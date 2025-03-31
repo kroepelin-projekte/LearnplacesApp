@@ -2,7 +2,9 @@
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim } from 'workbox-core'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
-import {CacheFirst} from 'workbox-strategies';
+import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
+import {CacheableResponsePlugin} from 'workbox-cacheable-response';
+import {ExpirationPlugin} from 'workbox-expiration';
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -24,15 +26,14 @@ registerRoute(new NavigationRoute(
 ))
 
 /**
- ================================
+ =========================================
  Caching of downloaded pages
- ================================
+ =========================================
  */
 const PAGE_CACHE = 'page-cache';
-
 registerRoute(
   ({ url }) => {
-    return url.pathname.startsWith('/learnplaces/');
+    return /^\/learnplaces\/\d+$/.test(url.pathname);
   },
   new CacheFirst({
     cacheName: PAGE_CACHE,
@@ -45,10 +46,28 @@ registerRoute(
 );
 
 /**
- ================================
- Caching of downloaded pages end
- ================================
+ =========================================
+ Temporary Caching of learnplaces list
+ =========================================
  */
+const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
+registerRoute(
+  ({ url }) => {
+    return url.pathname.endsWith('/learnplaces');
+  },
+  new StaleWhileRevalidate({
+    cacheName: TMP_LEARNPLACES_CACHE,
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 10, // Cache up to 10 entries
+        maxAgeSeconds: 7 * 24 * 60 * 60, // Cache for 7 days
+      }),
+    ],
+  })
+);
 
 self.skipWaiting()
 clientsClaim()
