@@ -1,0 +1,236 @@
+@use './_index' as *;
+
+.app {
+  overflow: hidden;
+  min-height: 100vh; /*fallback*/
+  min-height: 100svh;
+  display: grid;
+  grid-template-rows: 60px 1fr;
+}
+
+main {
+  background-color: $color-main;
+  .main-wrapper:not(:has(.map)):not(:has(.qr-code-scanner-wrapper)):not(:has(.login-wrapper)) {
+    height: 100%;
+    margin: 0 auto;
+    max-width: 800px;
+    padding-bottom: 60px;
+    padding-inline: $padding;
+  }
+}
+
+section {
+  background-color: $color-white;
+  transition: all .3s ease;
+  margin-block: $padding;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: $color-white;
+  color: $color-accent-2;
+  padding-inline: 20px;
+  border: 3px solid $color-accent-2;
+  cursor: pointer;
+  transition: 0.2s ease;
+  width: 100%;
+  height: 45px;
+  max-width: 380px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+  border-radius: $border-radius;
+  &:before {
+    content: "\203A";
+    font-size: 40px;
+    font-weight: bold;
+    transform: translateY(-4px);
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    padding-inline: 15px;
+    display: flex;
+    align-items: center;
+  }
+  &:hover,
+  &:focus{
+    background-color: $color-accent-2;
+    color: $color-white;
+  }
+  &.btn-login {
+    background-color: transparent;
+    border-color: $color-white;
+    color: $color-white;
+    &:hover,
+    &:focus {
+      background-color: $color-white;
+      color: $color-accent-2;
+    }
+  }
+  &.btn-start {
+    margin-top: 30px;
+  }
+  &.full-width {
+    max-width: inherit;
+  }
+}
+
+.install-to-homescreen-buttons {
+  z-index: 2000;
+  position: fixed;
+  bottom: 0px;
+  left: 0;
+  width: 100vw;
+  height: min-content;
+  background-color: $color-main;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: $padding;
+  padding: $padding;
+  button {
+    font-size: 14px;
+    font-weight: 100;
+  }
+}
+
+
+
+li:has(.card):last-child .card {
+  border: 0;
+}
+.card {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  gap: 10px;
+  z-index: 20;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(0,0,100,0.4);
+  margin-top: 20px;
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: $color-accent-2;
+  }
+  p {
+    font-weight: 100;
+    color: $color-accent-2;
+    margin-bottom: 20px;
+  }
+  .card-body div {
+    margin-bottom: 20px;
+  }
+}
+
+a:has(.card) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.qr-code-scanner-wrapper {
+  width: 100%;
+  height: calc(100svh - 120px);
+  background-color: $color-white;
+  video {
+    object-fit: cover !important;
+  }
+}
+
+.offline-message {
+  position: fixed;
+  bottom: 70px;
+  right: 0;
+  width: 100%;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  vertical-align: middle;
+  background-color: #9a0707;
+  color: white;
+  z-index: 1000;
+}
+main:has(.login-wrapper) .offline-message {
+  bottom: 0;
+}
+
+
+
+
+// howto list
+.howto-page {
+  .howto-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .howto-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    font-size: 17px;
+    color: $color-accent-2;
+  }
+
+  .howto-list li::before {
+    content: counter(list-item);
+    counter-increment: list-item;
+    font-size: 2rem;
+    font-weight: bold;
+    color: $color-accent-2;
+    margin-right: 20px;
+    line-height: 1;
+  }
+
+  .howto-list li > * {
+    line-height: 1.5;
+  }
+}
+
+
+// learnplace page
+.learnplace-page {
+  .full-width-image {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+  }
+  section {
+    margin-top: 20px;
+  }
+  section h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+  section h1,
+  section p,
+  .rich-text-block {
+    ul, ol {
+      margin-bottom: 20px;
+      padding-left: 20px;
+    }
+    ul {
+      list-style: initial;
+    }
+  }
+  .rich-text-block * {
+    color: $color-accent-2;
+  }
+}
+

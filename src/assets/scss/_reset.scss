@@ -1,0 +1,28 @@
+@use './_index' as *;
+
+body {
+  font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  color: $color-accent-2;
+}
+p {
+  font-size: 17px;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+ul {
+  list-style: none;
+}
+
+section h1 {
+  font-size: 44px;
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 40px;
+}

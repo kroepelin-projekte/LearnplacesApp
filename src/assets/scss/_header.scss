@@ -1,0 +1,74 @@
+@use './_index' as *;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-inline: $padding;
+  background-color: $color-white;
+  height: 100%;
+  .header-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    img {
+      transform: translateY(4px);
+    }
+    h1 {
+      font-size: 30px;
+      margin: 0;
+      color: $color-accent-2;
+    }
+  }
+}
+
+
+// logout modal
+.header-wrapper .btn-logout {
+  border: 0;
+  background-color: transparent;
+}
+
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  .modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: $border-radius;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    .modal-actions {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+
+      .btn-confirm {
+        background-color: #ff4d4f;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+      }
+      .btn-cancel {
+        background-color: #4caf50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: $border-radius;
+        cursor: pointer;
+      }
+    }
+  }
+}

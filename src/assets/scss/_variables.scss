@@ -1,0 +1,50 @@
+$color-accent-1: #F98128;
+$color-accent-2: #34499A;
+$color-main: #ffffff;
+$color-white: #ffffff;
+$color-black: #000000;
+$color-section: #eff3fa;
+
+$filter-accent-2: invert(27%) sepia(22%) saturate(3191%) hue-rotate(201deg) brightness(91%) contrast(88%);
+
+$padding: 40px;
+$padding-small: 20px;
+
+$border-radius: 4px;
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100svh;
+}
+.center-horizontally {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+@for $i from 1 through 20 {
+  .pt-#{$i} {
+    padding-top: #{$i * 0.25}rem;
+  }
+}
+
+@for $i from 1 through 20 {
+  .pb-#{$i} {
+    padding-bottom: #{$i * 0.25}rem;
+  }
+}
+
+@for $i from 1 through 20 {
+  .mt-#{$i} {
+    margin-top: #{$i * 0.25}rem;
+  }
+}
+
+@for $i from 1 through 20 {
+  .mb-#{$i} {
+    margin-bottom: #{$i * 0.25}rem;
+  }
+}

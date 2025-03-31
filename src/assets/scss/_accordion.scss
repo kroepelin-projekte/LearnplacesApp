@@ -1,0 +1,69 @@
+@use './_index' as *;
+
+.accordion-block {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: $border-radius;
+  margin-bottom: 10px;
+}
+
+.accordion-title {
+  background-color: $color-accent-2 !important;
+  font-weight: 700;
+  color: $color-white;
+  padding: $padding-small;
+  font-size: 16px;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease;
+  margin-bottom: 10px;
+  &:hover {
+    filter: brightness(1.1);
+  }
+}
+
+.accordion-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+  transform: translateY(2px);
+  margin-right: $padding-small;
+  color: $color-white !important;
+
+  svg {
+    transform: scale(1.6);
+    transform-origin: center;
+    * {
+      fill: $color-white !important;
+    }
+  }
+  &.open {
+    transform: rotate(90deg);
+  }
+}
+
+.accordion-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  transition: grid-template-rows 0.3s ease;
+}
+
+.accordion-items {
+  display: grid;
+  grid-gap: 10px;
+  min-height: 0;
+
+  &>div {
+    background-color: #fafafa;
+    padding: 10px;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    &:last-child {
+      margin-bottom: 10px;
+    }
+  }
+}

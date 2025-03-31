@@ -1,0 +1,28 @@
+@use './_index' as *;
+
+
+// login page
+.app:has(.login-wrapper) header {
+  background-color: $color-accent-2;
+  img {
+    filter: grayscale(1) brightness(0) invert(1);
+  }
+}
+.main-wrapper:has(.login-wrapper) {
+  background-color: $color-accent-2;
+  height: 100%;
+  h1, h2 {
+    color: $color-white;
+  }
+}
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding-inline: $padding;
+  h1 {
+    margin-bottom: 30px;
+  }
+}

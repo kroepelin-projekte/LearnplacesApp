@@ -1,0 +1,36 @@
+@use './_index' as *;
+
+.blocks>div {
+  margin-bottom: $padding;
+}
+
+.picture-block-img,
+.video-block-video {
+  width: 100%;
+}
+
+.video-block-video {
+  border-radius: $border-radius;
+}
+
+// picture block
+.picture-block {
+  display: flex;
+  flex-direction: column;
+  border-radius: $border-radius;
+  overflow: hidden;
+  .content {
+    background-color: $color-accent-2;
+    padding: $padding-small;
+  }
+  h2 {
+    margin-bottom: 10px;
+  }
+  p {
+    margin-bottom: 0;
+  }
+  h2, p {
+    color: $color-white;
+  }
+}
+
