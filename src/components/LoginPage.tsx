@@ -13,11 +13,11 @@ export const LoginPage = () => {
     try {
       // Generate PKCE (Code Verifier and Code Challenge)
       const { codeVerifier, codeChallenge } = await generatePkcePair();
+      const state = generateState();
 
       // Store the Code Verifier in storage
       sessionStorage.setItem('pkce_code_verifier', codeVerifier);
-
-      const state = generateState();
+      sessionStorage.setItem('pkce_state', state);
 
       // Encode the Redirect URI
       const redirect_uri = urlBase64Encode(`${window.location.protocol}//${window.location.host}/auth_callback`);

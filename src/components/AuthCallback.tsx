@@ -14,28 +14,39 @@ export const AuthCallback = () => {
     const code = params.get('code');
     const state = params.get('state');
 
-    console.log('code', code);
-    console.log('state', state);
+    const savedCodeVerifier = sessionStorage.getItem('pkce_code_verifier');
+    const savedState = sessionStorage.getItem('pkce_state');
 
-    const codeVerifier = sessionStorage.getItem('pkce_code_verifier');
+    if (!code || !state) {
+      return;
+    }
 
-    console.log('codeVerifier', codeVerifier);
+    if (!savedCodeVerifier || !savedState) {
+      return;
+    }
 
-    // todo state vergleichen
     fetch(`${apiBaseUrl}/token`, {
       method: 'POST',
       body: JSON.stringify({
-        code_verifier: codeVerifier,
+        code_verifier: savedCodeVerifier,
         code: code,
         state: state
       })
     })
       .then(res => res.json())
       .then((data) => {
-        // todo save jwt
-        console.log('login---------->', data);
+        console.log('JWT: ?? ', data);
+
+        sessionStorage.removeItem('pkce_code_verifier');
+        sessionStorage.removeItem('pkce_state');
+
         dispatch(login('test'));
         navigate('/', {replace: true});
+      })
+      .catch(err => {
+        console.log(err);
+        sessionStorage.removeItem('pkce_code_verifier');
+        sessionStorage.removeItem('pkce_state');
       });
   }, [dispatch, navigate]);
 

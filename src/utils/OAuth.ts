@@ -6,18 +6,18 @@ export const urlBase64Encode = (text: string) => {
 }
 
 const generateCodeVerifier = (): string => {
-  const array = new Uint8Array(128); // RFC 7636 empfiehlt eine zufällige Zeichenfolge zwischen 43 und 128 Zeichen
+  const array = new Uint8Array(128);
   window.crypto.getRandomValues(array);
   return Array.from(array, byte => String.fromCharCode(33 + (byte % 94))).join('');
-}
+};
 
 const generateCodeChallenge = async (codeVerifier: string): Promise<string> => {
   const encoder = new TextEncoder();
-  const data = encoder.encode(codeVerifier);
-  const digest = await crypto.subtle.digest('SHA-256', data);
-  const base64Digest = btoa(String.fromCharCode(...new Uint8Array(digest)));
-  return urlBase64Encode(base64Digest);
-}
+  const data = encoder.encode(codeVerifier); // Nutze UTF-8-Encoding
+  const digest = await crypto.subtle.digest('SHA-256', data); // SHA-256-Hash
+  const base64Digest = btoa(String.fromCharCode(...new Uint8Array(digest))); // Base64-Kodierung
+  return base64Digest.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); // URL-sicher machen
+};
 
 export const generatePkcePair = async (): Promise<{ codeVerifier: string, codeChallenge: string }> => {
   const codeVerifier = generateCodeVerifier();
