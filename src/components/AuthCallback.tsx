@@ -10,24 +10,33 @@ export const AuthCallback = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    const handleAuthCallback = () => {
-      // todo
-      //  POST Body:
-      //   - code_verifier vom zwischengespeicherten
-      //   - code von query params
-      //   - state von query params
-      fetch(`${apiBaseUrl}/token`, {
-        method: 'POST',
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const state = params.get('state');
+
+    console.log('code', code);
+    console.log('state', state);
+
+    const codeVerifier = sessionStorage.getItem('pkce_code_verifier');
+
+    console.log('codeVerifier', codeVerifier);
+
+    // todo state vergleichen
+    fetch(`${apiBaseUrl}/token`, {
+      method: 'POST',
+      body: JSON.stringify({
+        code_verifier: codeVerifier,
+        code: code,
+        state: state
       })
+    })
       .then(res => res.json())
-      .then(() => {
+      .then((data) => {
         // todo save jwt
+        console.log('login---------->', data);
         dispatch(login('test'));
         navigate('/', {replace: true});
       });
-    }
-
-    handleAuthCallback();
   }, [dispatch, navigate]);
 
   return (
