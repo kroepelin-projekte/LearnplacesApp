@@ -4,7 +4,6 @@ import {login} from '../state/auth/authSlice.ts';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import {TokenResponseInterface} from '../types/types.ts';
 
 export const AuthCallback = () => {
   const navigate = useNavigate();

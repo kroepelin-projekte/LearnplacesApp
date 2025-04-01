@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Loader } from '../../Loader';
 import { isVisible } from '../../../utils/BlockVisibility.ts';
-import {BlockInterface} from '../../../types/types.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: BlockInterface}) => {
@@ -47,15 +45,8 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
     fetchVideo();
   }, [rid]);
 
-  if (!visible) {
+  if (!visible || loading) {
     return null;
-  }
-
-  if (loading) {
-    return <>
-      <p className="center-horizontally">Video lädt...</p>
-      <Loader />
-    </>;
   }
 
   if (!videoSrc) {

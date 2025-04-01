@@ -2,15 +2,18 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router';
 import Confetti from 'react-confetti';
-import {Scanner} from '@yudiel/react-qr-scanner';
+import {IDetectedBarcode, Scanner} from '@yudiel/react-qr-scanner';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export function QrCodeScannerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
+  // for confetti
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
   const [showConfetti, setshowConfetti] = useState(false);
+
+  // for scanner
   const [result, setResult] = useState<string | null>(null);
   const [showScanner, setShowScanner] = useState(true);
 
@@ -20,7 +23,6 @@ export function QrCodeScannerPage() {
         width: window.innerWidth,
         height: window.innerHeight,
       };
-      console.log('[QR-Code Page] Window size: ', newSize); // Aktualisierte Werte
       return newSize;
     });
   }
@@ -43,7 +45,7 @@ export function QrCodeScannerPage() {
     }
 
     function fetchJson() {
-      const jwt = localStorage.getItem('learnplacesToken');
+      const jwt = localStorage.getItem('access_token');
 
       fetch(`${apiBaseUrl}/learnplaces/${id}/verify/${result}`, {
         method: 'POST',
@@ -67,12 +69,7 @@ export function QrCodeScannerPage() {
         })
         .then((data) => {
           if (data?.data?.valid === true) {
-            setShowScanner(false);
-            setshowConfetti(true);
-            vibrate();
-            setTimeout(() => {
-              setshowConfetti(false);
-            }, 8000);
+            onSuccess();
             return;
           }
           console.log('[Learnplace] Verify token: ', data);
@@ -84,24 +81,32 @@ export function QrCodeScannerPage() {
         });
     }
 
+    const onSuccess = () => {
+      setShowScanner(false);
+      setshowConfetti(true);
+      vibrate();
+      setTimeout(() => {
+        setshowConfetti(false);
+      }, 8000);
+    }
+
     fetchJson();
   }, [id, navigate, result]);
 
-/*  const handleScan = (data: QrCodeDataInterface | null) => {
-    if (data === null) {
+  const handleScan = (data: IDetectedBarcode[]) => {
+
+    if (data.length === 0) {
       return;
     }
-    const token: string = data['text'];
+
+    const token: string = data[0].rawValue;
     const tokenRegex = /^[a-zA-Z0-9]{10,}$/;
-    if (data && tokenRegex.test(token)) {
+    if (token && tokenRegex.test(token)) {
       setResult(token);
     } else {
-      console.log('[QR-Code] Invalid token: ', token);
-      setTimeout(() => setResult(null), 1500); // Scanner schnell wieder aktivieren
+      setTimeout(() => setResult(null), 1500);
     }
-  };*/
-
-  //const handleError = (err: Error) => console.error(err);
+  };
 
   if (!showScanner) {
     return (
@@ -115,13 +120,10 @@ export function QrCodeScannerPage() {
 
   return (
     <div className="qr-code-scanner-page">
-
       {
         showScanner && (
           <div className="qr-code-scanner-wrapper">
-
-            <Scanner onScan={(result) => console.log(result)} />
-
+            <Scanner onScan={(result) => handleScan(result)} />
           </div>
         )
       }

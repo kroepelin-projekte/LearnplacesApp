@@ -4,6 +4,17 @@ import App from './App.tsx'
 import {BrowserRouter} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './state/store.ts';
+import { registerSW } from 'virtual:pwa-register';
+
+registerSW({
+  immediate: true,
+  onNeedRefresh() {
+    window.location.reload();
+  },
+  onOfflineReady() {
+    console.log('Ready to work offline');
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

@@ -1,7 +1,6 @@
 import DOMPurify from 'dompurify';
 import { useEffect, useState } from 'react';
 import { isVisible } from '../../../utils/BlockVisibility.ts';
-import {BlockInterface} from '../../../types/types.ts';
 
 export const RichTextBlock = (props: {isWithinLearnplaceRadius: boolean, block: BlockInterface}) => {
   const [visible, setVisible] = useState(false);

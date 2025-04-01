@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { isWithinRadius } from '../../utils/BlockVisibility.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import { LearnplaceInterface, BlockInterface } from '../../types/types.ts';
 
 export const LearnplacePage = () => {
   const { id } = useParams();

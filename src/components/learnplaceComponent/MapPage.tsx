@@ -7,7 +7,6 @@ import { Loader } from '../Loader';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import { LearnplaceInterface } from '../../types/types.ts';
 
 L.Icon.Default.mergeOptions({
   shadowUrl: iconShadow,
@@ -22,7 +21,7 @@ export const MapPage = () => {
 
   useEffect(() => {
     function fetchJson() {
-      const jwt = localStorage.getItem('learnplacesToken');
+      const jwt = localStorage.getItem('access_token');
 
       fetch(`${apiBaseUrl}/learnplaces/${id}`, {
         method: 'GET',

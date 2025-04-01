@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Loader } from './Loader';
 import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
-import {LearnplaceInterface} from '../types/types.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const LearnplacesPage = () => {
@@ -19,7 +18,7 @@ export const LearnplacesPage = () => {
   // load learnplaces data
   useEffect(() => {
     function fetchJson() {
-      //const jwt = localStorage.getItem('learnplacesToken');
+      //const jwt = localStorage.getItem('access_token');
       const jwt = 'test';
       fetch(`${apiBaseUrl}/learnplaces`, {
         method: 'GET',

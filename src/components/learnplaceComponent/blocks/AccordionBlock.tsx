@@ -5,7 +5,6 @@ import { RichTextBlock } from './RichTextBlock';
 import { PictureBlock } from './PictureBlock';
 import { VideoBlock } from './VideoBlock';
 import { isVisible } from '../../../utils/BlockVisibility.ts';
-import { BlockInterface } from '../../../types/types.ts';
 
 export const AccordionBlock = (props: {isWithinLearnplaceRadius: boolean, block: BlockInterface}) => {
   const { title, sub_blocks: subBlocks } = props.block;

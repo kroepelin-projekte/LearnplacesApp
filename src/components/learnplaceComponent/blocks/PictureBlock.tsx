@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Loader } from '../../Loader';
 import DOMPurify from 'dompurify';
 import { isVisible } from '../../../utils/BlockVisibility.ts';
-import {BlockInterface} from '../../../types/types.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: BlockInterface}) => {
@@ -47,12 +45,8 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
     fetchImage();
   }, [rid]);
 
-  if (!visible) {
+  if (!visible || loading) {
     return null;
-  }
-
-  if (loading) {
-    return <Loader />;
   }
 
   if (!imgSrc) {
