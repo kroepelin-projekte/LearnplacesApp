@@ -28,3 +28,10 @@ export interface LearnplaceInterface {
   };
   blocks: Array<BlockInterface>;
 }
+
+export interface TokenResponseInterface {
+  data: {
+    success: boolean;
+    access_token: string;
+  }
+}

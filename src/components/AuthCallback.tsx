@@ -4,6 +4,7 @@ import {login} from '../state/auth/authSlice.ts';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+import {TokenResponseInterface} from '../types/types.ts';
 
 export const AuthCallback = () => {
   const navigate = useNavigate();
@@ -31,26 +32,38 @@ export const AuthCallback = () => {
         code_verifier: savedCodeVerifier,
         code: code,
         state: state
-      })
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Login failed: ');
+        }
+        return res.json() as Promise<TokenResponseInterface>;
+      })
+      .then(data => data.data)
       .then((data) => {
-        console.log('JWT: ?? ', data);
+        console.log('res data: ', data);
+        if (!data.success) {
+          throw new Error('Login failed');
+        }
 
         sessionStorage.removeItem('pkce_code_verifier');
         sessionStorage.removeItem('pkce_state');
 
-        dispatch(login('test'));
+        dispatch(login(data.access_token));
         navigate('/', {replace: true});
       })
       .catch(err => {
-        console.log(err);
+        console.log('Login Error: ', err);
         sessionStorage.removeItem('pkce_code_verifier');
         sessionStorage.removeItem('pkce_state');
       });
   }, [dispatch, navigate]);
 
   return (
-    <div>AuthCallback Page</div>
+    <></>
   );
 }
