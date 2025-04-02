@@ -18,8 +18,7 @@ export const LearnplacesPage = () => {
   // load learnplaces data
   useEffect(() => {
     function fetchJson() {
-      //const jwt = localStorage.getItem('access_token');
-      const jwt = 'test';
+      const jwt = localStorage.getItem('access_token');
       fetch(`${apiBaseUrl}/learnplaces`, {
         method: 'GET',
         headers: {
@@ -27,8 +26,7 @@ export const LearnplacesPage = () => {
         }
       })
         .then((res) => {
-          //const jwt = res.headers.get('Learnplaces_token');
-          const jwt = 'test';
+          const jwt = res.headers.get('Learnplaces_token');
           if (!res.ok || !jwt) {
             console.log(res.ok, jwt);
             throw new Error('[All Learnplaces] Failed to fetch learnplace: ' + res.statusText);
@@ -37,7 +35,7 @@ export const LearnplacesPage = () => {
             navigate('/logout', { replace: true });
             return;
           }
-          localStorage.setItem('learnplacesToken', jwt);
+          localStorage.setItem('access_token', jwt);
           return res.json();
         })
         .then((data) => data.data)
@@ -58,7 +56,7 @@ export const LearnplacesPage = () => {
       <section>
         <h1>Lernorte Übersicht</h1>
 
-        <ul>
+        <ul className="fade-in">
           {learnplaces.map((learnplace: LearnplaceInterface) => {
             return (
               <li key={learnplace.id}>

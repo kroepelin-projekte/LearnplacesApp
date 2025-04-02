@@ -40,25 +40,26 @@ export const AuthCallback = () => {
         if (!res.ok) {
           throw new Error('Login failed: ');
         }
-        return res.json() as Promise<TokenResponseInterface>;
-      })
-      .then(data => data.data)
-      .then((data) => {
-        console.log('res data: ', data);
-        if (!data.success) {
+        const jwt = res.headers.get('Learnplaces_token');
+        if (!jwt) {
           throw new Error('Login failed');
         }
-
+        return res.json().then((data) => ({ jwt, data }));
+      })
+      .then(({ jwt, data }) => {
+        if (!data.data.success) {
+          throw new Error('Login failed');
+        }
+        dispatch(login(jwt));
         sessionStorage.removeItem('pkce_code_verifier');
         sessionStorage.removeItem('pkce_state');
-
-        dispatch(login(data.access_token));
         navigate('/', {replace: true});
       })
       .catch(err => {
         console.log('Login Error: ', err);
         sessionStorage.removeItem('pkce_code_verifier');
         sessionStorage.removeItem('pkce_state');
+        navigate('/login?failed', {replace: true});
       });
   }, [dispatch, navigate]);
 

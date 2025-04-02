@@ -29,13 +29,6 @@ declare global {
     };
     blocks: Array<BlockInterface>;
   }
-
-  interface TokenResponseInterface {
-    data: {
-      success: boolean;
-      access_token: string;
-    }
-  }
 }
 
 export {};

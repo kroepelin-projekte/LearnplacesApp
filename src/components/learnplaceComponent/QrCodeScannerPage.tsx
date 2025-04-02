@@ -64,7 +64,7 @@ export function QrCodeScannerPage() {
             navigate('/logout', { replace: true });
             return;
           }
-          localStorage.setItem('learnplacesToken', jwt);
+          localStorage.setItem('access_token', jwt);
           return res.json();
         })
         .then((data) => {

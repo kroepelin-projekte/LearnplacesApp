@@ -34,7 +34,7 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
             console.log(res.ok, jwt);
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
-          localStorage.setItem('learnplacesToken', jwt);
+          localStorage.setItem('access_token', jwt);
           return res.blob();
         })
         .then(blob => setVideoSrc(URL.createObjectURL(blob)))
@@ -54,7 +54,7 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
   }
 
   return (
-    <div>
+    <div className="video-block">
       <video src={videoSrc} className="video-block-video" controls />
     </div>
   )

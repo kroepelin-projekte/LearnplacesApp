@@ -86,7 +86,7 @@ export const LearnplacePage = () => {
             navigate('/logout', { replace: true });
             return;
           }
-          localStorage.setItem('learnplacesToken', jwt);
+          localStorage.setItem('access_token', jwt);
           return res.json();
         })
         .then((data) =>  data.data)
@@ -109,7 +109,6 @@ export const LearnplacePage = () => {
     const watchID = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log("Geolocation success: ", { latitude, longitude });
         setUserPosition({ lat: latitude, lng: longitude });
       },
       (error) => {

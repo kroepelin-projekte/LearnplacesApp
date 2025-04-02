@@ -4,7 +4,7 @@ export const HowToPage = () => {
       <section>
         <h1>Wie funktioniert die Lernorte App</h1>
 
-        <ol className="howto-list">
+        <ol className="howto-list fade-in">
           <li>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia, perspiciatis.
           </li>

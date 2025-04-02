@@ -34,7 +34,7 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
           if (!res.ok || !jwt) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
-          localStorage.setItem('learnplacesToken', jwt);
+          localStorage.setItem('access_token', jwt);
           return res.blob();
         })
         .then(blob => setImgSrc(URL.createObjectURL(blob)))
