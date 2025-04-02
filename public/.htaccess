@@ -1,6 +1,13 @@
 RewriteEngine On
+
+# Wenn die Anfrage auf index.html zeigt, diese laden
 RewriteRule ^index\.html$ - [L]
+
+# Statische Dateien nicht umleiten (Existenz prüfen)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# SPA-Fallback-Regeln (wenn keine Datei/Ordner existiert)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-l
 RewriteRule . /index.html [L]
