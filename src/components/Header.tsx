@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FiLogOut } from "react-icons/fi";
+import {FiLogOut, FiX} from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {RootState} from '../state/store.ts';
@@ -32,13 +32,14 @@ export const Header = () => {
             {showModal && (
               <div className="modal-overlay" onClick={closeModal}>
                 <div className="modal">
-                  <p>Möchten Sie sich wirklich abmelden?</p>
                   <div className="modal-actions">
-                    <button onClick={confirmLogout} className="btn-confirm">
-                      Ja
+                    <p>Möchten Sie sich wirklich abmelden?</p>
+
+                    <button onClick={confirmLogout} className="btn full-width">
+                      Abmelden
                     </button>
                     <button onClick={closeModal} className="btn-cancel">
-                      Abbrechen
+                      <FiX size={30} />
                     </button>
                   </div>
                 </div>

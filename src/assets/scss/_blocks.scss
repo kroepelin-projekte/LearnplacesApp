@@ -2,6 +2,7 @@
 
 .blocks>div {
   margin-bottom: $padding;
+  animation: fadeIn .4s ease;
 }
 
 .picture-block-img,

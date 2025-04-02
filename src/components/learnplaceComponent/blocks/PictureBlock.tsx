@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect} from 'react';
 import DOMPurify from 'dompurify';
 import { isVisible } from '../../../utils/BlockVisibility.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;

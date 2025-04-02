@@ -32,6 +32,7 @@
 
 
 .modal-overlay {
+  animation: fadeIn .3s ease;
   position: fixed;
   top: 0;
   left: 0;
@@ -43,26 +44,31 @@
   align-items: center;
   z-index: 999;
   .modal {
+    position: relative;
     background-color: white;
-    padding: 20px;
+
     border-radius: $border-radius;
     text-align: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     .modal-actions {
       display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
+      flex-direction: column;
+      justify-content: center;
+      padding: 30px;
 
-      .btn-confirm {
-        background-color: #ff4d4f;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: $border-radius;
-        cursor: pointer;
+      p {
+        padding-right: 70px;
+        padding-bottom: 20px;
+      }
+
+      .full-width {
+        width: 100%;
       }
       .btn-cancel {
-        background-color: #4caf50;
+        background-color: transparent;
+        position: absolute;
+        top: 10px;
+        right: 10px;
         color: white;
         padding: 10px 20px;
         border: none;
