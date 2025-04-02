@@ -19,8 +19,7 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
   const rid = props.block.picture;
   useEffect(() => {
     const fetchImage = () => {
-      //const jwt = res.headers.get('Learnplaces_token');
-      const jwt = 'test';
+      const jwt = localStorage.getItem('access_token');
 
       fetch(`${apiBaseUrl}/resources/${rid}`, {
           method: 'GET',
@@ -29,8 +28,7 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
           }
         })
         .then((res) => {
-          //const jwt = res.headers.get('Learnplaces_token');
-          const jwt = 'test';
+          const jwt = res.headers.get('Learnplaces_token');
           if (!res.ok || !jwt) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }

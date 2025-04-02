@@ -67,8 +67,7 @@ export const LearnplacePage = () => {
    */
   useEffect(() => {
     function fetchJson() {
-      //const jwt = res.headers.get('Learnplaces_token');
-      const jwt = 'test';
+      const jwt = localStorage.getItem('access_token');
 
       fetch(`${apiBaseUrl}/learnplaces/${id}`, {
         method: 'GET',
@@ -77,8 +76,7 @@ export const LearnplacePage = () => {
         }
       })
         .then((res) => {
-          //const jwt = res.headers.get('Learnplaces_token');
-          const jwt = 'test';
+          const jwt = res.headers.get('Learnplaces_token');
           if (!res.ok || !jwt) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }

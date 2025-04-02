@@ -18,8 +18,7 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
 
   useEffect(() => {
     const fetchVideo = async () => {
-      //const jwt = res.headers.get('Learnplaces_token');
-      const jwt = 'test';
+      const jwt = localStorage.getItem('access_token');
 
       fetch(`${apiBaseUrl}/resources/${rid}`, {
         method: 'GET',
@@ -28,8 +27,7 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
         }
       })
         .then((res) => {
-          //const jwt = res.headers.get('Learnplaces_token');
-          const jwt = 'test';
+          const jwt = res.headers.get('Learnplaces_token');
           if (!res.ok || !jwt) {
             console.log(res.ok, jwt);
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
