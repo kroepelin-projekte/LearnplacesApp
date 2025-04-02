@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   esbuild: process.env.NODE_ENV === 'production' ? { drop: ['console', 'debugger'] } : {},
+  base: './',
   plugins: [react(), VitePWA({
     strategies: 'injectManifest',
     srcDir: 'src',
@@ -51,11 +52,37 @@ export default defineConfig({
           type: 'image/png',
         },
       ],
+ /*     icons: [
+        {
+          src: 'pwa-64x64.png',
+          sizes: '64x64',
+          type: 'image/png',
+        },
+        {
+          src: 'pwa-192x192.png',
+          sizes: '192x192',
+          type: 'image/png',
+        },
+        {
+          src: 'pwa-512x512.png',
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],*/
     },
 
     injectManifest: {
       globPatterns: ['**/*.{js,css,html,svg,png,jpg,ico}'],
     },
+
+    includeAssets: [
+      'favicon.svg',
+      'icons/Icon-48.png',
+      'icons/Icon-72.png',
+      'icons/Icon-96.png',
+      'icons/Icon-144.png',
+      'icons/Icon-192.png',
+    ],
 
     devOptions: {
       enabled: false,
