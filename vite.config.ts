@@ -4,8 +4,8 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  esbuild: process.env.NODE_ENV === 'production' ? { drop: ['console', 'debugger'] } : {},
-  base: './',
+  //esbuild: process.env.NODE_ENV === 'production' ? { drop: ['console', 'debugger'] } : {},
+  base: '/',
   plugins: [react(), VitePWA({
     strategies: 'injectManifest',
     srcDir: 'src',

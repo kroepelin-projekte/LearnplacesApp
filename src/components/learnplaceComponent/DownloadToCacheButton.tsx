@@ -1,7 +1,8 @@
 import {useEffect, useState} from 'react';
 import { BsDownload, BsXLg } from "react-icons/bs";
-
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const PAGE_CACHE = 'page-cache';
+const cachedResources: string[] = []; // Zwischenspeicherung der gecachten Ressourcen-URLs
 
 export const DownloadToCacheButton = ({url}: {url: string}) => {
   const [isCached, setIsCached] = useState(false);
@@ -25,22 +26,85 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
    * If an error occurs during either the fetch operation or the caching process,
    * the error is logged to the console along with a prefix message.
    */
-  const handleDownloadToCache = () => {
+  const handleDownloadToCache = async () => {
     console.log(`[DownloadToCacheButton]: Downloading ${url} to cache...`);
-    fetch(url)
-      .then(res => {
-        if (!res.ok) {
-          throw new Error(`Network response was not ok (${res.status})`);
+
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`[DownloadToCacheButton]: Network response was not ok (${res.status})`);
+      }
+      await cacheData(url, res);
+      cachedResources.push(url);
+
+      const data = await res.json();
+      const resourceUrlBase = `${apiBaseUrl}/resources/`;
+
+      const blocks = data.data.blocks || [];
+      for (const block of blocks) {
+        if (block.picture) {
+          console.log('Bild URL: ', resourceUrlBase + block.picture);
+          await fetchAndCache(resourceUrlBase + block.picture);
         }
-        return caches.open(PAGE_CACHE)
-          .then(cache => {
-            cache.put(url, res.clone())
-              .then(() => setIsCached(true));
-          })
-          .catch(err => console.log('[DownloadToCacheButton]', err));
-      })
-      .catch(err => console.log('[DownloadToCacheButton]', err));
+        if (block.video) {
+          await fetchAndCache(resourceUrlBase + block.video);
+        }
+
+        if (block.sub_blocks && Array.isArray(block.sub_blocks)) {
+          for (const subBlock of block.sub_blocks) {
+            if (subBlock.picture) {
+              console.log('Bild URL: ', resourceUrlBase + subBlock.picture);
+              await fetchAndCache(resourceUrlBase + subBlock.picture);
+            }
+            if (subBlock.video) {
+              await fetchAndCache(resourceUrlBase + subBlock.video);
+            }
+          }
+        }
+      }
+
+      console.log(`[DownloadToCacheButton]: Cached resources: `, cachedResources);
+
+
+      console.log(`[DownloadToCacheButton]: All resources cached successfully.`);
+      setIsCached(true);
+    } catch (err) {
+      console.error('[DownloadToCacheButton]: Error during caching process', err);
+    }
   };
+
+  const fetchAndCache = async (resourceUrl: string) => {
+    try {
+      const res = await fetch(resourceUrl);
+      if (!res.ok) {
+        console.warn(`[fetchAndCache]: Failed to fetch ${resourceUrl}, status: ${res.status}`);
+        return;
+      }
+      await cacheData(resourceUrl, res);
+      console.log(`[fetchAndCache]: Cached ${resourceUrl} successfully.`);
+    } catch (error) {
+      console.error(`[fetchAndCache]: Error caching ${resourceUrl}`, error);
+    }
+    cachedResources.push(resourceUrl);
+  };
+
+  const cacheData = async (url: string, res: Response): Promise<void> => {
+    try {
+      const cache = await caches.open(PAGE_CACHE);
+      await cache.put(url, res.clone());
+      console.log(`[cacheData]: Successfully cached ${url}`);
+    } catch (error) {
+      console.error(`[cacheData]: Failed to cache ${url}`, error);
+    }
+  };
+
+
+
+
+
+
+
+
 
   /**
    * Removes a specified resource from the browser's cache storage.
@@ -52,26 +116,30 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
    *
    * @function
    */
-  const handleRemoveFromCache = () => {
-    caches.open(PAGE_CACHE)
-      .then(cache => {
-        cache.delete(url)
-          .then((success) => {
-            if (success) {
-              setIsCached(false);
-              console.log(`[DownloadToCacheButton]: Successfully removed ${url} from cache.`);
-            } else {
-              console.warn(`[DownloadToCacheButton]: No cache entry found for ${url}.`);
-            }
-          })
-          .catch(err => console.error('[DownloadToCacheButton]: Error removing from cache', err));
-      })
-      .catch(err => console.error('[DownloadToCacheButton]: Error opening cache', err));
-  };
+  const handleRemoveFromCache = async () => {
+    try {
+      console.log(`[DownloadToCacheButton]: Removing cached resources for ${url}...`);
 
-  caches.open(PAGE_CACHE).then((cache) => {
-    cache.keys().then((keys) => console.log('Cached keys:', keys));
-  });
+      const cache = await caches.open(PAGE_CACHE);
+
+      const deletePromises = cachedResources.map(resourceUrl =>
+        cache.delete(resourceUrl).then(success => {
+          if (success) {
+            console.log(`[DownloadToCacheButton]: Successfully removed ${resourceUrl} from cache.`);
+          } else {
+            console.warn(`[DownloadToCacheButton]: No cache entry found for ${resourceUrl}.`);
+          }
+        })
+      );
+
+      await Promise.all(deletePromises);
+
+      console.log(`[DownloadToCacheButton]: All resources removed from cache.`);
+      setIsCached(false);
+    } catch (err) {
+      console.error('[DownloadToCacheButton]: Error during cache removal process', err);
+    }
+  };
 
   if (!navigator.onLine && !isCached) {
     return null;
@@ -79,7 +147,7 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
 
   return (
     <button
-      className={`btn-download-to-cache ${isCached ? 'is-cached' : ''}`}
+      className={`btn btn-download-to-cache ${isCached ? 'is-cached' : ''}`}
       onClick={isCached ? handleRemoveFromCache : handleDownloadToCache}
     >
       { isCached

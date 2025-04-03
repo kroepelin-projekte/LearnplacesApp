@@ -33,7 +33,20 @@ registerRoute(new NavigationRoute(
 const PAGE_CACHE = 'page-cache';
 registerRoute(
   ({ url }) => {
-    return /^\/learnplaces\/\d+$/.test(url.pathname);
+    return /.*\/learnplaces\/\d+$/.test(url.pathname);
+  },
+  new CacheFirst({
+    cacheName: PAGE_CACHE,
+    plugins: [
+      {
+        cacheWillUpdate: async () => null,
+      },
+    ],
+  })
+);
+registerRoute(
+  ({ url }) => {
+    return /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
   },
   new CacheFirst({
     cacheName: PAGE_CACHE,

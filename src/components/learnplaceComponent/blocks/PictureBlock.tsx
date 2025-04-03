@@ -28,11 +28,11 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
           }
         })
         .then((res) => {
-          const jwt = res.headers.get('Learnplaces_token');
-          if (!res.ok || !jwt) {
+          //const jwt = res.headers.get('Learnplaces_token');
+          if (!res.ok/* || !jwt*/) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
-          localStorage.setItem('access_token', jwt);
+          //localStorage.setItem('access_token', jwt);
           return res.blob();
         })
         .then(blob => setImgSrc(URL.createObjectURL(blob)))

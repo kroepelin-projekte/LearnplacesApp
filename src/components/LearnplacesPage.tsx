@@ -18,24 +18,23 @@ export const LearnplacesPage = () => {
   // load learnplaces data
   useEffect(() => {
     function fetchJson() {
-      const jwt = localStorage.getItem('access_token');
+      //const jwt = localStorage.getItem('access_token');
       fetch(`${apiBaseUrl}/learnplaces`, {
         method: 'GET',
-        headers: {
+/*        headers: {
           'Authorization': 'Bearer ' + jwt,
-        }
+        }*/
       })
         .then((res) => {
-          const jwt = res.headers.get('Learnplaces_token');
-          if (!res.ok || !jwt) {
-            console.log(res.ok, jwt);
+          //const jwt = res.headers.get('Learnplaces_token');
+/*          if (!res.ok/!* || !jwt*!/) {
             throw new Error('[All Learnplaces] Failed to fetch learnplace: ' + res.statusText);
           }
           if (res.status === 401) {
             navigate('/logout', { replace: true });
             return;
-          }
-          localStorage.setItem('access_token', jwt);
+          }*/
+          //localStorage.setItem('access_token', jwt);
           return res.json();
         })
         .then((data) => data.data)

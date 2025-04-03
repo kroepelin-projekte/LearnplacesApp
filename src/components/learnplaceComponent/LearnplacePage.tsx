@@ -8,10 +8,12 @@ import { VideoBlock } from './blocks/VideoBlock';
 import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { isWithinRadius } from '../../utils/BlockVisibility.ts';
+import {DownloadToCacheButton} from './DownloadToCacheButton.tsx';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const LearnplacePage = () => {
   const { id } = useParams();
+  const learnplaceUrl = `${apiBaseUrl}/learnplaces/${id}`;
   const [learnplace, setLearnplace] = useState<LearnplaceInterface | null>(null);
   const [userPosition, setUserPosition] = useState({ lat: 0, lng: 0});
   const navigate = useNavigate();
@@ -69,31 +71,31 @@ export const LearnplacePage = () => {
     function fetchJson() {
       const jwt = localStorage.getItem('access_token');
 
-      fetch(`${apiBaseUrl}/learnplaces/${id}`, {
+      fetch(learnplaceUrl, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + jwt,
         }
       })
         .then((res) => {
-          const jwt = res.headers.get('Learnplaces_token');
-          if (!res.ok || !jwt) {
+          //const jwt = res.headers.get('Learnplaces_token');
+          if (!res.ok /*|| !jwt*/) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
           if (res.status === 401) {
             navigate('/logout', { replace: true });
             return;
           }
-          localStorage.setItem('access_token', jwt);
+          //localStorage.setItem('access_token', jwt);
           return res.json();
         })
         .then((data) =>  data.data)
         .then((data) => setLearnplace(data))
-        .catch(() => console.log('[Learnplace] Fetch error or offline.'));
+        .catch((err) => console.log('[Learnplace] Fetch error or offline.', err));
     }
 
     fetchJson();
-  }, [navigate, id]);
+  }, [navigate, id, learnplaceUrl]);
 
   /**
    * Watch the user position
@@ -147,6 +149,7 @@ export const LearnplacePage = () => {
         <h1>{learnplace.title}</h1>
         <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
       </section>
+      <DownloadToCacheButton url={learnplaceUrl} />
       <div className="blocks">
         {blockComponents.length > 0 ? blockComponents : null}
       </div>

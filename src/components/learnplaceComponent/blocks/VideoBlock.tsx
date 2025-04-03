@@ -27,12 +27,12 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
         }
       })
         .then((res) => {
-          const jwt = res.headers.get('Learnplaces_token');
-          if (!res.ok || !jwt) {
+          //const jwt = res.headers.get('Learnplaces_token');
+          if (!res.ok/* || !jwt*/) {
             console.log(res.ok, jwt);
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
-          localStorage.setItem('access_token', jwt);
+          //localStorage.setItem('access_token', jwt);
           return res.blob();
         })
         .then(blob => setVideoSrc(URL.createObjectURL(blob)))
