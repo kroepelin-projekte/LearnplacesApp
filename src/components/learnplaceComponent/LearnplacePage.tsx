@@ -78,15 +78,17 @@ export const LearnplacePage = () => {
         }
       })
         .then((res) => {
-          //const jwt = res.headers.get('Learnplaces_token');
-          if (!res.ok /*|| !jwt*/) {
+          if (!res.ok) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
           if (res.status === 401) {
             navigate('/logout', { replace: true });
             return;
           }
-          //localStorage.setItem('access_token', jwt);
+          const jwt = res.headers.get('Learnplaces_token');
+          if (jwt) {
+            localStorage.setItem('access_token', jwt);
+          }
           return res.json();
         })
         .then((data) =>  data.data)

@@ -2,7 +2,9 @@ import {useEffect, useState} from 'react';
 import { BsDownload, BsXLg } from "react-icons/bs";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const PAGE_CACHE = 'page-cache';
-const cachedResources: string[] = []; // Zwischenspeicherung der gecachten Ressourcen-URLs
+const MEDIA_CACHE = 'media-cache';
+const cachedPageResources: string[] = [];
+const cachedMediaResources: string[] = [];
 
 export const DownloadToCacheButton = ({url}: {url: string}) => {
   const [isCached, setIsCached] = useState(false);
@@ -34,8 +36,8 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
       if (!res.ok) {
         throw new Error(`[DownloadToCacheButton]: Network response was not ok (${res.status})`);
       }
-      await cacheData(url, res);
-      cachedResources.push(url);
+      await cacheData(url, res, PAGE_CACHE);
+      cachedPageResources.push(url);
 
       const data = await res.json();
       const resourceUrlBase = `${apiBaseUrl}/resources/`;
@@ -63,9 +65,8 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
         }
       }
 
-      console.log(`[DownloadToCacheButton]: Cached resources: `, cachedResources);
-
-
+      console.log(`[DownloadToCacheButton]: Cached page: `, cachedPageResources);
+      console.log(`[DownloadToCacheButton]: Cached media: `, cachedMediaResources);
       console.log(`[DownloadToCacheButton]: All resources cached successfully.`);
       setIsCached(true);
     } catch (err) {
@@ -80,31 +81,23 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
         console.warn(`[fetchAndCache]: Failed to fetch ${resourceUrl}, status: ${res.status}`);
         return;
       }
-      await cacheData(resourceUrl, res);
+      await cacheData(resourceUrl, res, MEDIA_CACHE);;
       console.log(`[fetchAndCache]: Cached ${resourceUrl} successfully.`);
     } catch (error) {
       console.error(`[fetchAndCache]: Error caching ${resourceUrl}`, error);
     }
-    cachedResources.push(resourceUrl);
+    cachedMediaResources.push(resourceUrl);
   };
 
-  const cacheData = async (url: string, res: Response): Promise<void> => {
+  const cacheData = async (url: string, res: Response, cacheName: string): Promise<void> => {
     try {
-      const cache = await caches.open(PAGE_CACHE);
+      const cache = await caches.open(cacheName);
       await cache.put(url, res.clone());
       console.log(`[cacheData]: Successfully cached ${url}`);
     } catch (error) {
       console.error(`[cacheData]: Failed to cache ${url}`, error);
     }
   };
-
-
-
-
-
-
-
-
 
   /**
    * Removes a specified resource from the browser's cache storage.
@@ -120,10 +113,10 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
     try {
       console.log(`[DownloadToCacheButton]: Removing cached resources for ${url}...`);
 
-      const cache = await caches.open(PAGE_CACHE);
-
-      const deletePromises = cachedResources.map(resourceUrl =>
-        cache.delete(resourceUrl).then(success => {
+      // clear page cache for learnplace
+      const pageCache = await caches.open(PAGE_CACHE);
+      const deletePromisesForPageCache = cachedPageResources.map(resourceUrl =>
+        pageCache.delete(resourceUrl).then(success => {
           if (success) {
             console.log(`[DownloadToCacheButton]: Successfully removed ${resourceUrl} from cache.`);
           } else {
@@ -131,8 +124,20 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
           }
         })
       );
+      await Promise.all(deletePromisesForPageCache);
 
-      await Promise.all(deletePromises);
+      // clear media cache for learnplace
+      const mediacCache = await caches.open(MEDIA_CACHE);
+      const deletePromisesForMediaCache = cachedMediaResources.map(resourceUrl =>
+        mediacCache.delete(resourceUrl).then(success => {
+          if (success) {
+            console.log(`[DownloadToCacheButton]: Successfully removed ${resourceUrl} from cache.`);
+          } else {
+            console.warn(`[DownloadToCacheButton]: No cache entry found for ${resourceUrl}.`);
+          }
+        })
+      );
+      await Promise.all(deletePromisesForMediaCache);
 
       console.log(`[DownloadToCacheButton]: All resources removed from cache.`);
       setIsCached(false);

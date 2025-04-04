@@ -44,12 +44,13 @@ registerRoute(
     ],
   })
 );
+const MEDIA_CACHE = 'media-cache';
 registerRoute(
   ({ url }) => {
     return /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
   },
   new CacheFirst({
-    cacheName: PAGE_CACHE,
+    cacheName: MEDIA_CACHE,
     plugins: [
       {
         cacheWillUpdate: async () => null,
@@ -77,6 +78,30 @@ registerRoute(
       new ExpirationPlugin({
         maxEntries: 10, // Cache up to 10 entries
         maxAgeSeconds: 7 * 24 * 60 * 60, // Cache for 7 days
+      }),
+    ],
+  })
+);
+
+/**
+ =========================================
+ Map cache
+ =========================================
+ */
+const TMP_MAP_CACHE = 'tmp-map-cache';
+registerRoute(
+  ({ url }) => {
+    return url.pathname.includes('tile.openstreetmap.org');
+  },
+  new StaleWhileRevalidate({
+    cacheName: TMP_MAP_CACHE,
+    plugins: [
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 200,
+        maxAgeSeconds: 7 * 24 * 60 * 60,
       }),
     ],
   })
