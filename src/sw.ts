@@ -91,7 +91,7 @@ registerRoute(
 const TMP_MAP_CACHE = 'tmp-map-cache';
 registerRoute(
   ({ url }) => {
-    return url.pathname.includes('tile.openstreetmap.org');
+    return url.pathname.includes('openstreetmap');
   },
   new StaleWhileRevalidate({
     cacheName: TMP_MAP_CACHE,

@@ -175,8 +175,8 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
       onClick={isCached ? handleRemoveFromCache : handleDownloadToCache}
     >
       { isCached
-        ? <><BsXLg size={28} /><span>Heruntergeladene Daten entfernen</span></>
-        : <><BsDownload size={28} /><span>Für Offline Modus herunterladen</span></>
+        ? <><BsXLg size={28} /><span>Entfernen</span></>
+        : <><BsDownload size={28} /><span>Herunterladen</span></>
       }
     </button>
   )

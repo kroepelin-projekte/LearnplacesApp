@@ -46,7 +46,7 @@ export const DownloadedLearnplaces = () => {
             ))}
           </ul>
         ) : (
-          <p>Es sind keine gecachten Learnplaces verfügbar.</p>
+          <p>Es sind keine heruntergeladenen Lernorte verfügbar.</p>
         )}
       </section>
     </div>
