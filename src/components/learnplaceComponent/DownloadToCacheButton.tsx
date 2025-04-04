@@ -3,8 +3,6 @@ import { BsDownload, BsXLg } from "react-icons/bs";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const PAGE_CACHE = 'page-cache';
 const MEDIA_CACHE = 'media-cache';
-const cachedPageResources: string[] = [];
-const cachedMediaResources: string[] = [];
 
 export const DownloadToCacheButton = ({url}: {url: string}) => {
   const [isCached, setIsCached] = useState(false);
@@ -37,7 +35,6 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
         throw new Error(`[DownloadToCacheButton]: Network response was not ok (${res.status})`);
       }
       await cacheData(url, res, PAGE_CACHE);
-      cachedPageResources.push(url);
 
       const data = await res.json();
       const resourceUrlBase = `${apiBaseUrl}/resources/`;
@@ -65,8 +62,6 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
         }
       }
 
-      console.log(`[DownloadToCacheButton]: Cached page: `, cachedPageResources);
-      console.log(`[DownloadToCacheButton]: Cached media: `, cachedMediaResources);
       console.log(`[DownloadToCacheButton]: All resources cached successfully.`);
       setIsCached(true);
     } catch (err) {
@@ -86,7 +81,6 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
     } catch (error) {
       console.error(`[fetchAndCache]: Error caching ${resourceUrl}`, error);
     }
-    cachedMediaResources.push(resourceUrl);
   };
 
   const cacheData = async (url: string, res: Response, cacheName: string): Promise<void> => {
@@ -110,40 +104,65 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
    * @function
    */
   const handleRemoveFromCache = async () => {
-    try {
-      console.log(`[DownloadToCacheButton]: Removing cached resources for ${url}...`);
+    const resourceUrlBase = `${apiBaseUrl}/resources/`;
+    const cachedMediaResources: string[] = [];
 
-      // clear page cache for learnplace
-      const pageCache = await caches.open(PAGE_CACHE);
-      const deletePromisesForPageCache = cachedPageResources.map(resourceUrl =>
-        pageCache.delete(resourceUrl).then(success => {
-          if (success) {
-            console.log(`[DownloadToCacheButton]: Successfully removed ${resourceUrl} from cache.`);
-          } else {
-            console.warn(`[DownloadToCacheButton]: No cache entry found for ${resourceUrl}.`);
+    const cache = await caches.open(PAGE_CACHE);
+    const response = await cache.match(url);
+
+    if (response && response.ok) {
+      try {
+        const data = await response.json();
+        const learnplace = data.data;
+
+        for (const block of learnplace.blocks) {
+          if (block.picture) {
+            cachedMediaResources.push(resourceUrlBase + block.picture);
+          } else if (block.video) {
+            cachedMediaResources.push(resourceUrlBase + block.video);
           }
-        })
-      );
-      await Promise.all(deletePromisesForPageCache);
 
-      // clear media cache for learnplace
-      const mediacCache = await caches.open(MEDIA_CACHE);
-      const deletePromisesForMediaCache = cachedMediaResources.map(resourceUrl =>
-        mediacCache.delete(resourceUrl).then(success => {
-          if (success) {
-            console.log(`[DownloadToCacheButton]: Successfully removed ${resourceUrl} from cache.`);
-          } else {
-            console.warn(`[DownloadToCacheButton]: No cache entry found for ${resourceUrl}.`);
+          if (block.sub_blocks && Array.isArray(block.sub_blocks)) {
+            for (const subBlock of block.sub_blocks) {
+              if (subBlock.picture) {
+                cachedMediaResources.push(resourceUrlBase + subBlock.picture);
+              } else if (subBlock.video) {
+                cachedMediaResources.push(resourceUrlBase + subBlock.video);
+              }
+            }
           }
-        })
-      );
-      await Promise.all(deletePromisesForMediaCache);
-
-      console.log(`[DownloadToCacheButton]: All resources removed from cache.`);
-      setIsCached(false);
-    } catch (err) {
-      console.error('[DownloadToCacheButton]: Error during cache removal process', err);
+        }
+      } catch (error) {
+        console.error(`Fehler beim Parsen von JSON für ${url}:`, error);
+      }
     }
+
+    // delete specific learnplace media from media-cache
+    if (cachedMediaResources.length > 0) {
+      console.log("[Cache]: Zu entfernende Medienressourcen aus MEDIA_CACHE:", cachedMediaResources);
+
+      const mediaCache = await caches.open(MEDIA_CACHE);
+      const deletePromises = cachedMediaResources.map(async (resourceUrl) => {
+        const success = await mediaCache.delete(resourceUrl);
+        if (success) {
+          console.log(`[Cache]: Gelöschte Medienressource: ${resourceUrl}`);
+        } else {
+          console.warn(`[Cache]: Medienressource nicht im Cache gefunden: ${resourceUrl}`);
+        }
+      });
+
+      await Promise.all(deletePromises);
+    }
+
+    // delete specific learnplace info from page-cache
+    const pageCacheDeleteSuccess = await cache.delete(url);
+    if (pageCacheDeleteSuccess) {
+      console.log(`[Cache]: Erfolgreich aus PAGE_CACHE entfernt: ${url}`);
+    } else {
+      console.warn(`[Cache]: Haupt-URL war nicht im PAGE_CACHE: ${url}`);
+    }
+
+    setIsCached(false);
   };
 
   if (!navigator.onLine && !isCached) {
@@ -152,12 +171,12 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
 
   return (
     <button
-      className={`btn btn-download-to-cache ${isCached ? 'is-cached' : ''}`}
+      className={`btn-download-to-cache ${isCached ? 'is-cached' : ''}`}
       onClick={isCached ? handleRemoveFromCache : handleDownloadToCache}
     >
       { isCached
-        ? <><BsXLg /><span>Heruntergeladene Daten entfernen</span></>
-        : <><BsDownload /><span>Für Offline Modus herunterladen</span></>
+        ? <><BsXLg size={28} /><span>Heruntergeladene Daten entfernen</span></>
+        : <><BsDownload size={28} /><span>Für Offline Modus herunterladen</span></>
       }
     </button>
   )

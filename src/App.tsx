@@ -14,6 +14,7 @@ import {MapPage} from './components/learnplaceComponent/MapPage.tsx';
 import {QrCodeScannerPage} from './components/learnplaceComponent/QrCodeScannerPage.tsx';
 import { LearnplacesPage } from './components/LearnplacesPage.tsx';
 import {AuthCallback} from './components/AuthCallback.tsx';
+import {DownloadedLearnplaces} from './components/DownloadedLearnplaces.tsx';
 
 function App() {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -40,6 +41,7 @@ function App() {
           <Route path="lernort/:id" element={<LearnplacePage />} />
           <Route path="lernort/:id/map" element={<MapPage />} />
           <Route path="lernort/:id/scanner" element={<QrCodeScannerPage />} />
+          <Route path="downloads" element={<DownloadedLearnplaces />} />
         </Route>
       </Routes>
       <OfflineMessage />
