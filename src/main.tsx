@@ -1,4 +1,4 @@
-import { StrictMode } from 'react'
+//import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import {BrowserRouter} from 'react-router-dom';
@@ -9,7 +9,10 @@ import { registerSW } from 'virtual:pwa-register';
 registerSW({
   immediate: true,
   onNeedRefresh() {
-    window.location.reload();
+    const confirmed = confirm('New content is available. Refresh to display the latest version.');
+    if (confirmed) {
+      window.location.reload();
+    }
   },
   onOfflineReady() {
     console.log('Ready to work offline');
@@ -17,11 +20,9 @@ registerSW({
 });
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
-  </StrictMode>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>
 );

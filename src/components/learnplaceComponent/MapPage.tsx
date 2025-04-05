@@ -6,6 +6,7 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Loader } from '../Loader';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
+import {store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 L.Icon.Default.mergeOptions({
@@ -21,21 +22,17 @@ export const MapPage = () => {
 
   useEffect(() => {
     function fetchJson() {
-      const jwt = localStorage.getItem('access_token');
+      const accessToken = store.getState().auth.accessToken;
 
       fetch(`${apiBaseUrl}/learnplaces/${id}`, {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer ' + jwt,
+          'Authorization': 'Bearer ' + accessToken,
         }
       })
         .then((res) => {
           if (!res.ok) {
             throw new Error('[Map] Failed to fetch learnplace: ' + res.statusText);
-          }
-          if (res.status === 401) {
-            navigate('/logout', { replace: true });
-            return;
           }
           return res.json();
         })

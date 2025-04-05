@@ -1,11 +1,13 @@
 import {useEffect, useState} from 'react';
 import { BsDownload, BsXLg } from "react-icons/bs";
+import {store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const PAGE_CACHE = 'page-cache';
 const MEDIA_CACHE = 'media-cache';
 
 export const DownloadToCacheButton = ({url}: {url: string}) => {
   const [isCached, setIsCached] = useState(false);
+  const [buttonIsLoading, setButtonIsLoading] = useState(false);
 
   useEffect(() => {
     caches.open(PAGE_CACHE)
@@ -15,7 +17,7 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
           setIsCached(true);
         }
       })
-      .catch((err) =>console.error("[DownloadToCacheButton]: Error checking cache", err));
+      .catch((err) =>console.error("[DownloadButton]: Error checking cache", err));
   }, [url]);
 
   /**
@@ -27,12 +29,19 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
    * the error is logged to the console along with a prefix message.
    */
   const handleDownloadToCache = async () => {
-    console.log(`[DownloadToCacheButton]: Downloading ${url} to cache...`);
+    setButtonIsLoading(true);
+    console.log(`[DownloadButton]: Downloading ${url} to cache...`);
 
     try {
-      const res = await fetch(url);
+      const accessToken = store.getState().auth.accessToken;
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+        }
+      });
       if (!res.ok) {
-        throw new Error(`[DownloadToCacheButton]: Network response was not ok (${res.status})`);
+        throw new Error(`[DownloadButton]: Network response was not ok (${res.status})`);
       }
       await cacheData(url, res, PAGE_CACHE);
 
@@ -62,24 +71,31 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
         }
       }
 
-      console.log(`[DownloadToCacheButton]: All resources cached successfully.`);
+      console.log(`[DownloadButton]: All resources cached successfully.`);
       setIsCached(true);
+      setButtonIsLoading(false);
     } catch (err) {
-      console.error('[DownloadToCacheButton]: Error during caching process', err);
+      console.error('[DownloadButton]: Error during caching process', err);
     }
   };
 
   const fetchAndCache = async (resourceUrl: string) => {
     try {
-      const res = await fetch(resourceUrl);
+      const accessToken = store.getState().auth.accessToken;
+      const res = await fetch(resourceUrl, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+        }
+      });
       if (!res.ok) {
-        console.warn(`[fetchAndCache]: Failed to fetch ${resourceUrl}, status: ${res.status}`);
+        console.warn(`[DownloadButton]: Failed to fetch ${resourceUrl}, status: ${res.status}`);
         return;
       }
       await cacheData(resourceUrl, res, MEDIA_CACHE);;
-      console.log(`[fetchAndCache]: Cached ${resourceUrl} successfully.`);
+      console.log(`[DownloadButton]: Cached ${resourceUrl} successfully.`);
     } catch (error) {
-      console.error(`[fetchAndCache]: Error caching ${resourceUrl}`, error);
+      console.error(`[DownloadButton]: Error caching ${resourceUrl}`, error);
     }
   };
 
@@ -87,9 +103,9 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
     try {
       const cache = await caches.open(cacheName);
       await cache.put(url, res.clone());
-      console.log(`[cacheData]: Successfully cached ${url}`);
+      console.log(`[DownloadButton]: Successfully cached ${url}`);
     } catch (error) {
-      console.error(`[cacheData]: Failed to cache ${url}`, error);
+      console.error(`[DownloadButton]: Failed to cache ${url}`, error);
     }
   };
 
@@ -104,6 +120,7 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
    * @function
    */
   const handleRemoveFromCache = async () => {
+    setButtonIsLoading(true);
     const resourceUrlBase = `${apiBaseUrl}/resources/`;
     const cachedMediaResources: string[] = [];
 
@@ -133,21 +150,22 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
           }
         }
       } catch (error) {
-        console.error(`Fehler beim Parsen von JSON für ${url}:`, error);
+        console.error(`Error parsing json ${url}:`, error);
       }
     }
 
     // delete specific learnplace media from media-cache
     if (cachedMediaResources.length > 0) {
-      console.log("[Cache]: Zu entfernende Medienressourcen aus MEDIA_CACHE:", cachedMediaResources);
+      // Log the media resources to be removed from MEDIA_CACHE
+      console.log("[DownloadButton]: Media resources to be removed from MEDIA_CACHE:", cachedMediaResources);
 
       const mediaCache = await caches.open(MEDIA_CACHE);
       const deletePromises = cachedMediaResources.map(async (resourceUrl) => {
         const success = await mediaCache.delete(resourceUrl);
         if (success) {
-          console.log(`[Cache]: Gelöschte Medienressource: ${resourceUrl}`);
+          console.log(`[DownloadButton]: Deleted media resource: ${resourceUrl}`);
         } else {
-          console.warn(`[Cache]: Medienressource nicht im Cache gefunden: ${resourceUrl}`);
+          console.warn(`[DownloadButton]: Media resource not found in cache: ${resourceUrl}`);
         }
       });
 
@@ -157,12 +175,13 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
     // delete specific learnplace info from page-cache
     const pageCacheDeleteSuccess = await cache.delete(url);
     if (pageCacheDeleteSuccess) {
-      console.log(`[Cache]: Erfolgreich aus PAGE_CACHE entfernt: ${url}`);
+      console.log(`[DownloadButton]: Successfully removed from PAGE_CACHE: ${url}`);
     } else {
-      console.warn(`[Cache]: Haupt-URL war nicht im PAGE_CACHE: ${url}`);
+      console.warn(`[DownloadButton]: Main URL was not in PAGE_CACHE: ${url}`);
     }
 
     setIsCached(false);
+    setButtonIsLoading(false);
   };
 
   if (!navigator.onLine && !isCached) {
@@ -174,9 +193,13 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
       className={`btn-download-to-cache ${isCached ? 'is-cached' : ''}`}
       onClick={isCached ? handleRemoveFromCache : handleDownloadToCache}
     >
-      { isCached
-        ? <><BsXLg size={28} /><span>Entfernen</span></>
-        : <><BsDownload size={28} /><span>Herunterladen</span></>
+      { buttonIsLoading
+        ? <span>...</span>
+        : (
+          isCached
+            ? <><BsXLg size={28} /><span>Entfernen</span></>
+            : <><BsDownload size={28} /><span>Herunterladen</span></>
+        )
       }
     </button>
   )

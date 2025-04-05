@@ -3,11 +3,15 @@ import { Link } from 'react-router-dom';
 import { Loader } from './Loader';
 import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
+import {useDispatch} from 'react-redux';
+import {AppDispatch, store} from '../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+import {setAccessToken} from '../state/auth/authSlice.ts';
 
 export const LearnplacesPage = () => {
   const [learnplaces, setLearnplaces] = useState<LearnplaceInterface[]>([]);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   function vibrate() {
     if ('vibrate' in navigator) {
@@ -18,23 +22,21 @@ export const LearnplacesPage = () => {
   // load learnplaces data
   useEffect(() => {
     function fetchJson() {
-      //const jwt = localStorage.getItem('access_token');
+      const accessToken = store.getState().auth.accessToken;
       fetch(`${apiBaseUrl}/learnplaces`, {
         method: 'GET',
-/*        headers: {
-          'Authorization': 'Bearer ' + jwt,
-        }*/
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+        }
       })
         .then((res) => {
-          //const jwt = res.headers.get('Learnplaces_token');
-/*          if (!res.ok/!* || !jwt*!/) {
+          if (!res.ok) {
             throw new Error('[All Learnplaces] Failed to fetch learnplace: ' + res.statusText);
           }
-          if (res.status === 401) {
-            navigate('/logout', { replace: true });
-            return;
-          }*/
-          //localStorage.setItem('access_token', jwt);
+          const accessToken = res.headers.get('Learnplaces_token');
+          if (accessToken) {
+            dispatch(setAccessToken(accessToken));
+          }
           return res.json();
         })
         .then((data) => data.data)
@@ -43,7 +45,7 @@ export const LearnplacesPage = () => {
     }
 
     fetchJson();
-  }, [navigate]);
+  }, [dispatch, navigate]);
 
   if (!learnplaces) {
     console.log('no learnplaces');
@@ -55,7 +57,7 @@ export const LearnplacesPage = () => {
       <section>
         <h1>Lernorte Übersicht</h1>
 
-        <ul className="fade-in">
+        <ul>
           {learnplaces.map((learnplace: LearnplaceInterface) => {
             return (
               <li key={learnplace.id}>

@@ -5,6 +5,7 @@ import { NavigationRoute, registerRoute } from 'workbox-routing'
 import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
+import { getIndexedDBData } from './utils/Database';
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -27,6 +28,37 @@ registerRoute(new NavigationRoute(
 
 /**
  =========================================
+ Custom plugin for workbox stale while revalidate with headers
+ =========================================
+ */
+const jwtTokenPlugin = {
+  requestWillFetch: async ({ request }: { request: Request }) => {
+    try {
+      const accessToken = await getIndexedDBData('access_token');
+      if (!accessToken) {
+        console.warn('[jwtTokenPlugin] No access token found.');
+        return request;
+      }
+
+      const headers = new Headers(request.headers);
+      headers.set('Authorization', `Bearer ${accessToken}`);
+
+      const modifiedRequest = new Request(request.url, {
+        method: 'GET',
+        headers,
+        cache: request.cache,
+      });
+
+      return modifiedRequest;
+    } catch (error) {
+      console.error('[jwtTokenPlugin] Error modifying request:', error);
+      return request;
+    }
+  },
+};
+
+/**
+ =========================================
  Caching of downloaded pages
  =========================================
  */
@@ -41,9 +73,11 @@ registerRoute(
       {
         cacheWillUpdate: async () => null,
       },
+      jwtTokenPlugin
     ],
   })
 );
+
 const MEDIA_CACHE = 'media-cache';
 registerRoute(
   ({ url }) => {
@@ -55,13 +89,14 @@ registerRoute(
       {
         cacheWillUpdate: async () => null,
       },
+      jwtTokenPlugin
     ],
   })
 );
 
 /**
  =========================================
- Temporary Caching of learnplaces list
+ Temporary caching of learnplaces list
  =========================================
  */
 const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
@@ -79,13 +114,14 @@ registerRoute(
         maxEntries: 10, // Cache up to 10 entries
         maxAgeSeconds: 7 * 24 * 60 * 60, // Cache for 7 days
       }),
+      jwtTokenPlugin
     ],
   })
 );
 
 /**
  =========================================
- Map cache
+ Temporary caching map
  =========================================
  */
 const TMP_MAP_CACHE = 'tmp-map-cache';

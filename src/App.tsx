@@ -1,7 +1,7 @@
-import {Navigate, Route, Routes} from 'react-router-dom';
+import {Navigate, Route, Routes, useNavigate} from 'react-router-dom';
 import {Layout} from './components/Layout.tsx';
-import {useSelector} from 'react-redux';
-import {RootState} from './state/store.ts';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from './state/store.ts';
 import './assets/fonts/Roboto-VariableFont.ttf';
 import './assets/scss/index.scss';
 import { LoginPage } from './components/LoginPage.tsx';
@@ -15,9 +15,22 @@ import {QrCodeScannerPage} from './components/learnplaceComponent/QrCodeScannerP
 import { LearnplacesPage } from './components/LearnplacesPage.tsx';
 import {AuthCallback} from './components/AuthCallback.tsx';
 import {DownloadedLearnplaces} from './components/DownloadedLearnplaces.tsx';
+import {useEffect} from 'react';
+import {initializeAuth} from './state/auth/authSlice.ts';
 
 function App() {
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const loading = useSelector((state: RootState) => state.auth.loading);
+
+  useEffect(() => {
+    dispatch(initializeAuth());
+  }, [navigate, dispatch]);
+
+  if (loading) {
+    return null;
+  }
 
   return (
     <div className="app">

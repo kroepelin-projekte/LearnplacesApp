@@ -36,21 +36,21 @@ export const AuthCallback = () => {
         'Content-Type': 'application/json',
       },
     })
-      .then(res => {
+      .then(async res => {
         if (!res.ok) {
           throw new Error('Login failed: ');
         }
-        const jwt = res.headers.get('Learnplaces_token');
-        if (!jwt) {
+        const accessToken = res.headers.get('Learnplaces_token');
+        if (!accessToken) {
           throw new Error('Login failed');
         }
-        return res.json().then((data) => ({ jwt, data }));
+        return res.json().then((data) => ({ accessToken, data }));
       })
-      .then(({ jwt, data }) => {
+      .then(({ accessToken, data }) => {
         if (!data.data.success) {
           throw new Error('Login failed');
         }
-        dispatch(login(jwt));
+        dispatch(login(accessToken));
         sessionStorage.removeItem('pkce_code_verifier');
         sessionStorage.removeItem('pkce_state');
         navigate('/', {replace: true});

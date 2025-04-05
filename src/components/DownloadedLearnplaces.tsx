@@ -31,14 +31,13 @@ export const DownloadedLearnplaces = () => {
     fetchCachedLearnplaces();
   }, []);
 
-
   return (
     <div className="downloads">
       <section>
         <h1>Offline verfügbare Lernorte</h1>
 
         {cachedLearnplaces.length > 0 ? (
-          <ul className="fade-in">
+          <ul>
             {cachedLearnplaces.map((learnplace) => (
               <li key={learnplace.id}>
                 <Link to={`/lernort/${learnplace.id}`}>{learnplace.title}</Link>

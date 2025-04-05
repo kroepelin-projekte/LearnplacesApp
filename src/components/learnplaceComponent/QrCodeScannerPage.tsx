@@ -3,11 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router';
 import Confetti from 'react-confetti';
 import {IDetectedBarcode, Scanner} from '@yudiel/react-qr-scanner';
+import {setAccessToken} from '../../state/auth/authSlice.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+import {useDispatch} from 'react-redux';
+import {AppDispatch, store} from '../../state/store.ts';
 
 export function QrCodeScannerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   // for confetti
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -45,26 +49,21 @@ export function QrCodeScannerPage() {
     }
 
     function fetchJson() {
-      const jwt = localStorage.getItem('access_token');
-
+      const accessToken = store.getState().auth.accessToken;
       fetch(`${apiBaseUrl}/learnplaces/${id}/verify/${result}`, {
         method: 'POST',
         headers: {
-          'Authorization': 'Bearer ' + jwt,
+          'Authorization': 'Bearer ' + accessToken,
         }
       })
         .then((res) => {
-          const jwt = res.headers.get('Learnplaces_token');
-
-          // @ts-ignore
-          if (!res.status === 200 || !res.status === 400 || !jwt) {
+          if (res.status !== 200 && res.status !== 400) {
             throw new Error('[QR-Code] Failed to fetch learnplace: ' + res.statusText);
           }
-          if (res.status === 401) {
-            navigate('/logout', { replace: true });
-            return;
+          const accessToken = res.headers.get('Learnplaces_token');
+          if (accessToken) {
+            dispatch(setAccessToken(accessToken));
           }
-          localStorage.setItem('access_token', jwt);
           return res.json();
         })
         .then((data) => {
@@ -91,7 +90,7 @@ export function QrCodeScannerPage() {
     }
 
     fetchJson();
-  }, [id, navigate, result]);
+  }, [dispatch, id, navigate, result]);
 
   const handleScan = (data: IDetectedBarcode[]) => {
 

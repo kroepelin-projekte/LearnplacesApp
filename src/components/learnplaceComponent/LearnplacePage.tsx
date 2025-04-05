@@ -9,7 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { isWithinRadius } from '../../utils/BlockVisibility.ts';
 import {DownloadToCacheButton} from './DownloadToCacheButton.tsx';
+import {useDispatch} from 'react-redux';
+import {AppDispatch, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+import {setAccessToken} from '../../state/auth/authSlice.ts';
 
 export const LearnplacePage = () => {
   const { id } = useParams();
@@ -19,6 +22,7 @@ export const LearnplacePage = () => {
   const navigate = useNavigate();
   const [isWithinLearnplaceRadius, setIsWithinLearnplaceRadius] = useState(false);
   const [blockComponents, setBlockComponents] = useState<JSX.Element[]>([]);
+  const dispatch = useDispatch<AppDispatch>();
 
   /**
    * Check if user in within the learnplace radius if position changes
@@ -69,25 +73,20 @@ export const LearnplacePage = () => {
    */
   useEffect(() => {
     function fetchJson() {
-      const jwt = localStorage.getItem('access_token');
-
+      const accessToken = store.getState().auth.accessToken;
       fetch(learnplaceUrl, {
         method: 'GET',
         headers: {
-          'Authorization': 'Bearer ' + jwt,
+          'Authorization': 'Bearer ' + accessToken,
         }
       })
         .then((res) => {
           if (!res.ok) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
-          if (res.status === 401) {
-            navigate('/logout', { replace: true });
-            return;
-          }
-          const jwt = res.headers.get('Learnplaces_token');
-          if (jwt) {
-            localStorage.setItem('access_token', jwt);
+          const accessToken = res.headers.get('Learnplaces_token');
+          if (accessToken) {
+            dispatch(setAccessToken(accessToken));
           }
           return res.json();
         })
@@ -97,7 +96,7 @@ export const LearnplacePage = () => {
     }
 
     fetchJson();
-  }, [navigate, id, learnplaceUrl]);
+  }, [dispatch, navigate, id, learnplaceUrl]);
 
   /**
    * Watch the user position

@@ -20,6 +20,9 @@
   background-color: $color-accent-2;
   transition: all .3s ease;
   text-decoration: none;
+  svg path {
+    color: $color-white;
+  }
   span {
     font-size: 12px;
     font-weight: 300;
@@ -32,6 +35,9 @@
   &.active,
   &:focus {
     background-color: $color-white;
+    svg path {
+      color: $color-accent-2;
+    }
     span {
       color: $color-accent-2;
     }
