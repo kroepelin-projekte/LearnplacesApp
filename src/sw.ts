@@ -120,8 +120,8 @@ registerRoute(
 const TMP_MAP_CACHE = 'tmp-map-cache';
 registerRoute(
   ({ url }) => {
-    const isMatch = url.pathname.includes('openstreetmap');
-    console.log(`Route geprüft: ${url.pathname}, getroffen: ${isMatch}`);
+    const isMatch = url.hostname.includes('openstreetmap') || url.href.includes('openstreetmap');
+    console.log(`Route geprüft: ${url.href}, getroffen: ${isMatch}`);
     return isMatch;
   },
   new StaleWhileRevalidate({
