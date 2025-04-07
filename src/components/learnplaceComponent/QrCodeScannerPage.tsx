@@ -7,11 +7,14 @@ import {setAccessToken} from '../../state/auth/authSlice.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../../state/store.ts';
+import {Loader} from '../Loader.tsx';
 
 export function QrCodeScannerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
+
+  const [ready, setReady] = useState(false);
 
   const [revisitPage, setRevistPage] = useState(false);
 
@@ -115,7 +118,8 @@ export function QrCodeScannerPage() {
           setshowConfetti(true);
           setTimeout(() => {
             setshowConfetti(false);
-          }, 8000);        } else {
+          }, 8000);
+        } else {
           console.log(`[QR-Code] Request for ID ${id} failed`);
         }
 
@@ -123,6 +127,7 @@ export function QrCodeScannerPage() {
       } else {
         console.log('[QR-Code] No pending requests found.');
       }
+      setReady(true);
     };
     handleOnline();
 
@@ -145,6 +150,10 @@ export function QrCodeScannerPage() {
       setTimeout(() => setResult(null), 1500);
     }
   };
+
+  if (!ready) {
+    return <Loader />;
+  }
 
   if (revisitPage) {
     return (

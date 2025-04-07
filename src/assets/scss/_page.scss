@@ -58,8 +58,7 @@ section {
     display: flex;
     align-items: center;
   }
-  &:hover,
-  &:focus{
+  &:hover {
     background-color: $color-accent-2;
     color: $color-white;
   }
@@ -67,8 +66,7 @@ section {
     background-color: transparent;
     border-color: $color-white;
     color: $color-white;
-    &:hover,
-    &:focus {
+    &:hover {
       background-color: $color-white;
       color: $color-accent-2;
     }
