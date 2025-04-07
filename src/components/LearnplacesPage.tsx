@@ -70,7 +70,7 @@ export const LearnplacesPage = () => {
     fetchContainer();
   }, [handleLearnplaceList]);
 
-  if (!learnplaces || !containers) {
+  if (learnplaces.length === 0 || containers.length === 0) {
     console.log('no learnplaces');
     return <></>;
   }
