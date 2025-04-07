@@ -57,7 +57,7 @@ export const MapPage = () => {
             setHeading(heading);
           }
         },
-        () => console.error("[Map] Error retrieving location:"),
+        (err) => console.error("[Map] Error retrieving location:", err),
         {
           enableHighAccuracy: true,
           timeout: 15000,
