@@ -1,6 +1,12 @@
 import { Link } from 'react-router-dom';
+import {useEffect} from 'react';
 
 export const StartPage = () => {
+
+  useEffect(() => {
+    fetch('https://fastly.jsdelivr.net/npm/zxing-wasm@2.1.0/dist/reader/zxing_reader.wasm')
+      .catch(error => console.error(error));
+  }, []);
 
   return (
     <div className="start-page">

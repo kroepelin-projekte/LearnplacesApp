@@ -114,6 +114,21 @@ registerRoute(
 
 /**
  =========================================
+ WebAssembly Module for QR-Code Scanner
+ =========================================
+ */
+const QR_CODE_SCANNER_CACHE = 'qr-code-scanner-cache';
+registerRoute(
+  ({ url }) => {
+    return url.hostname.includes('fastly') || url.href.includes('fastly');
+  },
+  new StaleWhileRevalidate({
+    cacheName: QR_CODE_SCANNER_CACHE,
+  })
+);
+
+/**
+ =========================================
  Temporary caching map
  =========================================
  */
