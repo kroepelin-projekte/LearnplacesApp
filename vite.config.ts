@@ -13,6 +13,10 @@ export default defineConfig({
     registerType: 'autoUpdate',
     injectRegister: 'auto',
 
+    workbox: {
+      cleanupOutdatedCaches: true,
+    },
+
     pwaAssets: {
       disabled: false,
       config: true,
