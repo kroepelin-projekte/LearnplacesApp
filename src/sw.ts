@@ -102,18 +102,11 @@ registerRoute(
 const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
 registerRoute(
   ({ url }) => {
-    return url.pathname.endsWith('/learnplaces');
+    return url.pathname.includes('/containers');
   },
   new StaleWhileRevalidate({
     cacheName: TMP_LEARNPLACES_CACHE,
     plugins: [
-      new CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-      new ExpirationPlugin({
-        maxEntries: 10, // Cache up to 10 entries
-        maxAgeSeconds: 7 * 24 * 60 * 60, // Cache for 7 days
-      }),
       jwtTokenPlugin
     ],
   })
@@ -127,7 +120,9 @@ registerRoute(
 const TMP_MAP_CACHE = 'tmp-map-cache';
 registerRoute(
   ({ url }) => {
-    return url.pathname.includes('openstreetmap');
+    const isMatch = url.pathname.includes('openstreetmap');
+    console.log(`Route geprüft: ${url.pathname}, getroffen: ${isMatch}`);
+    return isMatch;
   },
   new StaleWhileRevalidate({
     cacheName: TMP_MAP_CACHE,

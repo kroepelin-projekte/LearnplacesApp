@@ -29,6 +29,12 @@ declare global {
     };
     blocks: Array<BlockInterface>;
   }
+
+  interface ContainerInterface {
+    title: string;
+    learnplaces_numbers: number;
+    ref_id: number;
+  }
 }
 
 export {};

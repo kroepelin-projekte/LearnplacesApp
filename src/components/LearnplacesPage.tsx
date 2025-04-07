@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import { Loader } from './Loader';
-import { useNavigate } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../state/store.ts';
@@ -10,7 +9,7 @@ import {setAccessToken} from '../state/auth/authSlice.ts';
 
 export const LearnplacesPage = () => {
   const [learnplaces, setLearnplaces] = useState<LearnplaceInterface[]>([]);
-  const navigate = useNavigate();
+  const [containers, setContainers] = useState<ContainerInterface[]>([]);
   const dispatch = useDispatch<AppDispatch>();
 
   function vibrate() {
@@ -19,11 +18,10 @@ export const LearnplacesPage = () => {
     }
   }
 
-  // load learnplaces data
-  useEffect(() => {
-    function fetchJson() {
+  const handleLearnplaceList =  useCallback((containerIdString: string) => {
+      const containerId = parseInt(containerIdString);
       const accessToken = store.getState().auth.accessToken;
-      fetch(`${apiBaseUrl}/learnplaces`, {
+      fetch(`${apiBaseUrl}/containers/${containerId}`, {
         method: 'GET',
         headers: {
           'Authorization': 'Bearer ' + accessToken,
@@ -40,22 +38,52 @@ export const LearnplacesPage = () => {
           return res.json();
         })
         .then((data) => data.data)
-        .then((data) => setLearnplaces(data))
+        .then((data) => setLearnplaces(data.learn_places))
         .catch((err: Error) => console.log('[All Learnplaces] Fetch error or offline.', err));
+    }, [dispatch]
+  );
+
+  useEffect(() => {
+    function fetchContainer() {
+      const accessToken = store.getState().auth.accessToken;
+      fetch(`${apiBaseUrl}/containers`, {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + accessToken,
+        }
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error('[All Learnplaces - Containers] Failed to fetch learnplace: ' + res.statusText);
+          }
+          return res.json();
+        })
+        .then((data) => data.data)
+        .then((data) => {
+          setContainers(data);
+          handleLearnplaceList(data[0].ref_id.toString());
+        })
+        .catch((err: Error) => console.log('[All Learnplaces - Containers] Fetch error or offline.', err));
     }
 
-    fetchJson();
-  }, [dispatch, navigate]);
+    fetchContainer();
+  }, [handleLearnplaceList]);
 
-  if (!learnplaces) {
+  if (!learnplaces || !containers) {
     console.log('no learnplaces');
     return <Loader />;
   }
 
   return (
     <div className="home-page">
-      <section>
+      <section className="learnplaces-container-select">
         <h1>Lernorte Übersicht</h1>
+
+        <select onChange={(e) => handleLearnplaceList(e.target.value)}>
+          {containers.map((container: ContainerInterface) => {
+            return <option key={container.ref_id} value={container.ref_id}>{container.title}</option>;
+          })}
+        </select>
 
         <ul>
           {learnplaces.map((learnplace: LearnplaceInterface) => {
