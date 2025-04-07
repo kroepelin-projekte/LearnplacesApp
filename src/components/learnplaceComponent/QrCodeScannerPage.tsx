@@ -118,6 +118,15 @@ export function QrCodeScannerPage() {
         showScanner && (
           <div className="qr-code-scanner-wrapper">
             <Scanner onScan={(result) => handleScan(result)} />
+
+            {/* Display scanned result */}
+            {result && (
+              <div className="qr-code-scan-result">
+                <p>Scan-Ergebnis:</p>
+                <strong>{result}</strong>
+              </div>
+            )}
+
           </div>
         )
       }
