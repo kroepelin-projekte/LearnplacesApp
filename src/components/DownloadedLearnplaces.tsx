@@ -1,5 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
+import DOMPurify from 'dompurify';
+import { vibrate } from '../utils/Navigator.ts';
 
 export const DownloadedLearnplaces = () => {
   const [cachedLearnplaces, setCachedLearnplaces] = useState<LearnplaceInterface[]>([]);
@@ -34,13 +36,22 @@ export const DownloadedLearnplaces = () => {
   return (
     <div className="downloads">
       <section>
-        <h1>Offline verfügbare Lernorte</h1>
+        <h1>Downloads</h1>
 
         {cachedLearnplaces.length > 0 ? (
           <ul>
             {cachedLearnplaces.map((learnplace) => (
               <li key={learnplace.id}>
-                <Link to={`/lernort/${learnplace.id}`}>{learnplace.title}</Link>
+                <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
+                  <div className="card">
+                    <div className="card-header">
+                      <h2>{learnplace.title}</h2>
+                    </div>
+                    <div className="card-body">
+                      <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
+                    </div>
+                  </div>
+                </Link>
               </li>
             ))}
           </ul>
@@ -50,5 +61,4 @@ export const DownloadedLearnplaces = () => {
       </section>
     </div>
   );
-
 }

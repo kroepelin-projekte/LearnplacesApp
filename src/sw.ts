@@ -59,7 +59,7 @@ const jwtTokenPlugin = {
 
 /**
  =========================================
- Caching of downloaded pages
+ Caching of downloaded pages (learnplacesInfo)
  =========================================
  */
 const PAGE_CACHE = 'page-cache';
@@ -131,7 +131,7 @@ registerRoute(
         statuses: [0, 200],
       }),
       new ExpirationPlugin({
-        maxEntries: 200,
+        maxEntries: 500,
         maxAgeSeconds: 7 * 24 * 60 * 60,
       }),
     ],

@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useParams } from 'react-router';
+import { vibrate } from '../../utils/Navigator.ts';
 import iconBack from '../../assets/images/nav_icons/back.svg';
 import iconBackActive from '../../assets/images/nav_icons/back_active.svg';
 import iconSingleLearnplace from '../../assets/images/nav_icons/single-learnplace.svg';
@@ -11,12 +12,6 @@ import iconQrCodeActive from '../../assets/images/nav_icons/qr-code_active.svg';
 
 export const LearnplaceNavbar = () => {
   const { id } = useParams();
-
-  function vibrate() {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(20);
-    }
-  }
 
   return (
     <nav className="navigation" onClick={vibrate}>

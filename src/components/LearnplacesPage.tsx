@@ -7,6 +7,7 @@ import {AppDispatch, store} from '../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {setAccessToken} from '../state/auth/authSlice.ts';
 import React from 'react';
+import { vibrate } from '../utils/Navigator.ts';
 
 export const LearnplacesPage = () => {
   const [learnplaces, setlearnplaces] = useState<LearnplaceInterface[]>([]);
@@ -15,12 +16,6 @@ export const LearnplacesPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const searchRef = React.useRef<HTMLInputElement>(null);
   const [isSearching, setIsSearching] = useState(false);
-
-  function vibrate() {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(20);
-    }
-  }
 
   const handleLearnplaceList =  useCallback((containerIdString: string) => {
       const containerId = parseInt(containerIdString);
@@ -117,19 +112,21 @@ export const LearnplacesPage = () => {
       <section className="learnplaces-container-select">
         <h1>Übersicht</h1>
 
-        <select onChange={(e) => handleLearnplaceList(e.target.value)}>
-          {containers.map((container: ContainerInterface) => {
-            return <option key={container.ref_id} value={container.ref_id}>{container.title}</option>;
-          })}
-        </select>
+        <div className="learnplace-settings-container">
+          <select onChange={(e) => handleLearnplaceList(e.target.value)}>
+            {containers.map((container: ContainerInterface) => {
+              return <option key={container.ref_id} value={container.ref_id}>{container.title}</option>;
+            })}
+          </select>
 
-        <div className="search-bar">
-          <input type="text" placeholder="Suche" onChange={handleSearch} ref={searchRef} />
-          {
-            isSearching
-              ? <FiXCircle onClick={handleResetSearch} />
-              : <FiSearch />
-          }
+          <div className="search-bar">
+            <input type="text" placeholder="Suche" onChange={handleSearch} ref={searchRef} />
+            {
+              isSearching
+                ? <FiXCircle onClick={handleResetSearch} />
+                : <FiSearch />
+            }
+          </div>
         </div>
 
         <ul>

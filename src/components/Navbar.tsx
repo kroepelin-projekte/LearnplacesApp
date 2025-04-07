@@ -4,14 +4,9 @@ import iconGroupActive from '../assets/images/nav_icons/group_active.svg';
 import iconQuestion from '../assets/images/nav_icons/question.svg';
 import iconQuestionActive from '../assets/images/nav_icons/question_active.svg';
 import {BsDownload} from 'react-icons/bs';
+import { vibrate } from '../utils/Navigator.ts';
 
 export const Navbar = () => {
-
-  function vibrate() {
-    if ('vibrate' in navigator) {
-      navigator.vibrate(20);
-    }
-  }
 
   return (
     <nav className="navigation" onClick={vibrate}>
