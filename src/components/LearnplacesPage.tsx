@@ -61,7 +61,9 @@ export const LearnplacesPage = () => {
         .then((data) => data.data)
         .then((data) => {
           setContainers(data);
-          handleLearnplaceList(data[0].ref_id.toString());
+          if (data.length > 0) {
+            handleLearnplaceList(data[0].ref_id.toString());
+          }
         })
         .catch((err: Error) => console.log('[All Learnplaces - Containers] Fetch error or offline.', err));
     }
@@ -71,7 +73,7 @@ export const LearnplacesPage = () => {
 
   if (!learnplaces || !containers) {
     console.log('no learnplaces');
-    return <Loader />;
+    return <></>;
   }
 
   return (
