@@ -12,8 +12,14 @@ import iconQrCodeActive from '../../assets/images/nav_icons/qr-code_active.svg';
 export const LearnplaceNavbar = () => {
   const { id } = useParams();
 
+  function vibrate() {
+    if ('vibrate' in navigator) {
+      navigator.vibrate(20);
+    }
+  }
+
   return (
-    <nav className="navigation">
+    <nav className="navigation" onClick={vibrate}>
       <NavLink
         to="/lernorte"
         className={({ isActive }) => (isActive ? "link active" : "link")}

@@ -1,12 +1,12 @@
 @use './_index' as *;
 
 .header {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-inline: $padding;
   background-color: $color-white;
-  height: 100%;
   .header-wrapper {
     display: flex;
     align-items: center;

@@ -2,14 +2,19 @@ import {useCallback, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import {useDispatch} from 'react-redux';
+import { FiSearch, FiXCircle } from "react-icons/fi";
 import {AppDispatch, store} from '../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {setAccessToken} from '../state/auth/authSlice.ts';
+import React from 'react';
 
 export const LearnplacesPage = () => {
-  const [learnplaces, setLearnplaces] = useState<LearnplaceInterface[]>([]);
+  const [learnplaces, setlearnplaces] = useState<LearnplaceInterface[]>([]);
+  const [filteredLearnplaces, setFilteredLearnplaces] = useState<LearnplaceInterface[]>([]);
   const [containers, setContainers] = useState<ContainerInterface[]>([]);
   const dispatch = useDispatch<AppDispatch>();
+  const searchRef = React.useRef<HTMLInputElement>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   function vibrate() {
     if ('vibrate' in navigator) {
@@ -37,7 +42,10 @@ export const LearnplacesPage = () => {
           return res.json();
         })
         .then((data) => data.data)
-        .then((data) => setLearnplaces(data.learn_places))
+        .then((data) => {
+          setlearnplaces(data.learn_places);
+          setFilteredLearnplaces(data.learn_places);
+        })
         .catch((err: Error) => console.log('[All Learnplaces] Fetch error or offline.', err));
     }, [dispatch]
   );
@@ -70,13 +78,35 @@ export const LearnplacesPage = () => {
     fetchContainer();
   }, [handleLearnplaceList]);
 
+  const handleSearch = useCallback(() => {
+    setIsSearching(false);
+    const searchString = searchRef.current?.value;
+    if (!searchString) {
+      setFilteredLearnplaces(learnplaces);
+      return;
+    }
+    setIsSearching(true);
+    setFilteredLearnplaces(
+      learnplaces.filter((learnplace: LearnplaceInterface) => {
+        return learnplace.title.trim().toLowerCase().includes(searchString.trim().toLowerCase());
+      }));
+  }, [learnplaces]);
+
+  const handleResetSearch = useCallback(() => {
+    if (searchRef.current === null) {
+      return;
+    }
+    searchRef.current.value = '';
+    setIsSearching(false);
+    setFilteredLearnplaces(learnplaces);
+    searchRef.current.focus();
+  }, [learnplaces]);
+
   if (learnplaces.length === 0 || containers.length === 0) {
-    console.log('no learnplaces');
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
-          <h1>Lernorte Übersicht</h1>
-          <p>Es gibt zur Zeit keine Lernorte</p>
+          <h1>Übersicht</h1>
         </section>
       </div>
     );
@@ -85,7 +115,7 @@ export const LearnplacesPage = () => {
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
-        <h1>Lernorte Übersicht</h1>
+        <h1>Übersicht</h1>
 
         <select onChange={(e) => handleLearnplaceList(e.target.value)}>
           {containers.map((container: ContainerInterface) => {
@@ -93,8 +123,17 @@ export const LearnplacesPage = () => {
           })}
         </select>
 
+        <div className="search-bar">
+          <input type="text" placeholder="Suche" onChange={handleSearch} ref={searchRef} />
+          {
+            isSearching
+              ? <FiXCircle onClick={handleResetSearch} />
+              : <FiSearch />
+          }
+        </div>
+
         <ul>
-          {learnplaces.map((learnplace: LearnplaceInterface) => {
+          {filteredLearnplaces.map((learnplace: LearnplaceInterface) => {
             return (
               <li key={learnplace.id}>
                 <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>

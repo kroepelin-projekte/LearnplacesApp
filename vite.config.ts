@@ -22,7 +22,7 @@ export default defineConfig({
       name: 'Lernorte App',
       short_name: 'Lernorte',
       description: 'Lernorte App',
-      theme_color: '#ffffff',
+      theme_color: '#34499A',
       start_url: '/',
       display: 'standalone',
       icons: [
