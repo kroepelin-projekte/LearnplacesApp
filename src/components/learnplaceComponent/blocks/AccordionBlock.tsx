@@ -20,7 +20,8 @@ export const AccordionBlock = (props: {isWithinLearnplaceRadius: boolean, block:
     }
 
     const blockComponents = subBlocks.map((block: BlockInterface, idx: number) => {
-        switch (block.type) {
+      block.visited = props.block.visited;
+      switch (block.type) {
           case 'ILIASLinkBlock':
             return <LinkBlock key={idx} block={block} isWithinLearnplaceRadius={props.isWithinLearnplaceRadius}/>;
           case 'RichTextBlock':

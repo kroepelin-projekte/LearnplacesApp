@@ -13,6 +13,7 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {setAccessToken} from '../../state/auth/authSlice.ts';
+import {FiCheck} from 'react-icons/fi';
 
 export const LearnplacePage = () => {
   const { id } = useParams();
@@ -48,6 +49,7 @@ export const LearnplacePage = () => {
     }
     const blockComponentsList: JSX.Element[] = learnplace.blocks
       .map((block: BlockInterface, idx: number) => {
+        block.visited = learnplace.visited;
         switch (block.type) {
           case 'ILIASLinkBlock':
             return <LinkBlock key={idx} block={block} isWithinLearnplaceRadius={isWithinLearnplaceRadius} />;
@@ -148,6 +150,13 @@ export const LearnplacePage = () => {
     <div className="learnplace-page">
       <section>
         <h1>{learnplace.title}</h1>
+        <div className="learnplace-visited-status">
+          {
+            learnplace.visited
+              ? <><FiCheck size={40} />Lernort gefunden</>
+              : ''
+          }
+        </div>
         <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
       </section>
       <DownloadToCacheButton url={learnplaceUrl} />

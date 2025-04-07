@@ -2,7 +2,7 @@ import {useCallback, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import {useDispatch} from 'react-redux';
-import { FiSearch, FiXCircle } from "react-icons/fi";
+import {FiCheck, FiSearch, FiXCircle} from 'react-icons/fi';
 import {AppDispatch, store} from '../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {setAccessToken} from '../state/auth/authSlice.ts';
@@ -137,6 +137,9 @@ export const LearnplacesPage = () => {
                   <div className="card">
                     <div className="card-header">
                       <h2>{learnplace.title}</h2>
+                      <div className="learnplace-visited-status">
+                        {learnplace.visited ? <FiCheck size={40} /> : ''}
+                      </div>
                     </div>
                     <div className="card-body">
                       <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />

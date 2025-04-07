@@ -28,6 +28,7 @@ declare global {
       longitude: number;
       radius: number;
     };
+    visited: boolean;
     blocks: Array<BlockInterface>;
   }
 

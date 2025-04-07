@@ -304,3 +304,10 @@ a:has(.card) {
 
 
 
+
+
+.learnplace-visited-status  {
+  display: flex;
+  align-items: center;
+  gap: $padding-small;
+}
