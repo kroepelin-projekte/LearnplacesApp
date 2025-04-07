@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
-import { Loader } from './Loader';
 import DOMPurify from 'dompurify';
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../state/store.ts';
