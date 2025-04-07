@@ -7,7 +7,6 @@ import {setAccessToken} from '../../state/auth/authSlice.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../../state/store.ts';
-import { vibrate } from '../../utils/Navigator.ts';
 
 export function QrCodeScannerPage() {
   const { id } = useParams();
@@ -78,7 +77,7 @@ export function QrCodeScannerPage() {
     const onSuccess = () => {
       setShowScanner(false);
       setshowConfetti(true);
-      vibrate();
+
       setTimeout(() => {
         setshowConfetti(false);
       }, 8000);
