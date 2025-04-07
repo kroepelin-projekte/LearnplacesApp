@@ -6,7 +6,7 @@ export const RichTextBlock = (props: {isWithinLearnplaceRadius: boolean, block: 
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!isVisible(true, props.isWithinLearnplaceRadius, props.block.visible)) {
+    if (!isVisible(props.block.visited, props.isWithinLearnplaceRadius, props.block.visible)) {
       setVisible(false);
     } else {
       setVisible(true);

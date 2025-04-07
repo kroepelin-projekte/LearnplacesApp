@@ -14,7 +14,7 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (!isVisible(true, props.isWithinLearnplaceRadius, props.block.visible)) {
+    if (!isVisible(props.block.visited, props.isWithinLearnplaceRadius, props.block.visible)) {
       setVisible(false);
     } else {
       setVisible(true);

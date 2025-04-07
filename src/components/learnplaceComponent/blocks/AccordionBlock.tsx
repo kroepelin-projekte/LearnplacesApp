@@ -13,7 +13,7 @@ export const AccordionBlock = (props: {isWithinLearnplaceRadius: boolean, block:
   const [subBlockComponents, setSubBlockComponents] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
-    if (!isVisible(true, props.isWithinLearnplaceRadius, props.block.visible)) {
+    if (!isVisible(props.block.visited, props.isWithinLearnplaceRadius, props.block.visible)) {
       setVisible(false);
     } else {
       setVisible(true);

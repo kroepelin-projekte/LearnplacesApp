@@ -14,7 +14,7 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (!isVisible(true, props.isWithinLearnplaceRadius, props.block.visible)) {
+    if (!isVisible(props.block.visited, props.isWithinLearnplaceRadius, props.block.visible)) {
       setVisible(false);
     } else {
       setVisible(true);

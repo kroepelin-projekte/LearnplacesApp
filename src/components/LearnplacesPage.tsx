@@ -72,7 +72,14 @@ export const LearnplacesPage = () => {
 
   if (learnplaces.length === 0 || containers.length === 0) {
     console.log('no learnplaces');
-    return <></>;
+    return (
+      <div className="home-page">
+        <section className="learnplaces-container-select">
+          <h1>Lernorte Übersicht</h1>
+          <p>Es gibt zur Zeit keine Lernorte</p>
+        </section>
+      </div>
+    );
   }
 
   return (

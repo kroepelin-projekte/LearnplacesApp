@@ -11,6 +11,7 @@ declare global {
     accordion: Array<string>;
     order: number;
     visible: string;
+    visited: boolean;
     ilias_obj_url: string;
     ilias_obj_title: string;
     expand: boolean;
