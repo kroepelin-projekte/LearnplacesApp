@@ -45,6 +45,7 @@ export const LoginPage = () => {
             backgroundAttachment: 'fixed',
             backgroundImage: `url(${bgImage})`,
           }}>
+            <h2>Anmelden mit ILIAS</h2>
             <button className="btn btn-login" onClick={handleOAuthLogin}>Login</button>
           </div>
         </div>

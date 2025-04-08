@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
-import { clientsClaim } from 'workbox-core'
+import { clientsClaim, skipWaiting } from 'workbox-core'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
 import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
@@ -59,7 +59,7 @@ const jwtTokenPlugin = {
 
 /**
  =========================================
- Caching of downloaded pages (learnplacesInfo)
+ Caching of downloaded pages and media (learnplacesInfo)
  =========================================
  */
 const PAGE_CACHE = 'page-cache';
@@ -153,5 +153,5 @@ registerRoute(
   })
 );
 
-self.skipWaiting()
-clientsClaim()
+skipWaiting();
+clientsClaim();

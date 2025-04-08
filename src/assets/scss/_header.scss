@@ -45,6 +45,7 @@
   .modal {
     position: relative;
     background-color: white;
+    margin-inline: $padding-small;
 
     border-radius: $border-radius;
     text-align: center;
@@ -53,8 +54,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 30px;
-
+      padding: $padding-small;
       p {
         padding-right: 70px;
         padding-bottom: 20px;
