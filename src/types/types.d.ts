@@ -28,6 +28,7 @@ declare global {
       longitude: number;
       radius: number;
     };
+    tags: Array<string>;
     visited: boolean;
     blocks: Array<BlockInterface>;
   }
@@ -36,6 +37,7 @@ declare global {
     title: string;
     learnplaces_numbers: number;
     ref_id: number;
+    tags: Array<string>;
   }
 }
 
