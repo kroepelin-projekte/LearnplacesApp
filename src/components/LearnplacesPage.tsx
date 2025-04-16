@@ -149,6 +149,9 @@ export const LearnplacesPage = () => {
     );
   }
 
+  console.log('containersRef:', containersRef.current);
+  console.log('availableTags:', availableTags);
+
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
