@@ -69,15 +69,7 @@ export const LearnplacesPage = () => {
       console.log('Fetched learnplaces and set tags:', data);
 
       const container = containersRef.current.find(c => c.ref_id === containerId);
-      if (!container) {
-        console.error('No container found for ref_id:', containerId);
-      }
       const tags = container?.tags || [];
-      if (!Array.isArray(tags)) {
-        console.error('tags is not an array:', tags);
-      }
-
-      console.log('Tags:', tags);
 
       setAvailableTags(tags);
       setLearnplaces(data.data.learn_places);
@@ -155,23 +147,6 @@ export const LearnplacesPage = () => {
       </div>
     );
   }
-
-  console.log('containersRef.current:', containersRef.current);
-  console.log('availableTags:', availableTags);
-  console.log('filteredLearnplaces:', filteredLearnplaces);
-
-  if (!Array.isArray(containersRef.current)) {
-    console.error('containersRef.current is not an array:', containersRef.current);
-  }
-
-  if (!Array.isArray(availableTags)) {
-    console.error('availableTags is not an array:', availableTags);
-  }
-
-  if (!Array.isArray(filteredLearnplaces)) {
-    console.error('filteredLearnplaces is not an array:', filteredLearnplaces);
-  }
-
 
 
   return (
