@@ -68,7 +68,11 @@ export const LearnplacesPage = () => {
       const data = await response.json();
       console.log('Fetched learnplaces and set tags:', data);
 
-      const tags = containersRef.current.find(c => c.ref_id === containerId)?.tags || [];
+      const container = containersRef.current.find(c => c.ref_id === containerId);
+      if (!container) {
+        console.error('No container found for ref_id:', containerId);
+      }
+      const tags = container?.tags || [];
       if (!Array.isArray(tags)) {
         console.error('tags is not an array:', tags);
       }
