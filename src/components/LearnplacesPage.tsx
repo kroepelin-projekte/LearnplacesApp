@@ -66,8 +66,12 @@ export const LearnplacesPage = () => {
       }
 
       const data = await response.json();
+      console.log('Fetched learnplaces and set tags:', data);
 
       const tags = containersRef.current.find(c => c.ref_id === containerId)?.tags || [];
+
+      console.log('Tags:', tags);
+
       setAvailableTags(tags);
       setLearnplaces(data.data.learn_places);
       setFilteredLearnplaces(data.data.learn_places);
