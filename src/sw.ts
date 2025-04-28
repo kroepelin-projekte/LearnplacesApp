@@ -99,7 +99,7 @@ registerRoute(
  Temporary caching of learnplaces list
  =========================================
  */
-const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
+/*const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
 registerRoute(
   ({ url }) => {
     return url.pathname.includes('/containers');
@@ -110,7 +110,7 @@ registerRoute(
       jwtTokenPlugin
     ],
   })
-);
+);*/
 
 /**
  =========================================
