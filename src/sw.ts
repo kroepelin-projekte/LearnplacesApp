@@ -5,7 +5,7 @@ import { NavigationRoute, registerRoute } from 'workbox-routing'
 import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
-//import { getIndexedDBData } from './utils/Database';
+import { getIndexedDBData } from './utils/Database';
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -31,7 +31,7 @@ registerRoute(new NavigationRoute(
  Custom plugin for workbox stale while revalidate with headers
  =========================================
  */
-/*const jwtTokenPlugin = {
+const jwtTokenPlugin = {
   requestWillFetch: async ({ request }: { request: Request }) => {
     try {
       const accessToken = await getIndexedDBData('access_token');
@@ -55,7 +55,7 @@ registerRoute(new NavigationRoute(
       return request;
     }
   },
-};*/
+};
 
 /**
  =========================================
@@ -65,7 +65,9 @@ registerRoute(new NavigationRoute(
 const PAGE_CACHE = 'page-cache';
 registerRoute(
   ({ url }) => {
-    return /.*\/learnplaces\/\d+$/.test(url.pathname);
+    const matches = /.*\/learnplaces\/\d+$/.test(url.pathname);
+    console.log('[Service Worker] Route Test:', url.pathname, 'Matches:', matches);
+    return matches;
   },
   new CacheFirst({
     cacheName: PAGE_CACHE,
@@ -73,7 +75,7 @@ registerRoute(
       {
         cacheWillUpdate: async () => null,
       },
-      //jwtTokenPlugin
+      jwtTokenPlugin
     ],
   })
 );
@@ -89,7 +91,7 @@ registerRoute(
       {
         cacheWillUpdate: async () => null,
       },
-      //jwtTokenPlugin
+      jwtTokenPlugin
     ],
   })
 );
