@@ -2,10 +2,11 @@
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim, skipWaiting } from 'workbox-core'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
-import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
+import {/*CacheFirst, */StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
 import { getIndexedDBData } from './utils/Database';
+
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -69,7 +70,7 @@ registerRoute(
     console.log('[Service Worker] Route Test:', url.pathname, 'Matches:', matches);
     return matches;
   },
-  new CacheFirst({
+  new StaleWhileRevalidate({
     cacheName: PAGE_CACHE,
     plugins: [
       {
@@ -85,7 +86,7 @@ registerRoute(
   ({ url }) => {
     return /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
   },
-  new CacheFirst({
+  new StaleWhileRevalidate({
     cacheName: MEDIA_CACHE,
     plugins: [
       {
