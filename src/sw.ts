@@ -70,12 +70,12 @@ registerRoute(
   },
   new CacheFirst({
     cacheName: PAGE_CACHE,
-    plugins: [
+/*    plugins: [
       {
         cacheWillUpdate: async () => null,
       },
       jwtTokenPlugin
-    ],
+    ],*/
   })
 );
 
@@ -86,12 +86,12 @@ registerRoute(
   },
   new CacheFirst({
     cacheName: MEDIA_CACHE,
-    plugins: [
+/*    plugins: [
       {
         cacheWillUpdate: async () => null,
       },
       jwtTokenPlugin
-    ],
+    ],*/
   })
 );
 
