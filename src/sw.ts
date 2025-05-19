@@ -31,7 +31,7 @@ registerRoute(new NavigationRoute(
  Custom plugin for workbox stale while revalidate with headers
  =========================================
  */
-/*const jwtTokenPlugin = {
+const jwtTokenPlugin = {
   requestWillFetch: async ({ request }: { request: Request }) => {
     try {
       const accessToken = await getIndexedDBData('access_token');
@@ -56,7 +56,7 @@ registerRoute(new NavigationRoute(
       return request;
     }
   },
-};*/
+};
 
 /**
  =========================================
@@ -70,12 +70,12 @@ registerRoute(
   },
   new CacheFirst({
     cacheName: PAGE_CACHE,
-/*    plugins: [
+    plugins: [
       {
         cacheWillUpdate: async () => null,
       },
       jwtTokenPlugin
-    ],*/
+    ],
   })
 );
 
@@ -86,12 +86,12 @@ registerRoute(
   },
   new CacheFirst({
     cacheName: MEDIA_CACHE,
-/*    plugins: [
+    plugins: [
       {
         cacheWillUpdate: async () => null,
       },
       jwtTokenPlugin
-    ],*/
+    ],
   })
 );
 
