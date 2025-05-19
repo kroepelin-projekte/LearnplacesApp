@@ -86,10 +86,10 @@ export const LearnplacePage = () => {
           if (!res.ok) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
-          const accessToken = res.headers.get('Learnplaces_token');
+/*          const accessToken = res.headers.get('Learnplaces_token');
           if (accessToken) {
             dispatch(setAccessToken(accessToken));
-          }
+          }*/
           return res.json();
         })
         .then((data) =>  data.data)
