@@ -2,7 +2,7 @@
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim, skipWaiting } from 'workbox-core'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
-import {/*CacheFirst, */CacheOnly, StaleWhileRevalidate} from 'workbox-strategies';
+import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
 import { getIndexedDBData } from './utils/Database';
@@ -43,14 +43,10 @@ const jwtTokenPlugin = {
       const headers = new Headers(request.headers);
       headers.set('Authorization', `Bearer ${accessToken}`);
 
-/*      const modifiedRequest = new Request(request.url, {
+      const modifiedRequest = new Request(request.url, {
         method: 'GET',
         headers,
         cache: request.cache,
-      });*/
-
-      const modifiedRequest = new Request(request, {
-        headers,
       });
 
       return modifiedRequest;
@@ -71,13 +67,13 @@ registerRoute(
   ({ url }) => {
     return /.*\/learnplaces\/\d+$/.test(url.pathname);
   },
-  new CacheOnly({
+  new CacheFirst({
     cacheName: PAGE_CACHE,
     plugins: [
       {
         cacheWillUpdate: async () => null,
       },
-      jwtTokenPlugin
+      //jwtTokenPlugin
     ],
   })
 );
@@ -87,13 +83,13 @@ registerRoute(
   ({ url }) => {
     return /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
   },
-  new CacheOnly({
+  new CacheFirst({
     cacheName: MEDIA_CACHE,
     plugins: [
       {
         cacheWillUpdate: async () => null,
       },
-      jwtTokenPlugin
+      //jwtTokenPlugin
     ],
   })
 );
