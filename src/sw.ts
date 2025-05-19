@@ -35,7 +35,6 @@ const jwtTokenPlugin = {
   requestWillFetch: async ({ request }: { request: Request }) => {
     try {
       const accessToken = await getIndexedDBData('access_token');
-      console.log('[jwtTokenPlugin] Access token: ', accessToken);
       if (!accessToken) {
         console.warn('[jwtTokenPlugin] No access token found.');
         return request;
@@ -44,10 +43,14 @@ const jwtTokenPlugin = {
       const headers = new Headers(request.headers);
       headers.set('Authorization', `Bearer ${accessToken}`);
 
-      const modifiedRequest = new Request(request.url, {
+/*      const modifiedRequest = new Request(request.url, {
         method: 'GET',
         headers,
         cache: request.cache,
+      });*/
+
+      const modifiedRequest = new Request(request, {
+        headers,
       });
 
       return modifiedRequest;
@@ -72,7 +75,13 @@ registerRoute(
     cacheName: PAGE_CACHE,
     plugins: [
       {
-        cacheWillUpdate: async () => null,
+        cacheWillUpdate: async ({ response }) => {
+          // Nur Antworten cachen, die ok (Status 200) sind und einen Body enthalten
+          if (response && response.ok) {
+            return response.clone(); // response.stream() wird gecached
+          }
+          return null;
+        }
       },
       jwtTokenPlugin
     ],
@@ -88,7 +97,13 @@ registerRoute(
     cacheName: MEDIA_CACHE,
     plugins: [
       {
-        cacheWillUpdate: async () => null,
+        cacheWillUpdate: async ({ response }) => {
+          // Nur Antworten cachen, die ok (Status 200) sind und einen Body enthalten
+          if (response && response.ok) {
+            return response.clone(); // response.stream() wird gecached
+          }
+          return null;
+        }
       },
       jwtTokenPlugin
     ],
