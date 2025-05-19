@@ -35,6 +35,7 @@ const jwtTokenPlugin = {
   requestWillFetch: async ({ request }: { request: Request }) => {
     try {
       const accessToken = await getIndexedDBData('access_token');
+      console.log('[jwtTokenPlugin] Access token: ', accessToken);
       if (!accessToken) {
         console.warn('[jwtTokenPlugin] No access token found.');
         return request;
