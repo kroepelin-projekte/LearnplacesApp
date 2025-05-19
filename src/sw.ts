@@ -2,10 +2,10 @@
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim, skipWaiting } from 'workbox-core'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
-import {/*CacheFirst, */StaleWhileRevalidate} from 'workbox-strategies';
+import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
-import { getIndexedDBData } from './utils/Database';
+//import { getIndexedDBData } from './utils/Database';
 
 
 declare let self: ServiceWorkerGlobalScope
@@ -32,7 +32,7 @@ registerRoute(new NavigationRoute(
  Custom plugin for workbox stale while revalidate with headers
  =========================================
  */
-const jwtTokenPlugin = {
+/*const jwtTokenPlugin = {
   requestWillFetch: async ({ request }: { request: Request }) => {
     try {
       const accessToken = await getIndexedDBData('access_token');
@@ -56,7 +56,7 @@ const jwtTokenPlugin = {
       return request;
     }
   },
-};
+};*/
 
 /**
  =========================================
@@ -70,13 +70,12 @@ registerRoute(
     console.log('[Service Worker] Route Test:', url.pathname, 'Matches:', matches);
     return matches;
   },
-  new StaleWhileRevalidate({
+  new CacheFirst({
     cacheName: PAGE_CACHE,
     plugins: [
       {
         cacheWillUpdate: async () => null,
       },
-      jwtTokenPlugin
     ],
   })
 );
@@ -86,13 +85,12 @@ registerRoute(
   ({ url }) => {
     return /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
   },
-  new StaleWhileRevalidate({
+  new CacheFirst({
     cacheName: MEDIA_CACHE,
     plugins: [
       {
         cacheWillUpdate: async () => null,
       },
-      jwtTokenPlugin
     ],
   })
 );
