@@ -12,7 +12,7 @@ import {DownloadToCacheButton} from './DownloadToCacheButton.tsx';
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import {setAccessToken} from '../../state/auth/authSlice.ts';
+//import {setAccessToken} from '../../state/auth/authSlice.ts';
 import {FiCheck} from 'react-icons/fi';
 
 export const LearnplacePage = () => {
