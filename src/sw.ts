@@ -2,7 +2,7 @@
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim, skipWaiting } from 'workbox-core'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
-import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
+import {/*CacheFirst, */CacheOnly, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
 import { getIndexedDBData } from './utils/Database';
@@ -71,17 +71,11 @@ registerRoute(
   ({ url }) => {
     return /.*\/learnplaces\/\d+$/.test(url.pathname);
   },
-  new CacheFirst({
+  new CacheOnly({
     cacheName: PAGE_CACHE,
     plugins: [
       {
-        cacheWillUpdate: async ({ response }) => {
-          // Nur Antworten cachen, die ok (Status 200) sind und einen Body enthalten
-          if (response && response.ok) {
-            return response.clone(); // response.stream() wird gecached
-          }
-          return null;
-        }
+        cacheWillUpdate: async () => null,
       },
       jwtTokenPlugin
     ],
@@ -93,17 +87,11 @@ registerRoute(
   ({ url }) => {
     return /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
   },
-  new CacheFirst({
+  new CacheOnly({
     cacheName: MEDIA_CACHE,
     plugins: [
       {
-        cacheWillUpdate: async ({ response }) => {
-          // Nur Antworten cachen, die ok (Status 200) sind und einen Body enthalten
-          if (response && response.ok) {
-            return response.clone(); // response.stream() wird gecached
-          }
-          return null;
-        }
+        cacheWillUpdate: async () => null,
       },
       jwtTokenPlugin
     ],

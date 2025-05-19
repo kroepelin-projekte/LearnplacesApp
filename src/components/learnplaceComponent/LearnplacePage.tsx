@@ -86,6 +86,7 @@ export const LearnplacePage = () => {
           if (!res.ok) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
+          console.log('[Learnplace] Fetch learnplace success.', res);
 /*          const accessToken = res.headers.get('Learnplaces_token');
           if (accessToken) {
             dispatch(setAccessToken(accessToken));
