@@ -5,7 +5,7 @@ import { NavigationRoute, registerRoute } from 'workbox-routing'
 import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
-//import { getIndexedDBData } from './utils/Database';
+import { getIndexedDBData } from './utils/Database';
 
 declare let self: ServiceWorkerGlobalScope
 
