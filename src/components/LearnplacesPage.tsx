@@ -27,6 +27,8 @@ export const LearnplacesPage = () => {
     const fetchContainers = async () => {
       try {
         const accessToken = store.getState().auth.accessToken;
+        console.log('access_token at /containers', accessToken);
+
         const response = await fetch(`${apiBaseUrl}/containers`, {
           method: 'GET',
           headers: { 'Authorization': `Bearer ${accessToken}` },
