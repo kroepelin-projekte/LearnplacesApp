@@ -5,7 +5,7 @@ import { NavigationRoute, registerRoute } from 'workbox-routing'
 import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
-//import { getIndexedDBData } from './utils/Database';
+import { getIndexedDBData } from './utils/Database';
 
 
 declare let self: ServiceWorkerGlobalScope
@@ -32,7 +32,7 @@ registerRoute(new NavigationRoute(
  Custom plugin for workbox stale while revalidate with headers
  =========================================
  */
-/*const jwtTokenPlugin = {
+const jwtTokenPlugin = {
   requestWillFetch: async ({ request }: { request: Request }) => {
     try {
       const accessToken = await getIndexedDBData('access_token');
@@ -56,7 +56,7 @@ registerRoute(new NavigationRoute(
       return request;
     }
   },
-};*/
+};
 
 /**
  =========================================
@@ -67,7 +67,7 @@ const PAGE_CACHE = 'page-cache';
 registerRoute(
   ({ url }) => {
     const matches = /.*\/learnplaces\/\d+$/.test(url.pathname);
-    console.log('[Service Worker] Route Test:', url.pathname, 'Matches:', matches);
+    //console.log('[Service Worker] Route Test:', url.pathname, 'Matches:', matches);
     return matches;
   },
   new CacheFirst({
@@ -100,7 +100,7 @@ registerRoute(
  Temporary caching of learnplaces list
  =========================================
  */
-/*const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
+const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
 registerRoute(
   ({ url }) => {
     return url.pathname.includes('/containers');
@@ -111,7 +111,7 @@ registerRoute(
       jwtTokenPlugin
     ],
   })
-);*/
+);
 
 /**
  =========================================
@@ -137,7 +137,7 @@ const TMP_MAP_CACHE = 'tmp-map-cache';
 registerRoute(
   ({ url }) => {
     const isMatch = url.hostname.includes('openstreetmap') || url.href.includes('openstreetmap');
-    console.log(`Route geprüft: ${url.href}, getroffen: ${isMatch}`);
+    //console.log(`Route geprüft: ${url.href}, getroffen: ${isMatch}`);
     return isMatch;
   },
   new StaleWhileRevalidate({

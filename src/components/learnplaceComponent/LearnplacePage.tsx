@@ -12,7 +12,7 @@ import {DownloadToCacheButton} from './DownloadToCacheButton.tsx';
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-//import {setAccessToken} from '../../state/auth/authSlice.ts';
+import {setAccessToken} from '../../state/auth/authSlice.ts';
 import {FiCheck} from 'react-icons/fi';
 
 export const LearnplacePage = () => {
@@ -87,10 +87,10 @@ export const LearnplacePage = () => {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
           console.log('[Learnplace] Fetch learnplace success.', res);
-/*          const accessToken = res.headers.get('Learnplaces_token');
+          const accessToken = res.headers.get('Learnplaces_token');
           if (accessToken) {
             dispatch(setAccessToken(accessToken));
-          }*/
+          }
           return res.json();
         })
         .then((data) =>  data.data)
