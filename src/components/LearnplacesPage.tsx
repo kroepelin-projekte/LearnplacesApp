@@ -8,6 +8,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {logout, setAccessToken} from '../state/auth/authSlice.ts';
 import React from 'react';
 import { vibrate } from '../utils/Navigator.ts';
+import {Loader} from './Loader.tsx';
 
 export const LearnplacesPage = () => {
   const [learnplaces, setLearnplaces] = useState<LearnplaceInterface[]>([]);
@@ -33,7 +34,12 @@ export const LearnplacesPage = () => {
         });
 
         const data = await response.json();
-        containersRef.current = data.data;
+
+        containersRef.current = data.data.sort((a: {title: string}, b: {title: string}) => {
+          const titleA = a.title.toLowerCase();
+          const titleB = b.title.toLowerCase();
+          return titleA < titleB ? -1 : titleA > titleB ? 1 : 0;
+        });
 
         if (!response.ok) {
           if (response.status === 401) {
@@ -77,14 +83,19 @@ export const LearnplacesPage = () => {
       }
 
       const data = await response.json();
-      console.log('Fetched learnplaces and set tags:', data);
 
       const container = containersRef.current.find(c => c.ref_id === containerId);
-      const tags = container?.tags || [];
+      const tags = (container?.tags || []).sort((a, b) => a.localeCompare(b));
+
+      const sortedLearnplaces = data.data.learn_places.sort((a: {title: string}, b: {title: string}) => {
+        const titleA = a.title.toLowerCase();
+        const titleB = b.title.toLowerCase();
+        return titleA < titleB ? -1 : titleA > titleB ? 1 : 0;
+      });
 
       setAvailableTags(tags);
-      setLearnplaces(data.data.learn_places);
-      setFilteredLearnplaces(data.data.learn_places);
+      setLearnplaces(sortedLearnplaces);
+      setFilteredLearnplaces(sortedLearnplaces);
     } catch (error) {
       console.error('[Learnplaces] Fetch error or offline:', error);
     }
@@ -154,6 +165,7 @@ export const LearnplacesPage = () => {
       <div className="home-page">
         <section className="learnplaces-container-select">
           <h1>Übersicht</h1>
+          <Loader />
         </section>
       </div>
     );

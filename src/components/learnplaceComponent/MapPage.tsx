@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
+import {MapContainer, TileLayer, Marker, Popup, Circle, CircleMarker} from 'react-leaflet';
 import L, { LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
@@ -127,6 +127,14 @@ export const MapPage = () => {
           color="green"
           fillColor="green"
           fillOpacity={0.4}
+        />
+
+        <CircleMarker
+          center={{ lat: learnplace.location.latitude, lng: learnplace.location.longitude }}
+          radius={5}
+          color="darkgreen"
+          fillColor="darkgreen"
+          fillOpacity={1}
         />
 
       </MapContainer>
