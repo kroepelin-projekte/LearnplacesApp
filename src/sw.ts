@@ -106,6 +106,16 @@ registerRoute(
     cacheName: PAGE_CACHE,
     plugins: [
       {
+        cacheKeyWillBeUsed: async ({ request }) => {
+          // Benutzerspezifische Manipulation der Anfrage-URL.
+          const url = new URL(request.url);
+          console.log('[Service Worker] URL ohne Header:', url.href);
+
+          // Rückgabe der URL. Manipulation möglich, falls nötig.
+          return new Request(url.href);
+        },
+      },
+      {
         cacheWillUpdate: async ({ response }) => {
           // Verifiziere, dass die Antwort korrekt ist
           if (!response || response.status !== 200) {
@@ -153,6 +163,16 @@ registerRoute(
   new CacheFirst({
     cacheName: MEDIA_CACHE,
     plugins: [
+      {
+        cacheKeyWillBeUsed: async ({ request }) => {
+          // Benutzerspezifische Manipulation der Anfrage-URL.
+          const url = new URL(request.url);
+          console.log('[Service Worker] URL ohne Header:', url.href);
+
+          // Rückgabe der URL. Manipulation möglich, falls nötig.
+          return new Request(url.href);
+        },
+      },
       {
         cacheWillUpdate: async ({ response }) => {
           // Sicherstellen, dass nur erfolgreiche Antworten gecacht werden
