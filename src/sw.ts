@@ -26,26 +26,6 @@ registerRoute(new NavigationRoute(
   { allowlist },
 ))
 
-self.addEventListener('fetch', async (event) => {
-  const cache = await caches.open('page-cache');
-  const match = await cache.match(event.request);
-
-  console.log(`[Service Worker] Prüfe URL: ${event.request.url}`);
-  console.log(`[Service Worker] Gefundene Cache-Response:`, match);
-
-  event.respondWith(
-    match ||
-    fetch(event.request).catch(() => {
-      console.error('[Service Worker] Netzwerkfehler & kein Cache');
-      return new Response(
-        'Die Seite ist derzeit offline und nicht im Cache verfügbar.',
-        { status: 503, statusText: 'Service Unavailable' }
-      );
-    })
-  );
-});
-
-
 /**
  =========================================
  Custom plugin for workbox stale while revalidate with headers
