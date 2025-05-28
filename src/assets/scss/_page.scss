@@ -66,6 +66,9 @@ section {
     background-color: transparent;
     border-color: $color-white;
     color: $color-white;
+    &:before {
+      content: "";
+    }
     &:hover {
       background-color: $color-white;
       color: $color-accent-2;
@@ -97,7 +100,7 @@ section {
   text-decoration: none;
   font-size: 18px;
   font-weight: bold;
-  margin-block: 10px;
+  margin-block: 60px;
   border-radius: $border-radius;
   svg {
     margin-right: auto;
@@ -141,6 +144,8 @@ li:has(.card):last-child .card {
   border: 0;
 }
 .card {
+  padding: 10px;
+  border-radius: $border-radius;
   display: grid;
   grid-template-rows: min-content 1fr;
   gap: 10px;
@@ -148,22 +153,40 @@ li:has(.card):last-child .card {
   cursor: pointer;
   border-bottom: 1px solid rgba(0,0,100,0.4);
   margin-top: 20px;
-  a {
-    text-decoration: none;
-    color: inherit;
+  .card-header {
+    position: relative;
+    h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: $color-black;
+      padding-right: 40px;
+    }
+    .learnplace-visited-status  {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      gap: $padding-small;
+    }
   }
-  h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: $color-accent-2;
+  .card-body {
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    p {
+      font-weight: 100;
+      color: $color-black;
+      margin-bottom: 20px;
+    }
+    div {
+      color: $color-black;
+      margin-bottom: 20px;
+    }
   }
-  p {
-    font-weight: 100;
-    color: $color-accent-2;
-    margin-bottom: 20px;
-  }
-  .card-body div {
-    margin-bottom: 20px;
+  &:hover {
+    background-color: rgba(0,0,100,0.1);
   }
 }
 
@@ -249,7 +272,7 @@ a:has(.card) {
   }
   section h1 {
     font-size: 28px;
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
   section h1,
   section p,
@@ -263,7 +286,7 @@ a:has(.card) {
     }
   }
   .rich-text-block * {
-    color: $color-accent-2;
+    color: $color-black;
   }
 }
 
@@ -304,11 +327,7 @@ a:has(.card) {
 
 
 
-.learnplace-visited-status  {
-  display: flex;
-  align-items: center;
-  gap: $padding-small;
-}
+
 
 .home-page-offline-message {
   margin-block: 40px;

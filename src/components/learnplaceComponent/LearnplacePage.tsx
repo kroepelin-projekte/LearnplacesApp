@@ -160,11 +160,11 @@ export const LearnplacePage = () => {
         </div>
         <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
       </section>
-      <div className="center-horizontally">
-        <DownloadToCacheButton url={learnplaceUrl} />
-      </div>
       <div className="blocks">
         {blockComponents.length > 0 ? blockComponents : null}
+      </div>
+      <div className="center-horizontally">
+        <DownloadToCacheButton url={learnplaceUrl} />
       </div>
     </div>
   );

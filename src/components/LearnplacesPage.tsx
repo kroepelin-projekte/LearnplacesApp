@@ -269,6 +269,7 @@ export const LearnplacesPage = () => {
                   <div className="card-header">
                     <h2>{learnplace.title}</h2>
                     <div className="learnplace-visited-status">
+                      <FiCheck size={40} />
                       {learnplace.visited ? <FiCheck size={40} /> : ''}
                     </div>
                   </div>
