@@ -32,6 +32,15 @@ function App() {
     return null;
   }
 
+  if (!isAuthenticated && location.pathname.startsWith('/lernort/')) {
+    localStorage.setItem('targetUrl', location.pathname);
+  }
+  const targetUrl = localStorage.getItem('targetUrl');
+  if (isAuthenticated && targetUrl) {
+    localStorage.removeItem('targetUrl');
+    navigate(targetUrl, {replace: true});
+  }
+
   return (
     <div className="app">
       <Routes>

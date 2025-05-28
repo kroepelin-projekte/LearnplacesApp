@@ -309,3 +309,16 @@ a:has(.card) {
   align-items: center;
   gap: $padding-small;
 }
+
+.home-page-offline-message {
+  margin-block: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.home-page-loader-container {
+  margin-block: 120px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

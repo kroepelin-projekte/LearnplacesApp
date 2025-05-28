@@ -11,6 +11,8 @@ import { vibrate } from '../utils/Navigator.ts';
 import {Loader} from './Loader.tsx';
 
 export const LearnplacesPage = () => {
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
   const [learnplaces, setLearnplaces] = useState<LearnplaceInterface[]>([]);
   const [filteredLearnplaces, setFilteredLearnplaces] = useState<LearnplaceInterface[]>([]);
 
@@ -153,11 +155,47 @@ export const LearnplacesPage = () => {
     searchRef.current?.focus();
   }, []);
 
+  useEffect(() => {
+    const updateOnlineStatus = () => {
+      setIsOffline(!navigator.onLine);
+    };
+
+    // Event-Listener für Änderungen des Offline-/Online-Status
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    // Cleanup der Event-Listener
+    return () => {
+      window.removeEventListener('online', updateOnlineStatus);
+      window.removeEventListener('offline', updateOnlineStatus);
+    };
+  }, []);
+
+
   /**
    =========================================
    Rendering
    =========================================
    */
+
+  // offline message
+  if (isOffline) {
+    return (
+      <div className="home-page">
+        <section className="learnplaces-container-select">
+          <h1>Übersicht</h1>
+          <p>
+          Sie sind offline. Auf der Download-Seite finden Sie alle heruntergeladenen Lernorte.
+          </p>
+          <div className="home-page-offline-message">
+            <Link to="/downloads" className="btn">
+              Zu den Downloads
+            </Link>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   // Conditional rendering for empty lists
   if (!selectedContainer || learnplaces.length === 0) {
@@ -165,7 +203,9 @@ export const LearnplacesPage = () => {
       <div className="home-page">
         <section className="learnplaces-container-select">
           <h1>Übersicht</h1>
-          <Loader />
+          <div className="home-page-loader-container">
+            <Loader />
+          </div>
         </section>
       </div>
     );
