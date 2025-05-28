@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { vibrate } from '../utils/Navigator.ts';
+import {FiCheck} from 'react-icons/fi';
 
 export const DownloadedLearnplaces = () => {
   const [cachedLearnplaces, setCachedLearnplaces] = useState<LearnplaceInterface[]>([]);
@@ -27,7 +28,13 @@ export const DownloadedLearnplaces = () => {
         }
       }
 
-      setCachedLearnplaces(learnplaces);
+      const sortedLearnplaces = learnplaces.sort((a: {title: string}, b: {title: string}) => {
+        const titleA = a.title.toLowerCase();
+        const titleB = b.title.toLowerCase();
+        return titleA < titleB ? -1 : titleA > titleB ? 1 : 0;
+      });
+
+      setCachedLearnplaces(sortedLearnplaces);
     };
 
     fetchCachedLearnplaces();
@@ -46,6 +53,9 @@ export const DownloadedLearnplaces = () => {
                   <div className="card">
                     <div className="card-header">
                       <h2>{learnplace.title}</h2>
+                      <div className="learnplace-visited-status">
+                        {learnplace.visited ? <FiCheck size={40} /> : ''}
+                      </div>
                     </div>
                     <div className="card-body">
                       <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />

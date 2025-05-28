@@ -66,7 +66,7 @@ const PAGE_CACHE = 'page-cache';
 registerRoute(
   ({ url }) => {
     const matches = /.*\/learnplaces\/\d+$/.test(url.pathname);
-    console.log('[Service Worker] Route Test for PAGE_CACHE:', url.pathname, 'Matched:', matches);
+    //console.log('[Service Worker] Route Test for PAGE_CACHE:', url.pathname, 'Matched:', matches);
     return matches;
   },
   new CacheFirst({
@@ -75,7 +75,7 @@ registerRoute(
       {
         cacheKeyWillBeUsed: async ({ request }) => {
           const url = new URL(request.url);
-          console.log('[Service Worker] URL ohne Header:', url.href);
+          //console.log('[Service Worker] URL ohne Header:', url.href);
           return new Request(url.href);
         },
       },
@@ -83,8 +83,8 @@ registerRoute(
         cacheWillUpdate: async () => null,
       },
       {
-        handlerDidError: async ({ request }) => {
-          console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
+        handlerDidError: async () => {
+          //console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
           return new Response("Das angeforderte Medium ist offline.", {
             status: 503,
             statusText: "Service Unavailable",
@@ -99,7 +99,7 @@ const MEDIA_CACHE = 'media-cache';
 registerRoute(
   ({ url }) => {
     const matches = /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
-    console.log('[Service Worker] Route Test for MEDIA_CACHE:', url.pathname, 'Matched:', matches);
+    //console.log('[Service Worker] Route Test for MEDIA_CACHE:', url.pathname, 'Matched:', matches);
     return matches;
   },
   new CacheFirst({
@@ -108,7 +108,7 @@ registerRoute(
       {
         cacheKeyWillBeUsed: async ({ request }) => {
           const url = new URL(request.url);
-          console.log('[Service Worker] URL ohne Header:', url.href);
+          //console.log('[Service Worker] URL ohne Header:', url.href);
           return new Request(url.href);
         },
       },
@@ -116,8 +116,8 @@ registerRoute(
         cacheWillUpdate: async () => null,
       },
       {
-        handlerDidError: async ({ request }) => {
-          console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
+        handlerDidError: async () => {
+          //console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
           return new Response("Das angeforderte Medium ist offline.", {
             status: 503,
             statusText: "Media Unavailable",
@@ -145,14 +145,14 @@ registerRoute(
       {
         cacheKeyWillBeUsed: async ({ request }) => {
           const url = new URL(request.url);
-          console.log('[Service Worker] URL ohne Header:', url.href);
+          //console.log('[Service Worker] URL ohne Header:', url.href);
           return new Request(url.href);
         },
       },
       jwtTokenPlugin,
       {
-        handlerDidError: async ({ request }) => {
-          console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
+        handlerDidError: async () => {
+          //console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
           return new Response("Das angeforderte Medium ist offline.", {
             status: 503,
             statusText: "Media Unavailable",
@@ -187,7 +187,7 @@ const TMP_MAP_CACHE = 'tmp-map-cache';
 registerRoute(
   ({ url }) => {
     const isMatch = url.hostname.includes('openstreetmap') || url.href.includes('openstreetmap');
-    //console.log(`Route geprüft: ${url.href}, getroffen: ${isMatch}`);
+    ////console.log(`Route geprüft: ${url.href}, getroffen: ${isMatch}`);
     return isMatch;
   },
   new StaleWhileRevalidate({
