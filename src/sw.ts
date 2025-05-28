@@ -7,7 +7,6 @@ import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
 import { getIndexedDBData } from './utils/Database';
 
-
 declare let self: ServiceWorkerGlobalScope
 
 // self.__WB_MANIFEST is the default injection point
@@ -63,7 +62,7 @@ const jwtTokenPlugin = {
  Caching of downloaded pages and media (learnplacesInfo)
  =========================================
  */
-const PAGE_CACHE = 'page-cache';
+/*const PAGE_CACHE = 'page-cache';
 registerRoute(
   ({ url }) => {
     const matches = /.*\/learnplaces\/\d+$/.test(url.pathname);
@@ -93,7 +92,78 @@ registerRoute(
       },
     ],
   })
+);*/
+
+
+const PAGE_CACHE = 'page-cache';
+registerRoute(
+  ({ url }) => {
+    const matches = /.*\/learnplaces\/\d+$/.test(url.pathname);
+    console.log('[Service Worker] Route Test for PAGE_CACHE:', url.pathname, 'Matched:', matches);
+    return matches;
+  },
+  new CacheFirst({
+    cacheName: PAGE_CACHE,
+    plugins: [
+      {
+        cacheWillUpdate: async ({ response }) => {
+          // Verifiziere, dass die Antwort korrekt ist
+          if (!response || response.status !== 200) {
+            console.error("[Service Worker] Ungültige Antwort im CacheWillUpdate!");
+            return null;
+          }
+          return response;
+        },
+      },
+      {
+        handlerDidError: async ({ request }) => {
+          // Fehler beim Abrufen behandeln
+          console.error("[Service Worker] Netzwerkfehler für den Request:", request.url);
+          // Optionale Fallback-Response zurückgeben
+          return new Response("Offline-Inhalt nicht verfügbar.", {
+            status: 503,
+            statusText: "Service Unavailable",
+          });
+        },
+      },
+    ],
+  })
 );
+
+const MEDIA_CACHE = 'media-cache';
+registerRoute(
+  ({ url }) => {
+    const matches = /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
+    console.log('[Service Worker] Route Test for MEDIA_CACHE:', url.pathname, 'Matched:', matches);
+    return matches;
+  },
+  new CacheFirst({
+    cacheName: MEDIA_CACHE,
+    plugins: [
+      {
+        cacheWillUpdate: async ({ response }) => {
+          // Sicherstellen, dass nur erfolgreiche Antworten gecacht werden
+          if (!response || response.status !== 200) {
+            console.error("[Service Worker] Ungültige Antwort für MEDIA_CACHE:", response);
+            return null;
+          }
+          return response;
+        },
+      },
+      {
+        handlerDidError: async ({ request }) => {
+          console.error("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
+          // Optionale Fehlernachricht zurückgeben
+          return new Response("Das angeforderte Medium ist offline.", {
+            status: 503,
+            statusText: "Media Unavailable",
+          });
+        },
+      },
+    ],
+  })
+);
+
 
 /**
  =========================================
@@ -154,5 +224,18 @@ registerRoute(
   })
 );
 
+self.addEventListener("fetch", (event) => {
+  console.log("[Service Worker] Fetch gestartet:", event.request.url);
+
+  event.respondWith(
+    fetch(event.request).catch((error) => {
+      console.error("[Service Worker] Fehler beim Abrufen der URL:", event.request.url, error);
+      throw error;
+    })
+  );
+});
+
+
 skipWaiting();
 clientsClaim();
+
