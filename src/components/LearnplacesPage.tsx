@@ -5,7 +5,7 @@ import {useDispatch} from 'react-redux';
 import {FiCheck, FiSearch, FiXCircle} from 'react-icons/fi';
 import {AppDispatch, store} from '../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import {logout, setAccessToken} from '../state/auth/authSlice.ts';
+import {/*logout, */setAccessToken} from '../state/auth/authSlice.ts';
 import React from 'react';
 import { vibrate } from '../utils/Navigator.ts';
 
@@ -35,13 +35,13 @@ export const LearnplacesPage = () => {
         const data = await response.json();
         containersRef.current = data.data;
 
-        if (!response.ok) {
+/*        if (!response.ok) {
           if (response.status === 401) {
             dispatch(logout());
             return;
           }
           throw new Error(`[Containers] Failed to fetch containers: ${response.statusText}`);
-        }
+        }*/
 
         const newAccessToken = response.headers.get('Learnplaces_token');
         if (newAccessToken) {
