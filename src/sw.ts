@@ -117,6 +117,19 @@ registerRoute(
       },
       {
         handlerDidError: async ({ request }) => {
+          console.warn("[Service Worker] Kein Cache für die URL vorhanden:", request.url);
+
+          const cache = await caches.open('fallback-cache'); // Dein spezifischer Cache
+          const cachedResponse = await cache.match(request);
+
+          if (cachedResponse) {
+            console.log(
+              '[Service Worker] Fallback-Cache-Eintrag gefunden, gebe zurück:',
+              request.url
+            );
+            return cachedResponse;
+          }
+
           // Fehler beim Abrufen behandeln
           console.error("[Service Worker] Netzwerkfehler für den Request:", request.url);
           // Optionale Fallback-Response zurückgeben
