@@ -82,7 +82,7 @@ registerRoute(
       {
         cacheWillUpdate: async () => null,
       },
-      {
+/*      {
         handlerDidError: async ({ request }) => {
           console.warn("[Service Worker] Kein Cache für die URL vorhanden:", request.url);
 
@@ -105,7 +105,7 @@ registerRoute(
             statusText: "Service Unavailable",
           });
         },
-      },
+      },*/
     ],
   })
 );
@@ -130,7 +130,7 @@ registerRoute(
       {
         cacheWillUpdate: async () => null,
       },
-      {
+/*      {
         handlerDidError: async ({ request }) => {
           console.error("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
           return new Response("Das angeforderte Medium ist offline.", {
@@ -138,7 +138,7 @@ registerRoute(
             statusText: "Media Unavailable",
           });
         },
-      },
+      },*/
     ],
   })
 );
