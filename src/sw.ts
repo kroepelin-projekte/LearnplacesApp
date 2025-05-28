@@ -62,39 +62,6 @@ const jwtTokenPlugin = {
  Caching of downloaded pages and media (learnplacesInfo)
  =========================================
  */
-/*const PAGE_CACHE = 'page-cache';
-registerRoute(
-  ({ url }) => {
-    const matches = /.*\/learnplaces\/\d+$/.test(url.pathname);
-    //console.log('[Service Worker] Route Test:', url.pathname, 'Matches:', matches);
-    return matches;
-  },
-  new CacheFirst({
-    cacheName: PAGE_CACHE,
-    plugins: [
-      {
-        cacheWillUpdate: async () => null,
-      },
-    ],
-  })
-);
-
-const MEDIA_CACHE = 'media-cache';
-registerRoute(
-  ({ url }) => {
-    return /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
-  },
-  new CacheFirst({
-    cacheName: MEDIA_CACHE,
-    plugins: [
-      {
-        cacheWillUpdate: async () => null,
-      },
-    ],
-  })
-);*/
-
-
 const PAGE_CACHE = 'page-cache';
 registerRoute(
   ({ url }) => {
@@ -107,11 +74,8 @@ registerRoute(
     plugins: [
       {
         cacheKeyWillBeUsed: async ({ request }) => {
-          // Benutzerspezifische Manipulation der Anfrage-URL.
           const url = new URL(request.url);
           console.log('[Service Worker] URL ohne Header:', url.href);
-
-          // Rückgabe der URL. Manipulation möglich, falls nötig.
           return new Request(url.href);
         },
       },
@@ -165,11 +129,8 @@ registerRoute(
     plugins: [
       {
         cacheKeyWillBeUsed: async ({ request }) => {
-          // Benutzerspezifische Manipulation der Anfrage-URL.
           const url = new URL(request.url);
           console.log('[Service Worker] URL ohne Header:', url.href);
-
-          // Rückgabe der URL. Manipulation möglich, falls nötig.
           return new Request(url.href);
         },
       },
@@ -186,7 +147,6 @@ registerRoute(
       {
         handlerDidError: async ({ request }) => {
           console.error("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
-          // Optionale Fehlernachricht zurückgeben
           return new Response("Das angeforderte Medium ist offline.", {
             status: 503,
             statusText: "Media Unavailable",
@@ -256,21 +216,6 @@ registerRoute(
     ],
   })
 );
-
-self.addEventListener("fetch", (event) => {
-  console.log("[Service Worker] Fetch gestartet:", event.request.url);
-
-  event.respondWith(
-    fetch(event.request).catch((error) => {
-      console.error("[Service Worker] Fehler beim Abrufen der URL:", event.request.url, error);
-      throw error;
-    })
-  );
-});
-
-
-
-
 
 skipWaiting();
 clientsClaim();
