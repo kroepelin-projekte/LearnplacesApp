@@ -80,14 +80,7 @@ registerRoute(
         },
       },
       {
-        cacheWillUpdate: async ({ response }) => {
-          // Verifiziere, dass die Antwort korrekt ist
-          if (!response || response.status !== 200) {
-            console.error("[Service Worker] Ungültige Antwort im CacheWillUpdate!");
-            return null;
-          }
-          return response;
-        },
+        cacheWillUpdate: async () => null,
       },
       {
         handlerDidError: async ({ request }) => {
@@ -135,14 +128,7 @@ registerRoute(
         },
       },
       {
-        cacheWillUpdate: async ({ response }) => {
-          // Sicherstellen, dass nur erfolgreiche Antworten gecacht werden
-          if (!response || response.status !== 200) {
-            console.error("[Service Worker] Ungültige Antwort für MEDIA_CACHE:", response);
-            return null;
-          }
-          return response;
-        },
+        cacheWillUpdate: async () => null,
       },
       {
         handlerDidError: async ({ request }) => {
