@@ -142,7 +142,23 @@ registerRoute(
   new StaleWhileRevalidate({
     cacheName: TMP_LEARNPLACES_CACHE,
     plugins: [
-      jwtTokenPlugin
+      {
+        cacheKeyWillBeUsed: async ({ request }) => {
+          const url = new URL(request.url);
+          console.log('[Service Worker] URL ohne Header:', url.href);
+          return new Request(url.href);
+        },
+      },
+      jwtTokenPlugin,
+      {
+        handlerDidError: async ({ request }) => {
+          console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
+          return new Response("Das angeforderte Medium ist offline.", {
+            status: 503,
+            statusText: "Media Unavailable",
+          });
+        },
+      },
     ],
   })
 );
