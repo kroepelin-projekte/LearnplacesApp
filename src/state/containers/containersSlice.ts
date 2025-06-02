@@ -97,5 +97,6 @@ export const getContainers = (state: RootState) => state.containers.containers;
 export const getSelectedContainer = (state: RootState) => state.containers.selectedContainer;
 export const getSelectedTag = (state: RootState) => state.containers.selectedTag;
 export const getSearchQuery = (state: RootState) => state.containers.searchQuery;
+export const getContainerLoadingState = (state: RootState) => state.containers.isLoading;
 
 export default containersSlice.reducer;

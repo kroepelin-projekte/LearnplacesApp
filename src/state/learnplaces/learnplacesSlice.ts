@@ -63,5 +63,6 @@ const learnplacesSlice = createSlice({
 });
 
 export const getLearnplaces = (state: RootState) => state.learnplaces.learnplaces;
+export const getLearnplacesLoadingState = (state: RootState) => state.learnplaces.isLoading;
 
 export default learnplacesSlice.reducer;

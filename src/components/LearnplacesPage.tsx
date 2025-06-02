@@ -13,12 +13,15 @@ import {
   setSearchQuery,
   setSelectedContainer,
   setSelectedTag,
+  getContainerLoadingState
 } from '../state/containers/containersSlice';
-import {fetchLearnplaces, getLearnplaces} from '../state/learnplaces/learnplacesSlice';
+import {fetchLearnplaces, getLearnplaces, getLearnplacesLoadingState} from '../state/learnplaces/learnplacesSlice';
 import {Loader} from './Loader.tsx';
 
 export const LearnplacesPage = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const containerIsLoading = useSelector(getContainerLoadingState);
+  const learnplaceIsLoading = useSelector(getLearnplacesLoadingState);
   const dispatch = useDispatch<AppDispatch>();
   const containers = useSelector(getContainers);
   const selectedContainer = useSelector(getSelectedContainer); // current selected container
@@ -32,7 +35,7 @@ export const LearnplacesPage = () => {
     if (containers.length === 0) {
       dispatch(fetchContainers());
     }
-  }, [dispatch]);
+  }, [dispatch, containers.length]);
 
   // load learnplaces when container changes
   useEffect(() => {
@@ -124,13 +127,27 @@ export const LearnplacesPage = () => {
   }
 
   // loading
-  if (containers.length === 0) {
+  if (containerIsLoading || learnplaceIsLoading) {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
           <h1>Übersicht</h1>
           <div className="home-page-loader-container">
             <Loader />
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // loading
+  if (containers.length === 0) {
+    return (
+      <div className="home-page">
+        <section className="learnplaces-container-select">
+          <h1>Übersicht</h1>
+          <div className="home-page-loader-container">
+            Es wurden keine Lernorte gefunden.
           </div>
         </section>
       </div>
