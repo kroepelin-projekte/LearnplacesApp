@@ -29,7 +29,9 @@ export const LearnplacesPage = () => {
 
   // load containers when component is mounted
   useEffect(() => {
-    dispatch(fetchContainers());
+    if (containers.length === 0) {
+      dispatch(fetchContainers());
+    }
   }, [dispatch]);
 
   // load learnplaces when container changes
@@ -190,6 +192,7 @@ export const LearnplacesPage = () => {
                 <div className="card-header">
                   <h2>{learnplace.title}</h2>
                   <div className="learnplace-visited-status">
+                    <FiCheck size={40} />
                     {learnplace.visited ? <FiCheck size={40} /> : ''}
                   </div>
                 </div>

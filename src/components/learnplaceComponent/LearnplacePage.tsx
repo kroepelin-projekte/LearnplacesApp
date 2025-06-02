@@ -152,9 +152,10 @@ export const LearnplacePage = () => {
       <section>
         <h1>{learnplace.title}</h1>
         <div className="learnplace-visited-status">
+          <FiCheck size={40} />
           {
             learnplace.visited
-              ? <><FiCheck size={40} />Lernort gefunden</>
+              ? <FiCheck size={40} />
               : ''
           }
         </div>

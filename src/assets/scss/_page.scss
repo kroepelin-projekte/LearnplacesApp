@@ -140,21 +140,29 @@ section {
   }
 }
 
+.learnplace-visited-status  {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
 
-
-li:has(.card):last-child .card {
+li:has(.card) {
+  border-bottom: 1px solid rgba(0,0,100,0.4);
+  padding-block: 2px;
+}
+li:has(.card):last-child {
   border: 0;
 }
 .card {
-  padding: 10px;
+  padding: 12px;
   border-radius: $border-radius;
   display: grid;
   grid-template-rows: min-content 1fr;
   gap: 10px;
   z-index: 20;
   cursor: pointer;
-  border-bottom: 1px solid rgba(0,0,100,0.4);
-  margin-top: 20px;
+  margin-block: 20px;
+  transition: all .25s ease;
   .card-header {
     position: relative;
     h2 {
@@ -184,7 +192,6 @@ li:has(.card):last-child .card {
     }
     div {
       color: $color-black;
-      margin-bottom: 20px;
     }
   }
   &:hover {
@@ -261,6 +268,9 @@ a:has(.card) {
 
 // learnplace page
 .learnplace-page {
+  > section {
+    position: relative;
+  }
   .full-width-image {
     position: relative;
     left: 50%;
