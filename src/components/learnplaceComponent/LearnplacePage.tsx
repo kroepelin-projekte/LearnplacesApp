@@ -158,7 +158,7 @@ export const LearnplacePage = () => {
               : ''
           }
         </div>
-        <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
+        <div className="description" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
       </section>
       <div className="blocks">
         {blockComponents.length > 0 ? blockComponents : null}
@@ -169,4 +169,3 @@ export const LearnplacePage = () => {
     </div>
   );
 }
-
