@@ -1,160 +1,91 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
-import {useDispatch} from 'react-redux';
 import {FiCheck, FiSearch, FiXCircle} from 'react-icons/fi';
-import {AppDispatch, store} from '../state/store.ts';
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import {logout, setAccessToken} from '../state/auth/authSlice.ts';
-import React from 'react';
+import {AppDispatch} from '../state/store.ts';
 import { vibrate } from '../utils/Navigator.ts';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchContainers,
+  getContainers, getSearchQuery,
+  getSelectedContainer,
+  getSelectedTag,
+  setSearchQuery,
+  setSelectedContainer,
+  setSelectedTag,
+} from '../state/containers/containersSlice';
+import {fetchLearnplaces, getLearnplaces} from '../state/learnplaces/learnplacesSlice';
 import {Loader} from './Loader.tsx';
 
 export const LearnplacesPage = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
-
-  const [learnplaces, setLearnplaces] = useState<LearnplaceInterface[]>([]);
-  const [filteredLearnplaces, setFilteredLearnplaces] = useState<LearnplaceInterface[]>([]);
-
-  const containersRef = useRef<ContainerInterface[]>([]);
-  const [selectedContainer, setSelectedContainer] = useState<number | null>(null);
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
-
   const dispatch = useDispatch<AppDispatch>();
-  const searchRef = React.useRef<HTMLInputElement>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const containers = useSelector(getContainers);
+  const selectedContainer = useSelector(getSelectedContainer); // current selected container
+  const selectedTag = useSelector(getSelectedTag); // current selected tag
+  const searchQuery = useSelector(getSearchQuery); // current search query
+  const learnplaces = useSelector(getLearnplaces);
+  const searchRef = useRef<HTMLInputElement>(null);
 
-  // Fetch containers on mount
+  // load containers when component is mounted
   useEffect(() => {
-    const fetchContainers = async () => {
-      try {
-        const accessToken = store.getState().auth.accessToken;
-        const response = await fetch(`${apiBaseUrl}/containers`, {
-          method: 'GET',
-          headers: { 'Authorization': `Bearer ${accessToken}` },
-        });
+    dispatch(fetchContainers());
+  }, [dispatch]);
 
-        const data = await response.json();
-
-        containersRef.current = data.data.sort((a: {title: string}, b: {title: string}) => {
-          const titleA = a.title.toLowerCase();
-          const titleB = b.title.toLowerCase();
-          return titleA < titleB ? -1 : titleA > titleB ? 1 : 0;
-        });
-
-        if (!response.ok) {
-          if (response.status === 401) {
-            dispatch(logout());
-            return;
-          }
-          throw new Error(`[Containers] Failed to fetch containers: ${response.statusText}`);
-        }
-
-        const newAccessToken = response.headers.get('Learnplaces_token');
-        if (newAccessToken) {
-          dispatch(setAccessToken(newAccessToken));
-        }
-
-        if (data.data.length > 0) {
-          const firstContainerId = data.data[0].ref_id;
-          setSelectedContainer(firstContainerId);
-          updateTagsAndLearnplaces(firstContainerId);
-        }
-      } catch (error) {
-        console.error('[Containers] Fetch error or offline:', error);
-      }
-    };
-
-    fetchContainers();
-  }, []);
-
-  // Update tags and learnplaces when a container is selected
-  const updateTagsAndLearnplaces = useCallback(async (containerId: number) => {
-    try {
-      const accessToken = store.getState().auth.accessToken;
-      const response = await fetch(`${apiBaseUrl}/containers/${containerId}`, {
-        method: 'GET',
-        headers: { 'Authorization': `Bearer ${accessToken}` },
-      });
-
-      if (!response.ok) throw new Error(`[Learnplaces] Failed to fetch learnplaces: ${response.statusText}`);
-
-      if (accessToken) {
-        dispatch(setAccessToken(accessToken));
-      }
-
-      const data = await response.json();
-
-      const container = containersRef.current.find(c => c.ref_id === containerId);
-      const tags = (container?.tags || []).sort((a, b) => a.localeCompare(b));
-
-      const sortedLearnplaces = data.data.learn_places.sort((a: {title: string}, b: {title: string}) => {
-        const titleA = a.title.toLowerCase();
-        const titleB = b.title.toLowerCase();
-        return titleA < titleB ? -1 : titleA > titleB ? 1 : 0;
-      });
-
-      setAvailableTags(tags);
-      setLearnplaces(sortedLearnplaces);
-      setFilteredLearnplaces(sortedLearnplaces);
-    } catch (error) {
-      console.error('[Learnplaces] Fetch error or offline:', error);
+  // load learnplaces when container changes
+  useEffect(() => {
+    if (selectedContainer) {
+      dispatch(fetchLearnplaces(selectedContainer));
     }
-  }, []);
+  }, [dispatch, selectedContainer]);
 
-  /**
-   =========================================
-   Filter
-   =========================================
-   */
+  // handler for container change
+  const handleContainerChange = (containerIdString: string) => {
+    const containerId = parseInt(containerIdString, 10);
+    dispatch(setSelectedContainer(containerId)); // Setze den Container in Redux
+    dispatch(setSelectedTag(null)); // Zurücksetzen des ausgewählten Tags
+  };
 
-  // Filter logic
-  useEffect(() => {
+  // handler for tag change
+  const handleTagChange = (tag: string | null) => {
+    dispatch(setSelectedTag(tag)); // Aktualisiere den ausgewählten Tag in Redux
+  };
+
+  // filter
+  const filterLearnplaces = useCallback((learnplaces: LearnplaceInterface[], selectedTag: string | null, searchQuery: string) => {
     let filtered = [...learnplaces];
 
-    // Tag filter
+    // filter by tag
     if (selectedTag && selectedTag.length > 0) {
       filtered = filtered.filter(learnplace =>
         learnplace.tags.includes(selectedTag)
       );
     }
 
-    // Searchquery
+    // filter by search query
     if (searchQuery && searchQuery.trim().length > 0) {
       filtered = filtered.filter(learnplace =>
         learnplace.title.toLowerCase().includes(searchQuery.trim().toLowerCase())
       );
     }
 
-    setFilteredLearnplaces(filtered);
-  }, [learnplaces, selectedTag, searchQuery]);
-
-  /**
-   =========================================
-   Input Handler
-   =========================================
-   */
-
-  // Handle container selection
-  const handleContainerChange = useCallback((containerIdString: string) => {
-    const containerId = parseInt(containerIdString, 10);
-    setSelectedContainer(containerId);
-    setSelectedTag(null);
-    updateTagsAndLearnplaces(containerId);
-  }, [updateTagsAndLearnplaces]);
-
-  // Handle tag filter
-  const handleTagChange = useCallback((tag: string) => {
-    setSelectedTag(tag);
+    return filtered;
   }, []);
 
-  // Handle resetting the search
+  const filteredLearnplaces = filterLearnplaces(learnplaces, selectedTag, searchQuery);
+
+  // handler for search query
+  const handleSearchInput = useCallback((searchQuery: string) => {
+    dispatch(setSearchQuery(searchQuery));
+  }, [dispatch]);
+
+  // search reset
   const handleResetSearch = useCallback(() => {
-    setSearchQuery('');
+    dispatch(setSearchQuery(''));
     searchRef.current?.focus();
-  }, []);
+  }, [dispatch]);
 
+  // offline status
   useEffect(() => {
     const updateOnlineStatus = () => {
       setIsOffline(!navigator.onLine);
@@ -170,13 +101,6 @@ export const LearnplacesPage = () => {
       window.removeEventListener('offline', updateOnlineStatus);
     };
   }, []);
-
-
-  /**
-   =========================================
-   Rendering
-   =========================================
-   */
 
   // offline message
   if (isOffline) {
@@ -197,8 +121,8 @@ export const LearnplacesPage = () => {
     );
   }
 
-  // Conditional rendering for empty lists
-  if (!selectedContainer || learnplaces.length === 0) {
+  // loading
+  if (containers.length === 0) {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
@@ -211,7 +135,6 @@ export const LearnplacesPage = () => {
     );
   }
 
-
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
@@ -219,11 +142,8 @@ export const LearnplacesPage = () => {
 
         <div className="learnplace-settings-container">
           {/* Container Dropdown */}
-          <select
-            value={selectedContainer || ''}
-            onChange={(e) => handleContainerChange(e.target.value)}
-          >
-            {containersRef.current.map((container: ContainerInterface) => (
+          <select value={selectedContainer || ''} onChange={(e) => handleContainerChange(e.target.value)}>
+            {containers.map((container) => (
               <option key={container.ref_id} value={container.ref_id}>
                 {container.title}
               </option>
@@ -231,16 +151,15 @@ export const LearnplacesPage = () => {
           </select>
 
           {/* Tag Dropdown */}
-          <select
-            value={selectedTag || ''}
-            onChange={(e) => handleTagChange(e.target.value)}
-          >
+          <select value={selectedTag || ''} onChange={(e) => handleTagChange(e.target.value)}>
             <option value="">Alle Tags</option>
-            {availableTags.map(tag => (
-              <option key={tag} value={tag}>
-                {tag}
-              </option>
-            ))}
+            {containers
+              .find((c) => c.ref_id === selectedContainer)
+              ?.tags.map((tag) => (
+                <option key={tag} value={tag}>
+                  {tag}
+                </option>
+              ))}
           </select>
 
           {/* Search Bar */}
@@ -249,7 +168,7 @@ export const LearnplacesPage = () => {
               type="text"
               placeholder="Suche"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearchInput(e.target.value)}
               ref={searchRef}
             />
             {
@@ -259,28 +178,29 @@ export const LearnplacesPage = () => {
             }
           </div>
         </div>
+      </section>
 
-        {/* Learnplace List */}
-        <ul>
-          {filteredLearnplaces.map((learnplace: LearnplaceInterface) => (
-            <li key={learnplace.id}>
-              <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
-                <div className="card">
-                  <div className="card-header">
-                    <h2>{learnplace.title}</h2>
-                    <div className="learnplace-visited-status">
-                      {learnplace.visited ? <FiCheck size={40} /> : ''}
-                    </div>
-                  </div>
-                  <div className="card-body">
-                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
+
+      {/* Learnplace List */}
+      <ul>
+        {filteredLearnplaces.map((learnplace: LearnplaceInterface) => (
+          <li key={learnplace.id}>
+            <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
+              <div className="card">
+                <div className="card-header">
+                  <h2>{learnplace.title}</h2>
+                  <div className="learnplace-visited-status">
+                    {learnplace.visited ? <FiCheck size={40} /> : ''}
                   </div>
                 </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
+                <div className="card-body">
+                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
+                </div>
+              </div>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
