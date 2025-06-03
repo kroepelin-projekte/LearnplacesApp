@@ -60,10 +60,10 @@ function App() {
           <Route path="logout" element={<Logout />} />
           <Route path="lernorte" element={<LearnplacesPage />} />
           <Route path="how-to" element={<HowToPage />} />
+          <Route path="scanner" element={<QrCodeScannerPage />} />
+          <Route path="downloads" element={<DownloadedLearnplaces />} />
           <Route path="lernort/:id" element={<LearnplacePage />} />
           <Route path="lernort/:id/map" element={<MapPage />} />
-          <Route path="lernort/:id/scanner" element={<QrCodeScannerPage />} />
-          <Route path="downloads" element={<DownloadedLearnplaces />} />
         </Route>
       </Routes>
       <OfflineMessage />

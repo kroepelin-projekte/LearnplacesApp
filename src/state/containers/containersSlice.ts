@@ -48,7 +48,7 @@ export const fetchContainers = createAsyncThunk(
 
       const data = await response.json();
       const newAccessToken = response.headers.get('Learnplaces_token');
-      if (newAccessToken) {
+      if (navigator.onLine && newAccessToken) {
         dispatch(setAccessToken(newAccessToken));
       }
 

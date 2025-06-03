@@ -1,77 +1,49 @@
 import {useCallback, useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router';
-import Confetti from 'react-confetti';
 import {IDetectedBarcode, Scanner} from '@yudiel/react-qr-scanner';
 import {setAccessToken} from '../../state/auth/authSlice.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../../state/store.ts';
-import {Loader} from '../Loader.tsx';
 
 export function QrCodeScannerPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
-
-  const [ready, setReady] = useState(false);
-
   const [revisitPage, setRevistPage] = useState(false);
-
-  // for confetti
-  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
-  const [showConfetti, setshowConfetti] = useState(false);
 
   // for scanner
   const [result, setResult] = useState<string | null>(null);
   const [showScanner, setShowScanner] = useState(true);
 
-  // resize confetti
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize(() => {
-        const newSize = {
-          width: window.innerWidth,
-          height: window.innerHeight,
-        };
-        return newSize;
-      });
-    }
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
   // verify qr-code token
   const fetchVerifyToken = useCallback(async (token: string) => {
     const accessToken = store.getState().auth.accessToken;
-    return fetch(`${apiBaseUrl}/learnplaces/${id}/verify/${token}`, {
+    return fetch(`${apiBaseUrl}/learnplaces/verifyqrcode/${token}`, {
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + accessToken,
       }
     })
       .then((res) => {
-        if (res.status !== 200 && res.status !== 400) {
+        if (!res.ok) {
           throw new Error('[QR-Code] Failed to fetch learnplace: ' + res.statusText);
         }
         const accessToken = res.headers.get('Learnplaces_token');
-        if (accessToken) {
+        if (navigator.onLine && accessToken) {
           dispatch(setAccessToken(accessToken));
         }
         return res.json();
       })
       .then((data) => {
-        if (data?.data?.valid === true) {
-          return true;
-        }
-        throw new Error('[QR-Code] Invalid QR-Code');
+        return data?.data;
       })
       .catch(() => {
         console.log('[QR-Code] Fetch error or offline.');
         return false;
       });
-  }, [dispatch, id]);
+  }, [dispatch]);
 
   // handle qr-code scanner
   useEffect(() => {
@@ -80,13 +52,15 @@ export function QrCodeScannerPage() {
     }
 
     const handleOnlineMode = async () => {
-      const success = await fetchVerifyToken(result);
-      if (success) {
+      const data = await fetchVerifyToken(result);
+      console.log(data);
+      if (data?.found) {
+        if (data.first_time_found) {
+          navigate(`/lernort/${data.id}?success`);
+        } else {
+          navigate(`/lernort/${data.id}`);
+        }
         setShowScanner(false);
-        setshowConfetti(true);
-        setTimeout(() => {
-          setshowConfetti(false);
-        }, 8000);
       }
     }
 
@@ -103,7 +77,11 @@ export function QrCodeScannerPage() {
     }
   }, [fetchVerifyToken, dispatch, id, navigate, result]);
 
-  // Fetch qr-code list when online
+
+
+
+
+/*  // Fetch qr-code list when online
   useEffect(() => {
     const handleOnline = async () => {
       setRevistPage(false);
@@ -135,8 +113,12 @@ export function QrCodeScannerPage() {
     return () => {
       window.removeEventListener('online', handleOnline);
     };
-  }, [fetchVerifyToken, id]);
+  }, [fetchVerifyToken, id]);*/
 
+
+
+
+  // scann handler
   const handleScan = (data: IDetectedBarcode[]) => {
     console.log('SCANNER ', data);
     if (data.length === 0) {
@@ -151,26 +133,12 @@ export function QrCodeScannerPage() {
     }
   };
 
-  if (!ready) {
-    return <Loader />;
-  }
-
   if (revisitPage) {
     return (
       <div className="qr-code-message">
         <h3>Bitte öffnen Sie die Scanner-Seite von diesem Lernort erneut, wenn Sie wieder online sind.</h3>
       </div>
     );
-  }
-
-  if (!showScanner) {
-    return (
-      <div className="qr-code-message">
-        <Confetti width={windowSize.width} height={windowSize.height} style={{opacity: showConfetti ? 1 : 0, transition: 'opacity 1s ease-in-out' }} />
-        <h2>Herzlichen Glückwunsch!</h2>
-        <h2>Sie haben den Lernort gefunden.</h2>
-      </div>
-    )
   }
 
   return (

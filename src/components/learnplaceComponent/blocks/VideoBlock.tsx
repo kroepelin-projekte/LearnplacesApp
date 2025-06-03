@@ -35,7 +35,7 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
             throw new Error('[VideoBlock] Failed to fetch learnplace: ' + res.statusText);
           }
           const accessToken = res.headers.get('Learnplaces_token');
-          if (accessToken) {
+          if (navigator.onLine && accessToken) {
             dispatch(setAccessToken(accessToken));
           }
           return res.blob();

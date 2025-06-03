@@ -14,6 +14,8 @@ import {AppDispatch, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {setAccessToken} from '../../state/auth/authSlice.ts';
 import {FiCheck} from 'react-icons/fi';
+import Confetti from 'react-confetti';
+import { useSearchParams } from 'react-router-dom';
 
 export const LearnplacePage = () => {
   const { id } = useParams();
@@ -24,6 +26,18 @@ export const LearnplacePage = () => {
   const [isWithinLearnplaceRadius, setIsWithinLearnplaceRadius] = useState(false);
   const [blockComponents, setBlockComponents] = useState<JSX.Element[]>([]);
   const dispatch = useDispatch<AppDispatch>();
+
+  // for confetti
+  const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
+  const [searchParams] = useSearchParams();
+  const hasConfetti = searchParams.has('success');
+  const [showConfetti, setShowConfetti] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 6000);
+  }, []);
 
   /**
    * Check if user in within the learnplace radius if position changes
@@ -86,9 +100,8 @@ export const LearnplacePage = () => {
           if (!res.ok) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }
-          console.log('[Learnplace] Fetch learnplace success.', res);
           const accessToken = res.headers.get('Learnplaces_token');
-          if (accessToken) {
+          if (navigator.onLine && accessToken) {
             dispatch(setAccessToken(accessToken));
           }
           return res.json();
@@ -143,12 +156,31 @@ export const LearnplacePage = () => {
     };
   }, []);
 
+  // resize confetti
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(() => {
+        const newSize = {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+        return newSize;
+      });
+    }
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   if (!learnplace || !blockComponents) {
     return '';
   }
 
   return (
     <div className="learnplace-page">
+
+      { hasConfetti ? <Confetti width={windowSize.width} height={windowSize.height} style={{opacity: showConfetti ? 1 : 0, transition: 'opacity 1s ease-in-out' }} /> : ''}
+
       <section>
         <h1>{learnplace.title}</h1>
         <div className="learnplace-visited-status">

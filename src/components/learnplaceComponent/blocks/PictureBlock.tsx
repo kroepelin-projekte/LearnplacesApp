@@ -37,7 +37,7 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
             throw new Error('[PictureBlock] Failed to fetch learnplace: ' + res.statusText);
           }
           const accessToken = res.headers.get('Learnplaces_token');
-          if (accessToken) {
+          if (navigator.onLine && accessToken) {
             dispatch(setAccessToken(accessToken));
           }
           return res.blob();

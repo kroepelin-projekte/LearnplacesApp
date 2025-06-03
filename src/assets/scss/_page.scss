@@ -204,29 +204,16 @@ a:has(.card) {
   text-decoration: none;
 }
 
+
+
+
 .qr-code-scanner-wrapper {
   width: 100%;
-  height: calc(100svh - 130px);
-  background-color: $color-white;
-  video {
-    object-fit: cover !important;
-  }
-  div:has(>svg) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-  svg {
-    border: 0 !important;
-    width: 90vw;
-    max-width: 500px;
-    path {
-      stroke: $color-accent-2;
-    }
+  * {
+    border-color: $color-accent-2 !important;
+    border-width: 3px !important;
   }
 }
-
 
 
 

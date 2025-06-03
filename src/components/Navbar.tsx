@@ -3,6 +3,8 @@ import iconGroup from '../assets/images/nav_icons/group.svg';
 import iconGroupActive from '../assets/images/nav_icons/group_active.svg';
 import iconQuestion from '../assets/images/nav_icons/question.svg';
 import iconQuestionActive from '../assets/images/nav_icons/question_active.svg';
+import iconQrCode from '../assets/images/nav_icons/qr-code.svg';
+import iconQrCodeActive from '../assets/images/nav_icons/qr-code_active.svg';
 import {BsDownload} from 'react-icons/bs';
 import { vibrate } from '../utils/Navigator.ts';
 
@@ -40,6 +42,17 @@ export const Navbar = () => {
           <>
             {isActive ? <BsDownload size={28} /> : <BsDownload size={28} />}
             <span>Downloads</span>
+          </>
+        )}
+      </NavLink>
+      <NavLink
+        to="/scanner"
+        className={({ isActive }) => (isActive ? "link active" : "link")}
+      >
+        {({ isActive }) => (
+          <>
+            <img src={isActive ? iconQrCodeActive : iconQrCode} alt="Scanner" />
+            <span>Scanner</span>
           </>
         )}
       </NavLink>
