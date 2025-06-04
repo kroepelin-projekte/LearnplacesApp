@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {MapContainer, TileLayer, Marker, Popup, Circle, CircleMarker} from 'react-leaflet';
-import L, { LatLngExpression } from 'leaflet';
+import L, { Map as LeafletMap, LatLngExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Loader } from '../Loader';
@@ -19,6 +19,7 @@ export const MapPage = () => {
   const [learnplace, setLearnplace] = useState<LearnplaceInterface | null>(null);
   const [position, setPosition] = useState<number[] | null>(null);
   const [heading, setHeading] = useState<number>(0);
+  const mapRef = useRef<LeafletMap | null>(null);
 
   useEffect(() => {
     function fetchJson() {
@@ -53,6 +54,13 @@ export const MapPage = () => {
         (location) => {
           const { latitude, longitude, heading } = location.coords;
           setPosition([latitude, longitude]);
+
+/*          if (mapRef.current) {
+            mapRef.current.flyTo([latitude, longitude], 17, {
+              duration: 1.5, // Animation für das Zoomen
+            });
+          }*/
+
           if (heading !== undefined && heading !== null && heading != 0) {
             setHeading(heading);
           }
@@ -73,6 +81,14 @@ export const MapPage = () => {
     }
   }, [learnplace]);
 
+  useEffect(() => {
+    if (mapRef.current && position) {
+      mapRef.current.flyTo([position[0], position[1]], 17, {
+        duration: 1.5,
+      });
+    }
+  }, [position]);
+
   const customIcon = (heading: number) => {
     return L.divIcon({
       className: 'custom-icon',
@@ -86,41 +102,50 @@ export const MapPage = () => {
     });
   };
 
-  if (!position || !learnplace) {
-    return <div className="loading-map">
-      <p>
-        Karte wird geladen...
-      </p>
-      <Loader />
-    </div>;
+  if (!learnplace) {
+    return (
+      <div className="loading-map">
+        <p>Karte wird geladen...</p>
+        <Loader />
+      </div>
+    );
   }
 
   return (
     <div className="map">
       <MapContainer
-        center={position as LatLngExpression}
+        center={{ lat: learnplace.location.latitude, lng: learnplace.location.longitude } as LatLngExpression} // Startpunkt auf learnplace
         zoom={17}
         style={{ height: "calc(100svh - 130px)", width: "100%", marginBottom: "30px", }}
+        ref={(mapInstance) => {
+          if (mapInstance) {
+            mapRef.current = mapInstance;
+          }
+        }}
       >
         <TileLayer
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         />
 
-        <Marker position={position as LatLngExpression} icon={customIcon(heading)}>
-          <Circle
-            center={position as LatLngExpression}
-            radius={50}
-            color="hsla(220, 100%, 40%, 1)"
-            fillColor="hsla(220, 100%, 40%, 0.3)"
-            fillOpacity={1}
-          />
-          <Popup>
-            Du bist hier!
-            {heading !== null && <div>Richtung: {heading.toFixed(2)}°</div>}
-          </Popup>
-        </Marker>
+        {/* Nutzerposition */}
+        {position && (
+          <Marker position={position as LatLngExpression} icon={customIcon(heading)}>
+            <Circle
+              center={position as LatLngExpression}
+              radius={50}
+              color="hsla(220, 100%, 40%, 1)"
+              fillColor="hsla(220, 100%, 40%, 0.3)"
+              fillOpacity={1}
+            />
+            <Popup>
+              Du bist hier!
+              {heading !== null && <div>Richtung: {heading.toFixed(2)}°</div>}
+            </Popup>
+          </Marker>
+        )}
 
+        {/* Learnplace radius */}
         <Circle
           center={{ lat:learnplace.location.latitude, lng:learnplace.location.longitude }}
           radius={learnplace.location.radius}
@@ -129,6 +154,7 @@ export const MapPage = () => {
           fillOpacity={0.4}
         />
 
+        {/* Learnplace point */}
         <CircleMarker
           center={{ lat: learnplace.location.latitude, lng: learnplace.location.longitude }}
           radius={5}
