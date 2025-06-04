@@ -116,7 +116,7 @@ export const MapPage = () => {
       <MapContainer
         center={{ lat: learnplace.location.latitude, lng: learnplace.location.longitude } as LatLngExpression} // Startpunkt auf learnplace
         zoom={17}
-        style={{ height: "calc(100svh - 130px)", width: "100%", marginBottom: "30px", }}
+        style={{ height: "calc(100svh - 110px)", width: "100%", marginBottom: "30px", }}
         ref={(mapInstance) => {
           if (mapInstance) {
             mapRef.current = mapInstance;
