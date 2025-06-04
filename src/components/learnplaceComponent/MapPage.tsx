@@ -20,7 +20,7 @@ export const MapPage = () => {
   const [position, setPosition] = useState<number[] | null>(null);
   const [heading, setHeading] = useState<number>(0);
   const mapRef = useRef<LeafletMap | null>(null);
-  //const [positionReady, setPositionReady] = useState(false);
+  const [positionReady, setPositionReady] = useState(false);
 
   useEffect(() => {
     function fetchJson() {
@@ -82,16 +82,16 @@ export const MapPage = () => {
     }
   }, [learnplace]);
 
-/*  useEffect(() => {
-    if (!positionReady) {
+  useEffect(() => {
+    if (!positionReady && position && mapRef.current) {
       setPositionReady(true);
-      if (mapRef.current && position) {
-        mapRef.current.flyTo([position[0], position[1]], 17, {
-          duration: 1.5,
-        });
-      }
+
+      mapRef.current.flyTo([position[0], position[1]], 17, {
+        duration: 1.5,
+      });
     }
-  }, [position, positionReady]);*/
+  }, [position, positionReady]);
+
 
   const customIcon = (heading: number) => {
     return L.divIcon({
