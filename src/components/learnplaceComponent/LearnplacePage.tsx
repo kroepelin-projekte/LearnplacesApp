@@ -5,7 +5,7 @@ import { RichTextBlock } from './blocks/RichTextBlock';
 import { AccordionBlock } from './blocks/AccordionBlock';
 import { PictureBlock } from './blocks/PictureBlock';
 import { VideoBlock } from './blocks/VideoBlock';
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { isWithinRadius } from '../../utils/BlockVisibility.ts';
 import {DownloadToCacheButton} from './DownloadToCacheButton.tsx';
@@ -171,6 +171,25 @@ export const LearnplacePage = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  if (!navigator.onLine && !learnplace) {
+    return (
+      <>
+        <div className="learnplace-page">
+          <section>
+            <h1>Lernort</h1>
+            <div className="center-horizontally pt-14">
+              <p>Sie sind offline und dieser Lernort wurde nicht heruntergeladen.</p>
+
+              <Link to="/downloads" className="btn">
+                Zu den Downloads
+              </Link>
+            </div>
+          </section>
+        </div>
+      </>
+    );
+  }
 
   if (!learnplace || !blockComponents) {
     return '';
