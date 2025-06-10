@@ -1,22 +1,6 @@
 import { store } from '../state/store'; // Pfad anpassen, wenn nötig
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-interface VerifyTokenResponse {
-  id: number;
-  status: string;
-  title: string;
-}
-
-interface ApiResponse {
-  data: VerifyTokenResponse;
-}
-
-/**
- * Verifiziert einen QR-Code-Token mittels der API.
- * @param token string Der QR-Code-Token
- * @param dispatch AppDispatch Redux-Dispatch
- * @returns Promise<any> API-Antwort oder `false` im Fehlerfall
- */
 export const fetchVerifyToken = async (token: string): Promise<VerifyTokenResponse | false> => {
   const accessToken = store.getState().auth.accessToken;
   try {

@@ -39,6 +39,16 @@ declare global {
     ref_id: number;
     tags: Array<string>;
   }
+
+  interface VerifyTokenResponse {
+    id: number;
+    status: string;
+    title: string;
+  }
+
+  interface ApiResponse {
+    data: VerifyTokenResponse;
+  }
 }
 
 export {};

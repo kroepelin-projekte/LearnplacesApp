@@ -19,12 +19,6 @@ import {
 import {fetchLearnplaces, getLearnplaces, getLearnplacesLoadingState} from '../state/learnplaces/learnplacesSlice';
 import {Loader} from './Loader.tsx';
 
-interface VerifyTokenResponse {
-  id: number;
-  status: string;
-  title: string;
-}
-
 export const LearnplacesPage = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [newFoundLearnplaces, setNewFoundLearnplaces] = useState<string[]>([]);

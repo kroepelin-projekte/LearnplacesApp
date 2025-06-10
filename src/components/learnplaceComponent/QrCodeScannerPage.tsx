@@ -5,12 +5,6 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../state/store.ts';
 import { fetchVerifyToken } from '../../utils/apiHelperQrCode.ts';
 
-interface VerifyTokenResponse {
-  id: number;
-  status: string;
-  title: string;
-}
-
 export function QrCodeScannerPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -20,6 +14,8 @@ export function QrCodeScannerPage() {
   const [result, setResult] = useState<string | null>(null);
   const [showScanner, setShowScanner] = useState(true);
 
+  const [denied, setDenied] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
 
   // handle qr-code scanner
@@ -44,10 +40,10 @@ export function QrCodeScannerPage() {
           navigate(`/lernort/${data.id}`);
           break;
         case 'QR_CODE_ACCESS_DENIED':
-          navigate(`/lernort/${data.id}?denied`);
+          setDenied(true);
           break;
         case 'QR_CODE_NOT_FOUND':
-          navigate(`/lernort/${data.id}?not_found`);
+          setNotFound(true);
           break;
       }
       setShowScanner(false);
@@ -89,6 +85,22 @@ export function QrCodeScannerPage() {
     }
   };
 
+  if (denied) {
+    return (
+      <div className="qr-code-message">
+        <h3>Der Lernort ist nicht für Sie verfügbar.</h3>
+      </div>
+    );
+  }
+
+  if (notFound) {
+    return (
+      <div className="qr-code-message">
+        <h3>Der Lernort wurde nicht gefunden.</h3>
+      </div>
+    );
+  }
+
   if (revisitPage) {
     return (
       <div className="qr-code-message">
@@ -106,6 +118,7 @@ export function QrCodeScannerPage() {
               onScan={(result) => handleScan(result)}
               onError={(err) => console.error(err)}
               allowMultiple={true}
+              sound={false}
             />
           </div>
         )

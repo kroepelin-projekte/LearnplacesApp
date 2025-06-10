@@ -204,6 +204,10 @@ a:has(.card) {
   text-decoration: none;
 }
 
+ul:has(.card) {
+  padding-bottom: $padding;
+}
+
 
 
 
