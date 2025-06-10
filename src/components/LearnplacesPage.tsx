@@ -19,6 +19,12 @@ import {
 import {fetchLearnplaces, getLearnplaces, getLearnplacesLoadingState} from '../state/learnplaces/learnplacesSlice';
 import {Loader} from './Loader.tsx';
 
+interface VerifyTokenResponse {
+  id: number;
+  status: string;
+  title: string;
+}
+
 export const LearnplacesPage = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [newFoundLearnplaces, setNewFoundLearnplaces] = useState<string[]>([]);
@@ -129,15 +135,17 @@ export const LearnplacesPage = () => {
       try {
         await Promise.all(
           storedCodes.map(async (code: string) => {
-            const data = await fetchVerifyToken(code, dispatch);
-            if (data?.found && data.first_time_found) {
-              console.log('first time found: ', data.title);
-              setNewFoundLearnplaces((prev) => {
-                return [...prev, data.title];
-              });
-
-              return data.title;
+            const data: VerifyTokenResponse|false = await fetchVerifyToken(code);
+            if (!data) {
+              return null;
             }
+            if (data?.status === 'QR_CODE_USER_FIRST_TIME_HERE') {
+                console.log('first time found: ', data.title);
+                setNewFoundLearnplaces((prev) => {
+                  return [...prev, data.title];
+                });
+            }
+
             return null;
           })
         );

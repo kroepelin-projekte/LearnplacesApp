@@ -5,6 +5,12 @@ import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../state/store.ts';
 import { fetchVerifyToken } from '../../utils/apiHelperQrCode.ts';
 
+interface VerifyTokenResponse {
+  id: number;
+  status: string;
+  title: string;
+}
+
 export function QrCodeScannerPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
@@ -14,6 +20,8 @@ export function QrCodeScannerPage() {
   const [result, setResult] = useState<string | null>(null);
   const [showScanner, setShowScanner] = useState(true);
 
+
+
   // handle qr-code scanner
   useEffect(() => {
     if (result === null) {
@@ -21,16 +29,28 @@ export function QrCodeScannerPage() {
     }
 
     const handleOnlineMode = async () => {
-      const data = await fetchVerifyToken(result, dispatch);
+      const data: VerifyTokenResponse|false = await fetchVerifyToken(result);
       console.log(data);
-      if (data?.found) {
-        if (data.first_time_found) {
-          navigate(`/lernort/${data.id}?success`);
-        } else {
-          navigate(`/lernort/${data.id}`);
-        }
-        setShowScanner(false);
+
+      if (!data) {
+        return;
       }
+
+      switch (data?.status) {
+        case 'QR_CODE_USER_FIRST_TIME_HERE':
+          navigate(`/lernort/${data.id}?success`);
+          break;
+        case 'QR_CODE_USER_WAS_HERE':
+          navigate(`/lernort/${data.id}`);
+          break;
+        case 'QR_CODE_ACCESS_DENIED':
+          navigate(`/lernort/${data.id}?denied`);
+          break;
+        case 'QR_CODE_NOT_FOUND':
+          navigate(`/lernort/${data.id}?not_found`);
+          break;
+      }
+      setShowScanner(false);
     }
 
     const handleOfflineMode = () => {

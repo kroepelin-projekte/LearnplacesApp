@@ -6,8 +6,9 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import { Loader } from '../Loader';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
-import {store} from '../../state/store.ts';
+import {RootState, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+import {useSelector} from 'react-redux';
 
 L.Icon.Default.mergeOptions({
   shadowUrl: iconShadow,
@@ -17,10 +18,12 @@ export const MapPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [learnplace, setLearnplace] = useState<LearnplaceInterface | null>(null);
-  const [position, setPosition] = useState<number[] | null>(null);
-  const [heading, setHeading] = useState<number>(0);
   const mapRef = useRef<LeafletMap | null>(null);
-  const [positionReady, setPositionReady] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
+
+  const [zoomFinished, setZoomFinished] = useState(false);
+  const position: number[]|null = useSelector((state: RootState) => state.geolocation.position);
+  const heading: number|null = useSelector((state: RootState) => state.geolocation.heading);
 
   useEffect(() => {
     function fetchJson() {
@@ -47,44 +50,15 @@ export const MapPage = () => {
   }, [navigate, id]);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      console.log("[Map] Geolocation is supported by this browser. Start watching position.");
+    if (mapReady && position && mapRef.current) {
+      const [lat, lng] = position;
 
-      // Watch position
-      const watchId = navigator.geolocation.watchPosition(
-        (location) => {
-          const { latitude, longitude, heading } = location.coords;
-          setPosition([latitude, longitude]);
-          if (heading !== undefined && heading !== null && heading != 0) {
-            setHeading(heading);
-          }
-        },
-        (err) => console.error("[Map] Error retrieving location:", err),
-        {
-          enableHighAccuracy: false,
-          timeout: 5000,
-          maximumAge: 0,
-        }
-      );
-
-      return () => {
-        navigator.geolocation.clearWatch(watchId);
-      };
-    } else {
-      console.error("[Map] Geolocation is not supported by this browser.");
+      if (!zoomFinished && lat !== null && lng !== null) {
+        mapRef.current.flyTo([lat, lng], 17, { duration: 1.5 });
+        setZoomFinished(true);
+      }
     }
-  }, [learnplace]);
-
-  useEffect(() => {
-    if (!positionReady && position && mapRef.current) {
-      setPositionReady(true);
-
-      mapRef.current.flyTo([position[0], position[1]], 17, {
-        duration: 1.5,
-      });
-    }
-  }, [position, positionReady]);
-
+  }, [mapReady, position, zoomFinished]);
 
   const customIcon = (heading: number) => {
     return L.divIcon({
@@ -117,6 +91,7 @@ export const MapPage = () => {
         ref={(mapInstance) => {
           if (mapInstance) {
             mapRef.current = mapInstance;
+            setMapReady(true);
           }
         }}
       >
@@ -127,7 +102,7 @@ export const MapPage = () => {
 
         {/* Nutzerposition */}
         {position && (
-          <Marker position={position as LatLngExpression} icon={customIcon(heading)}>
+          <Marker position={position as LatLngExpression} icon={customIcon(heading ?? 0)}>
             <Circle
               center={position as LatLngExpression}
               radius={50}

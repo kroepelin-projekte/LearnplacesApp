@@ -4,7 +4,6 @@ import { isVisible } from '../../../utils/BlockVisibility.ts';
 import {useDispatch} from 'react-redux';
 import {AppDispatch} from '../../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import {setAccessToken} from '../../../state/auth/authSlice.ts';
 import { store } from '../../../state/store.ts';
 
 export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: BlockInterface}) => {
@@ -35,10 +34,6 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
         .then((res) => {
           if (!res.ok) {
             throw new Error('[PictureBlock] Failed to fetch learnplace: ' + res.statusText);
-          }
-          const accessToken = res.headers.get('Learnplaces_token');
-          if (navigator.onLine && accessToken) {
-            dispatch(setAccessToken(accessToken));
           }
           return res.blob();
         })

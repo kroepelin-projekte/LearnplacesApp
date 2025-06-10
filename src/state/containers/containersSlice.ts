@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk, PayloadAction} from '@reduxjs/toolkit';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import {logout, setAccessToken} from '../auth/authSlice.ts';
+import {logout} from '../auth/authSlice.ts';
 import { RootState } from '../store';
 
 interface ContainerInterface {
@@ -47,10 +47,6 @@ export const fetchContainers = createAsyncThunk(
       }
 
       const data = await response.json();
-      const newAccessToken = response.headers.get('Learnplaces_token');
-      if (navigator.onLine && newAccessToken) {
-        dispatch(setAccessToken(newAccessToken));
-      }
 
       return data.data.sort((a: ContainerInterface, b: ContainerInterface) => a.title.localeCompare(b.title));
     } catch (error) {

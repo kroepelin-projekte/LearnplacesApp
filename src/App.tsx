@@ -17,6 +17,7 @@ import {AuthCallback} from './components/AuthCallback.tsx';
 import {DownloadedLearnplaces} from './components/DownloadedLearnplaces.tsx';
 import {useEffect} from 'react';
 import {initializeAuth} from './state/auth/authSlice.ts';
+import useGeolocation from './utils/geolocation.ts';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,10 +29,13 @@ function App() {
     dispatch(initializeAuth());
   }, [navigate, dispatch]);
 
+  useGeolocation(isAuthenticated);
+
   if (loading) {
     return null;
   }
 
+  // redirect to learnplace url after login
   if (!isAuthenticated && location.pathname.startsWith('/lernort/')) {
     localStorage.setItem('targetUrl', location.pathname);
   }
