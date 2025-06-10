@@ -55,21 +55,14 @@ export const MapPage = () => {
         (location) => {
           const { latitude, longitude, heading } = location.coords;
           setPosition([latitude, longitude]);
-
-/*          if (mapRef.current) {
-            mapRef.current.flyTo([latitude, longitude], 17, {
-              duration: 1.5, // Animation für das Zoomen
-            });
-          }*/
-
           if (heading !== undefined && heading !== null && heading != 0) {
             setHeading(heading);
           }
         },
         (err) => console.error("[Map] Error retrieving location:", err),
         {
-          enableHighAccuracy: true,
-          timeout: 15000,
+          enableHighAccuracy: false,
+          timeout: 5000,
           maximumAge: 0,
         }
       );

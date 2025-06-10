@@ -4,6 +4,7 @@ import DOMPurify from 'dompurify';
 import {FiCheck, FiSearch, FiXCircle} from 'react-icons/fi';
 import {AppDispatch} from '../state/store.ts';
 import { vibrate } from '../utils/Navigator.ts';
+import { fetchVerifyToken } from '../utils/apiHelperQrCode.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchContainers,
@@ -20,6 +21,7 @@ import {Loader} from './Loader.tsx';
 
 export const LearnplacesPage = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [newFoundLearnplaces, setNewFoundLearnplaces] = useState<string[]>([]);
   const containerIsLoading = useSelector(getContainerLoadingState);
   const learnplaceIsLoading = useSelector(getLearnplacesLoadingState);
   const dispatch = useDispatch<AppDispatch>();
@@ -29,6 +31,12 @@ export const LearnplacesPage = () => {
   const searchQuery = useSelector(getSearchQuery); // current search query
   const learnplaces = useSelector(getLearnplaces);
   const searchRef = useRef<HTMLInputElement>(null);
+
+  // for debugging
+  const renderCount = useRef(0); // Render-Zähler
+  renderCount.current += 1; // Erhöhe bei jedem Render
+  console.log('renderCount', renderCount.current);
+
 
   // load containers when component is mounted
   useEffect(() => {
@@ -107,6 +115,47 @@ export const LearnplacesPage = () => {
     };
   }, []);
 
+  // backgroundSync: Fetch qr-code list when online
+  useEffect(() => {
+    const getStoredCodes = () => {
+      const storedCodes = localStorage.getItem('scannedCodes');
+      localStorage.removeItem('scannedCodes');
+      return storedCodes ? JSON.parse(storedCodes) : [];
+    };
+
+    const syncLearnplaces = async () => {
+      const storedCodes = getStoredCodes();
+
+      try {
+        await Promise.all(
+          storedCodes.map(async (code: string) => {
+            const data = await fetchVerifyToken(code, dispatch);
+            if (data?.found && data.first_time_found) {
+              console.log('first time found: ', data.title);
+              setNewFoundLearnplaces((prev) => {
+                return [...prev, data.title];
+              });
+
+              return data.title;
+            }
+            return null;
+          })
+        );
+      } catch (error) {
+        console.error('Fehler beim Synchronisieren der Lernorte:', error);
+      }
+    };
+
+    if (navigator.onLine) {
+      syncLearnplaces();
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log('newFoundLearnplaces wurde aktualisiert:', newFoundLearnplaces);
+  }, [newFoundLearnplaces]);
+
+
   // offline message
   if (isOffline) {
     return (
@@ -154,6 +203,8 @@ export const LearnplacesPage = () => {
     );
   }
 
+  console.log(`RenderCount: ${renderCount.current} - State:`, newFoundLearnplaces);
+
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
@@ -192,13 +243,25 @@ export const LearnplacesPage = () => {
             />
             {
               searchQuery.length > 0
-                ? <FiXCircle onClick={handleResetSearch} />
-                : <FiSearch />
+                ? <FiXCircle onClick={handleResetSearch}/>
+                : <FiSearch/>
             }
           </div>
         </div>
       </section>
 
+      {
+        newFoundLearnplaces && newFoundLearnplaces.length > 0 && (
+          <div className="new-found-learnplaces">
+            <p>Sie haben {newFoundLearnplaces.length} neue Lernorte gefunden:</p>
+            <ul>
+              {newFoundLearnplaces.map((title, index) => (
+                <li key={index}>{title}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
 
       {/* Learnplace List */}
       <ul>
@@ -209,11 +272,11 @@ export const LearnplacesPage = () => {
                 <div className="card-header">
                   <h2>{learnplace.title}</h2>
                   <div className="learnplace-visited-status">
-                    {learnplace.visited ? <FiCheck size={40} /> : ''}
+                    {learnplace.visited ? <FiCheck size={40}/> : ''}
                   </div>
                 </div>
                 <div className="card-body">
-                  <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
+                  <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(learnplace.description)}}/>
                 </div>
               </div>
             </Link>

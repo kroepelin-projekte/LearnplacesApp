@@ -12,7 +12,7 @@ import {DownloadToCacheButton} from './DownloadToCacheButton.tsx';
 import {useDispatch} from 'react-redux';
 import {AppDispatch, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-import {setAccessToken} from '../../state/auth/authSlice.ts';
+import {logout, setAccessToken} from '../../state/auth/authSlice.ts';
 import {FiCheck} from 'react-icons/fi';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'react-router-dom';
@@ -97,6 +97,17 @@ export const LearnplacePage = () => {
         }
       })
         .then((res) => {
+
+          if (res.status === 401) {
+            dispatch(logout());
+            return;
+          }
+
+          if (res.status === 400) {
+            navigate('/lernorte');
+            return;
+          }
+
           if (!res.ok) {
             throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
           }

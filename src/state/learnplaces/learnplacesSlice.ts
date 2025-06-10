@@ -1,8 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import { RootState } from '../store';
-
-
+import {logout, setAccessToken} from '../auth/authSlice.ts';
 
 interface LearnplacesState {
   learnplaces: LearnplaceInterface[];
@@ -19,7 +18,7 @@ const initialState: LearnplacesState = {
 // Thunk to fetch learnplaces for a container
 export const fetchLearnplaces = createAsyncThunk(
   'learnplaces/fetchLearnplaces',
-  async (containerId: number, { rejectWithValue, getState }) => {
+  async (containerId: number, { rejectWithValue, dispatch, getState }) => {
     try {
       const state = getState() as RootState;
       const accessToken = state.auth.accessToken;
@@ -28,7 +27,16 @@ export const fetchLearnplaces = createAsyncThunk(
       });
 
       if (!response.ok) {
+        if (response.status === 401) {
+          dispatch(logout());
+          return rejectWithValue('Unauthorized');
+        }
         return rejectWithValue('Failed to fetch learnplaces');
+      }
+
+      const newAccessToken = response.headers.get('Learnplaces_token');
+      if (navigator.onLine && newAccessToken) {
+        dispatch(setAccessToken(newAccessToken));
       }
 
       const data = await response.json();

@@ -345,3 +345,17 @@ a:has(.card) {
   justify-content: center;
   align-items: center;
 }
+
+
+.new-found-learnplaces {
+  background-color: #becfe6;
+  padding: $padding-small;
+  border-radius: $border-radius;
+  p {
+    font-size: 28px;
+  }
+  li {
+    font-size: 20px;
+    color: $color-black;
+  }
+}
