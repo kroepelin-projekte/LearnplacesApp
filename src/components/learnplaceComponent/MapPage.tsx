@@ -63,7 +63,6 @@ export const MapPage = () => {
   if (!learnplace) {
     return (
       <div className="loading-map">
-        <p>Karte wird geladen...</p>
         <Loader />
       </div>
     );
