@@ -371,17 +371,14 @@ ul:has(.card) {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-block: 100px;
+  margin-block: $padding;
   border: 1px solid $color-accent-2;
   padding: $padding-small;
   transition: all .25s ease;
-  &:hover {
-    background-color: rgba(0,0,100,0.1);
-  }
   .connection-info {
     width: 100%;
     text-align: center;
     font-size: 20px;
-    margin-block: 20px;
+    margin-block: $padding-small;
   }
 }
