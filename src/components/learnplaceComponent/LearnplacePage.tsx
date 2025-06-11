@@ -9,8 +9,8 @@ import {Link, useNavigate} from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { isWithinRadius } from '../../utils/BlockVisibility.ts';
 import {DownloadToCacheButton} from './DownloadToCacheButton.tsx';
-import {useDispatch} from 'react-redux';
-import {AppDispatch, store} from '../../state/store.ts';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {logout} from '../../state/auth/authSlice.ts';
 import {FiCheck} from 'react-icons/fi';
@@ -33,11 +33,15 @@ export const LearnplacePage = () => {
   const hasConfetti = searchParams.has('success');
   const [showConfetti, setShowConfetti] = useState(true);
 
+  const position: number[]|null = useSelector((state: RootState) => state.geolocation.position);
+
   useEffect(() => {
-    setTimeout(() => {
-      setShowConfetti(false);
-    }, 6000);
-  }, []);
+    // Effekt 1: Nutzerposition aktualisieren
+    if (position) {
+      setUserPosition({ lat: position[0], lng: position[1] });
+    }
+  }, [position]);
+
 
   /**
    * Check if user in within the learnplace radius if position changes
@@ -122,48 +126,6 @@ export const LearnplacePage = () => {
     fetchJson();
   }, [dispatch, navigate, id, learnplaceUrl]);
 
-  /**
-   * Watch the user position
-   */
-  useEffect(() => {
-    if (!navigator.geolocation) {
-      console.error("Geolocation is not supported by your browser.");
-      return;
-    }
-
-    const watchID = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserPosition({ lat: latitude, lng: longitude });
-      },
-      (error) => {
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            console.error("User denied the request for Geolocation.");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            console.error("Location information is unavailable.");
-            break;
-          case error.TIMEOUT:
-            console.error("The request to get the user's location timed out.");
-            break;
-          default:
-            console.error("An unknown error occurred while retrieving geolocation.");
-            break;
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
-
-    return () => {
-      navigator.geolocation.clearWatch(watchID);
-    };
-  }, []);
-
   // resize confetti
   useEffect(() => {
     const handleResize = () => {
@@ -178,6 +140,13 @@ export const LearnplacePage = () => {
     handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // stop confetti
+  useEffect(() => {
+    setTimeout(() => {
+      setShowConfetti(false);
+    }, 6000);
   }, []);
 
   if (!navigator.onLine && !learnplace) {

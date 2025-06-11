@@ -21,3 +21,29 @@
     color: $color-accent-2;
   }
 }
+
+.map {
+  position: relative;
+  .button-container {
+    position: absolute;
+    bottom: 32px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 5000;
+
+    .map-button {
+      background-color: $color-white;
+      color: $color-accent-2;
+      border-radius: $border-radius;
+      transition: all 0.3s ease-in-out;
+      min-width: 200px;
+      border: 1px solid $color-accent-2;
+      outline: 0;
+      padding: 8px 30px;
+      font-weight: 700;
+      font-family: inherit;
+    }
+  }
+}

@@ -27,6 +27,7 @@ declare global {
       latitude: number;
       longitude: number;
       radius: number;
+      zoom: number;
     };
     tags: Array<string>;
     visited: boolean;

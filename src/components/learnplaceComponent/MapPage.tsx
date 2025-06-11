@@ -19,9 +19,7 @@ export const MapPage = () => {
   const navigate = useNavigate();
   const [learnplace, setLearnplace] = useState<LearnplaceInterface | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
-  const [mapReady, setMapReady] = useState(false);
 
-  const [zoomFinished, setZoomFinished] = useState(false);
   const position: number[]|null = useSelector((state: RootState) => state.geolocation.position);
   const heading: number|null = useSelector((state: RootState) => state.geolocation.heading);
 
@@ -49,16 +47,22 @@ export const MapPage = () => {
     fetchJson();
   }, [navigate, id]);
 
-  useEffect(() => {
+/*  useEffect(() => {
     if (mapReady && position && mapRef.current) {
       const [lat, lng] = position;
 
       if (!zoomFinished && lat !== null && lng !== null) {
-        mapRef.current.flyTo([lat, lng], 17, { duration: 1.5 });
-        setZoomFinished(true);
+        mapRef.current.whenReady(() => {
+          if (mapRef.current) { // Noch einmal prüfen
+            console.log("Map is ready. Executing flyTo...");
+            mapRef.current.flyTo([lat, lng], 16, { duration: 1.8 });
+            setZoomFinished(true);
+          }
+        });
       }
     }
-  }, [mapReady, position, zoomFinished]);
+  }, [mapReady, position, zoomFinished]);*/
+
 
   const customIcon = (heading: number) => {
     return L.divIcon({
@@ -84,14 +88,50 @@ export const MapPage = () => {
 
   return (
     <div className="map">
+      {/* Buttons zum Steuern der Karte */}
+      <div className="button-container">
+        <button
+          className="map-button"
+          onClick={() => {
+            if (mapRef.current && position) {
+              const [lat, lng] = position;
+              if (lat !== null && lng !== null) {
+                mapRef.current.flyTo(
+                  [lat, lng],
+                  17, // Zoom-Level für Position
+                  { duration: 2 }
+                );
+              }
+            }
+          }}
+        >
+          Eigene Position anzeigen
+        </button>
+        <button
+          className="map-button"
+          onClick={() => {
+            if (mapRef.current && learnplace) {
+              mapRef.current.flyTo(
+                [learnplace.location.latitude, learnplace.location.longitude],
+                17, // Zoom-Level für Lernort
+                { duration: 2 }
+              );
+            }
+          }}
+        >
+          Lernort anzeigen
+        </button>
+      </div>
+
+      {/* Karte */}
       <MapContainer
         center={{ lat: learnplace.location.latitude, lng: learnplace.location.longitude } as LatLngExpression} // Startpunkt auf learnplace
-        zoom={17}
-        style={{ height: "calc(100svh - 110px)", width: "100%", marginBottom: "30px", }}
+        zoom={learnplace.location.zoom}
+        style={{ height: "calc(100svh - 110px)", width: "100%", marginBottom: "30px" }}
         ref={(mapInstance) => {
           if (mapInstance) {
             mapRef.current = mapInstance;
-            setMapReady(true);
+            // setMapReady(true);
           }
         }}
       >
@@ -119,7 +159,7 @@ export const MapPage = () => {
 
         {/* Learnplace radius */}
         <Circle
-          center={{ lat:learnplace.location.latitude, lng:learnplace.location.longitude }}
+          center={{ lat: learnplace.location.latitude, lng: learnplace.location.longitude }}
           radius={learnplace.location.radius}
           color="green"
           fillColor="green"
@@ -134,7 +174,6 @@ export const MapPage = () => {
           fillColor="darkgreen"
           fillOpacity={1}
         />
-
       </MapContainer>
     </div>
   );
