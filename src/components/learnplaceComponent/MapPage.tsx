@@ -47,23 +47,6 @@ export const MapPage = () => {
     fetchJson();
   }, [navigate, id]);
 
-/*  useEffect(() => {
-    if (mapReady && position && mapRef.current) {
-      const [lat, lng] = position;
-
-      if (!zoomFinished && lat !== null && lng !== null) {
-        mapRef.current.whenReady(() => {
-          if (mapRef.current) { // Noch einmal prüfen
-            console.log("Map is ready. Executing flyTo...");
-            mapRef.current.flyTo([lat, lng], 16, { duration: 1.8 });
-            setZoomFinished(true);
-          }
-        });
-      }
-    }
-  }, [mapReady, position, zoomFinished]);*/
-
-
   const customIcon = (heading: number) => {
     return L.divIcon({
       className: 'custom-icon',

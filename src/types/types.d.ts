@@ -32,6 +32,7 @@ declare global {
     tags: Array<string>;
     visited: boolean;
     blocks: Array<BlockInterface>;
+    content_size: number;
   }
 
   interface ContainerInterface {
@@ -49,6 +50,14 @@ declare global {
 
   interface ApiResponse {
     data: VerifyTokenResponse;
+  }
+
+  interface NetworkInformation {
+    type?: 'wifi' | 'cellular' | 'ethernet' | 'none' | 'unknown';
+    downlink?: number; // Speed in Mbps
+    effectiveType?: string; // e.g. '4g', '3g'
+    rtt?: number; // Round Trip Time in ms
+    saveData?: boolean; // Data saving mode?
   }
 }
 
