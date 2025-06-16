@@ -35,6 +35,11 @@ declare global {
     content_size: number;
   }
 
+  interface CachedContainer {
+    title: string;
+    learnplaces: LearnplaceInterface[];
+  }
+
   interface ContainerInterface {
     title: string;
     learnplaces_numbers: number;

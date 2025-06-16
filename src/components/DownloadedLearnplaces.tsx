@@ -5,7 +5,7 @@ import { vibrate } from '../utils/Navigator.ts';
 import {FiCheck} from 'react-icons/fi';
 
 export const DownloadedLearnplaces = () => {
-  const [cachedLearnplaces, setCachedLearnplaces] = useState<LearnplaceInterface[]>([]);
+  const [cachedLearnplaces, setCachedLearnplaces] = useState<CachedContainer[]>([]);
 
   useEffect(() => {
     const fetchCachedLearnplaces = async () => {
@@ -13,7 +13,7 @@ export const DownloadedLearnplaces = () => {
       const cache = await caches.open(cacheName);
       const requests = await cache.keys();
 
-      const learnplaces: LearnplaceInterface[] = [];
+      const containerMap: Record<string, LearnplaceInterface[]> = {};
 
       for (const request of requests) {
         const response = await cache.match(request);
@@ -21,20 +21,25 @@ export const DownloadedLearnplaces = () => {
           try {
             const data = await response.json();
             const learnplace = data.data;
-            learnplaces.push(learnplace);
+            const containerTitle = learnplace.container_title;
+            if (!containerMap[containerTitle]) {
+              containerMap[containerTitle] = [];
+            }
+            containerMap[containerTitle].push(learnplace);
           } catch (error) {
             console.error(`Fehler beim Parsen von JSON für ${request.url}:`, error);
           }
         }
       }
 
-      const sortedLearnplaces = learnplaces.sort((a: {title: string}, b: {title: string}) => {
-        const titleA = a.title.toLowerCase();
-        const titleB = b.title.toLowerCase();
-        return titleA < titleB ? -1 : titleA > titleB ? 1 : 0;
-      });
+      const containers: CachedContainer[] = Object.entries(containerMap).map(([title, learnplaces]) => ({
+        title,
+        learnplaces: learnplaces.sort((a, b) =>
+          a.title.toLowerCase().localeCompare(b.title.toLowerCase())
+        ),
+      }));
 
-      setCachedLearnplaces(sortedLearnplaces);
+      setCachedLearnplaces(containers);
     };
 
     fetchCachedLearnplaces();
@@ -46,28 +51,40 @@ export const DownloadedLearnplaces = () => {
         <h1>Downloads</h1>
 
         {cachedLearnplaces.length > 0 ? (
-          <ul>
-            {cachedLearnplaces.map((learnplace) => (
-              <li key={learnplace.id}>
-                <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
-                  <div className="card">
-                    <div className="card-header">
-                      <h2>{learnplace.title}</h2>
-                      <div className="learnplace-visited-status">
-                        {learnplace.visited ? <FiCheck size={40} /> : ''}
-                      </div>
-                    </div>
-                    <div className="card-body">
-                      <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
-                    </div>
-                  </div>
-                </Link>
-              </li>
+          <div>
+            {cachedLearnplaces.map((container) => (
+              <section key={container.title}>
+                <h2>{container.title}</h2>
+                <ul>
+                  {container.learnplaces.map((learnplace) => (
+                    <li key={learnplace.id}>
+                      <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
+                        <div className="card">
+                          <div className="card-header">
+                            <h3>{learnplace.title}</h3>
+                            <div className="learnplace-visited-status">
+                              {learnplace.visited ? <FiCheck size={40} /> : ''}
+                            </div>
+                          </div>
+                          <div className="card-body">
+                            <div
+                              dangerouslySetInnerHTML={{
+                                __html: DOMPurify.sanitize(learnplace.description),
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
             ))}
-          </ul>
+          </div>
         ) : (
           <p>Es sind keine heruntergeladenen Lernorte verfügbar.</p>
         )}
+
       </section>
     </div>
   );

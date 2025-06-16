@@ -104,7 +104,7 @@ export function QrCodeScannerPage() {
   if (revisitPage) {
     return (
       <div className="qr-code-message">
-        <h3>Der Lernort wird geladen wenn Sie wieder online sind.</h3>
+        <h3>Der Lernort wird geladen, wenn Sie wieder online sind.</h3>
       </div>
     );
   }

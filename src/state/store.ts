@@ -3,6 +3,7 @@ import authReducer from './auth/authSlice';
 import containersReducer from './containers/containersSlice';
 import learnplacesReducer from './learnplaces/learnplacesSlice';
 import geolocation from './map/geolocationSlice.ts';
+import syncedLearnplaces from './sync/syncedLearnplacesSlice.ts';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     containers: containersReducer,
     learnplaces: learnplacesReducer,
     geolocation: geolocation,
+    sync: syncedLearnplaces,
   },
 });
 

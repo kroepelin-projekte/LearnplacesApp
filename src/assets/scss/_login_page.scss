@@ -47,6 +47,9 @@
   background-color: #9a0707;
   color: white;
   z-index: 1000;
+  &.server {
+    background-color: #F98128;
+  }
 }
 main:has(.login-wrapper) ~ .offline-message {
   bottom: 0;

@@ -375,6 +375,7 @@ ul:has(.card) {
   border: 1px solid $color-accent-2;
   padding: $padding-small;
   transition: all .25s ease;
+  border-radius: $border-radius;
   .connection-info {
     width: 100%;
     text-align: center;
@@ -382,3 +383,67 @@ ul:has(.card) {
     margin-block: $padding-small;
   }
 }
+
+
+
+
+/* Sync Modal */
+.synced-learnplaces-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $padding-small;
+  cursor: pointer;
+
+  .new-found-learnplaces {
+    position: relative;
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+    cursor: default;
+    h2 {
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 19px;
+      margin-bottom: 20px;
+    }
+    ul {
+      li {
+        margin-bottom: 10px;
+        svg  {
+          transform: translateY(3px);
+        }
+        a {
+          padding-left: 10px;
+          text-decoration: none;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+    .btn-cancel {
+      background-color: transparent;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: $border-radius;
+      cursor: pointer;
+    }
+  }
+}
+

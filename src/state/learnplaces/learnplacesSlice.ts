@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import { RootState } from '../store';
-import {logout, setAccessToken} from '../auth/authSlice.ts';
+import {logout/*, setAccessToken*/} from '../auth/authSlice.ts';
 
 interface LearnplacesState {
   learnplaces: LearnplaceInterface[];
@@ -34,10 +34,10 @@ export const fetchLearnplaces = createAsyncThunk(
         return rejectWithValue('Failed to fetch learnplaces');
       }
 
-      const newAccessToken = response.headers.get('Learnplaces_token');
+/*      const newAccessToken = response.headers.get('Learnplaces_token');
       if (navigator.onLine && newAccessToken) {
         dispatch(setAccessToken(newAccessToken));
-      }
+      }*/
 
       const data = await response.json();
       return data.data.learn_places.sort((a: LearnplaceInterface, b: LearnplaceInterface) =>

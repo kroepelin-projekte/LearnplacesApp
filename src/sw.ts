@@ -137,7 +137,7 @@ registerRoute(
 const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
 registerRoute(
   ({ url }) => {
-    return /\/containers\/?$/.test(url.pathname);
+    return url.pathname.includes('containers');
   },
   new StaleWhileRevalidate({
     cacheName: TMP_LEARNPLACES_CACHE,
@@ -159,6 +159,13 @@ registerRoute(
           });
         },
       },
+      new CacheableResponsePlugin({
+        statuses: [0, 200],
+      }),
+      new ExpirationPlugin({
+        maxEntries: 10,
+        maxAgeSeconds: 60 * 60,
+      }),
     ],
   })
 );
