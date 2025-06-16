@@ -2,7 +2,7 @@ import {useCallback, useEffect, useRef, useState} from 'react';
 import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import {FiCheck, FiSearch, FiXCircle} from 'react-icons/fi';
-import {AppDispatch} from '../state/store.ts';
+import {AppDispatch, RootState} from '../state/store.ts';
 import { vibrate } from '../utils/Navigator.ts';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -18,6 +18,8 @@ import {
 import {fetchLearnplaces, getLearnplaces, getLearnplacesLoadingState} from '../state/learnplaces/learnplacesSlice';
 import {Loader} from './Loader.tsx';
 import {SyncLearnplaces} from './SyncLearnplaces.tsx';
+import {setAccessToken} from '../state/auth/authSlice.ts';
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const LearnplacesPage = () => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
@@ -30,6 +32,26 @@ export const LearnplacesPage = () => {
   const searchQuery = useSelector(getSearchQuery); // current search query
   const learnplaces = useSelector(getLearnplaces);
   const searchRef = useRef<HTMLInputElement>(null);
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+
+  // refresh access_token
+  useEffect(() => {
+    fetch(`${apiBaseUrl}/refresh`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    })
+      .then(res => {
+        const newToken = res.headers.get('Learnplaces_token');
+
+        if (res.ok && newToken) {
+          console.log('Change access token');
+          dispatch(setAccessToken(newToken));
+        }
+      })
+      .catch(error => {
+        console.error('Fehler bei /refresh', error);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   // load containers when component is mounted
   useEffect(() => {
