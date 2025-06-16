@@ -63,7 +63,7 @@ export const DownloadedLearnplaces = () => {
                           <div className="card-header">
                             <h3>{learnplace.title}</h3>
                             <div className="learnplace-visited-status">
-                              {learnplace.visited ? <FiCheck size={40} /> : ''}
+                              {learnplace.visited ? <FiCheck size={30} /> : ''}
                             </div>
                           </div>
                           <div className="card-body">

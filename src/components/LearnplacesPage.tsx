@@ -203,7 +203,6 @@ export const LearnplacesPage = () => {
         </div>
       </section>
 
-
       {/* Learnplace List */}
       <ul>
         {filteredLearnplaces.map((learnplace: LearnplaceInterface) => (

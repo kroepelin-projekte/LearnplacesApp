@@ -447,3 +447,16 @@ ul:has(.card) {
   }
 }
 
+
+/* downloads page */
+main .downloads section section {
+  margin-block: 20px;
+  border-bottom: 1px solid #ccc;
+  padding-top: 20px;
+}
+main .downloads section section:last-child {
+  border: 0;
+}
+main .downloads section ul {
+  padding-bottom: 10px;
+}
