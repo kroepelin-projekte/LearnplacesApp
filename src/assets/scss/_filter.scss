@@ -8,7 +8,7 @@ select {
   background-color: $color-white;
   color: $color-accent-2;
   padding-inline: 20px;
-  border: 3px solid $color-accent-2;
+  border: 2px solid $color-accent-2;
   cursor: pointer;
   transition: 0.2s ease;
   width: 100%;
@@ -28,7 +28,7 @@ select {
     </svg>');
   background-repeat: no-repeat;
   background-position: calc(100% - 10px) center;
-  background-size: 26px;
+  background-size: 30px;
 
   /* Entfernt standardmäßige Outline-Styles */
   &:focus {
@@ -54,7 +54,7 @@ select {
   background-color: $color-white;
   color: $color-accent-2;
   padding-inline: 20px;
-  border: 3px solid $color-accent-2;
+  border: 2px solid $color-accent-2;
   border-radius: $border-radius;
   height: 45px;
   max-width: 380px;

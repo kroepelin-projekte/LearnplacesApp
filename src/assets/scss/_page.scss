@@ -32,7 +32,7 @@ section {
   position: relative;
   background-color: $color-white;
   color: $color-accent-2;
-  border: 3px solid $color-accent-2;
+  border: 2px solid $color-accent-2;
   cursor: pointer;
   transition: 0.2s ease;
   width: 100%;
@@ -92,7 +92,7 @@ section {
   background-color: transparent;
   color: $color-accent-2;
   padding-inline: 20px;
-  border: 3px solid $color-accent-2;
+  border: 2px solid $color-accent-2;
   cursor: pointer;
   transition: 0.2s ease;
   width: 100%;
@@ -215,7 +215,7 @@ ul:has(.card) {
   width: 100%;
   * {
     border-color: $color-accent-2 !important;
-    border-width: 3px !important;
+    border-width: 2px !important;
   }
 }
 
