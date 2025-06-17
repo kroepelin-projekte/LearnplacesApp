@@ -170,6 +170,7 @@ li:has(.card):last-child {
       font-weight: 700;
       color: $color-black;
       padding-right: 40px;
+      hyphens: auto;
     }
     .learnplace-visited-status  {
       position: absolute;
