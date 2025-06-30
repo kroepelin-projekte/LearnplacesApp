@@ -29,14 +29,9 @@ export const LearnplacePage = () => {
   const [isWithinLearnplaceRadius, setIsWithinLearnplaceRadius] = useState(false);
   const [blockComponents, setBlockComponents] = useState<JSX.Element[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-
-
-
-  const { connectionType, downloadSpeed, connectionInfo } = useSelector(
+  const { connectionInfo } = useSelector(
       (state: RootState) => state.network
   );
-
-
 
   // for confetti
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -161,31 +156,6 @@ export const LearnplacePage = () => {
   }, []);
 
   // check internet connection type
-/*  useEffect(() => {
-    function getConnectionType(): string | null {
-      if ('connection' in navigator) {
-        const connection = navigator.connection as NetworkInformation;
-        return connection?.type || null;
-      }
-      return null;
-    }
-
-    const connectionType = getConnectionType();
-
-    if (connectionType) {
-      console.log(`Verbindungstyp: ${connectionType}`);
-      if (connectionType === 'wifi') {
-        setConnectionInfo('Sie sind mit einem WLAN verbunden.');
-      } else if (connectionType === 'cellular') {
-        setConnectionInfo('Sie nutzen Mobile Daten.');
-      } else {
-        setConnectionInfo('Bitte prüfen Sie vor dem Download, ob Sie Mobile Daten verwenden.');
-      }
-    } else {
-      setConnectionInfo('Bitte prüfen Sie vor dem Download, ob Sie Mobile Daten verwenden.');
-    }
-  }, []);*/
-
   useEffect(() => {
     function updateConnectionInfo() {
       if ('connection' in navigator) {
