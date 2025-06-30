@@ -37,7 +37,8 @@ section {
   transition: 0.2s ease;
   width: 100%;
   height: 45px;
-  max-width: min(30ch, 420px);
+  //max-width: min(30ch, 420px);
+  max-width: 500px;
   text-overflow: ellipsis;
   overflow: hidden;
   padding-inline: 30px !important;
@@ -277,6 +278,8 @@ ul:has(.card) {
   section h1 {
     font-size: 28px;
     margin-bottom: 0;
+    margin-right: 60px;
+    hyphens: auto;
   }
   section .description {
     margin-top: 20px;

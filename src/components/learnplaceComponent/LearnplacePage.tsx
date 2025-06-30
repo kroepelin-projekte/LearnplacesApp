@@ -13,7 +13,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState, store} from '../../state/store.ts';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {logout} from '../../state/auth/authSlice.ts';
-import {FiCheck} from 'react-icons/fi';
+import iconCheck from '../../assets/images/pin-check_2.svg';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'react-router-dom';
 
@@ -242,8 +242,8 @@ export const LearnplacePage = () => {
         <div className="learnplace-visited-status">
           {
             learnplace.visited
-              ? <FiCheck size={40} />
-              : ''
+              ? <img src={iconCheck} width="40" alt="Lernort besucht" />
+                : ''
           }
         </div>
         <div className="description" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(learnplace.description) }} />
@@ -258,7 +258,7 @@ export const LearnplacePage = () => {
         <div>{connectionInfo}</div>
 
         {/* download size */}
-        <div className="content-size mt-4">Download-Größe: {learnplace.content_size == '0 Bytes' ? ' < 1MB' : learnplace.content_size}</div>
+        <div className="content-size mt-6">Download-Größe: {learnplace.content_size == '0 Bytes' ? ' < 1MB' : learnplace.content_size}</div>
 
         <DownloadToCacheButton url={learnplaceUrl} />
       </div>

@@ -1,7 +1,7 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import { Link } from 'react-router-dom';
 import DOMPurify from 'dompurify';
-import {FiCheck, FiSearch, FiXCircle} from 'react-icons/fi';
+import {FiSearch, FiXCircle} from 'react-icons/fi';
 import {AppDispatch, RootState} from '../state/store.ts';
 import { vibrate } from '../utils/Navigator.ts';
 import { useDispatch, useSelector } from 'react-redux';
@@ -19,6 +19,7 @@ import {fetchLearnplaces, getLearnplaces, getLearnplacesLoadingState} from '../s
 import {Loader} from './Loader.tsx';
 import {SyncLearnplaces} from './SyncLearnplaces.tsx';
 import {setAccessToken} from '../state/auth/authSlice.ts';
+import iconCheck from "../assets/images/pin-check_2_black.svg";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const LearnplacesPage = () => {
@@ -187,7 +188,7 @@ export const LearnplacesPage = () => {
 
         <div className="learnplace-settings-container">
           {/* Container Dropdown */}
-          <select value={selectedContainer || ''} onChange={(e) => handleContainerChange(e.target.value)}>
+          <select id="select-container" value={selectedContainer || ''} onChange={(e) => handleContainerChange(e.target.value)}>
             {containers.map((container) => (
               <option key={container.ref_id} value={container.ref_id}>
                 {container.title}
@@ -196,7 +197,7 @@ export const LearnplacesPage = () => {
           </select>
 
           {/* Tag Dropdown */}
-          <select value={selectedTag || ''} onChange={(e) => handleTagChange(e.target.value)}>
+          <select id="select-tag" value={selectedTag || ''} onChange={(e) => handleTagChange(e.target.value)}>
             <option value="">Alle Tags</option>
             {containers
               .find((c) => c.ref_id === selectedContainer)
@@ -210,6 +211,7 @@ export const LearnplacesPage = () => {
           {/* Search Bar */}
           <div className="search-bar">
             <input
+              id="search-bar"
               type="text"
               placeholder="Suche"
               value={searchQuery}
@@ -234,7 +236,7 @@ export const LearnplacesPage = () => {
                 <div className="card-header">
                   <h2>{learnplace.title}</h2>
                   <div className="learnplace-visited-status">
-                    {learnplace.visited ? <FiCheck size={40}/> : ''}
+                    {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
                   </div>
                 </div>
                 <div className="card-body">

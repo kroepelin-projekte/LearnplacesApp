@@ -11,24 +11,32 @@ select {
   border: 2px solid $color-accent-2;
   cursor: pointer;
   transition: 0.2s ease;
-  width: 100%;
   height: $input-height;
+  width: 100%;
   max-width: 380px;
   font-size: 18px;
   font-weight: bold;
+  padding-right: 60px;
+
   border-radius: $border-radius;
   appearance: none; // Entfernt Browser-Standard-Styling
   -webkit-appearance: none; // Für Safari/Chrome
   -moz-appearance: none; // Für Firefox
 
+  // add ... to the selected option
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+
   /* Platz für einen Custom-Arrow */
   background-image: url('data:image/svg+xml;charset=UTF-8, \
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23222222"> \
-    <path d="M7 10l5 5 5-5z"/> \
-    </svg>');
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2334499AFF"> \
+  <path d="M7 10l5 5 5-5z"/> \
+  </svg>');
   background-repeat: no-repeat;
   background-position: calc(100% - 10px) center;
-  background-size: 30px;
+  background-size: 40px;
+
 
   /* Entfernt standardmäßige Outline-Styles */
   &:focus {
@@ -48,12 +56,9 @@ select {
 
 // search bar
 .search-bar {
-  display: flex;
-  align-items: center; /* Zentriert das Icon und das Input-Feld vertikal */
-  justify-content: space-between; /* Platz für Icon und Input */
+  position: relative;
   background-color: $color-white;
   color: $color-accent-2;
-  padding-inline: 20px;
   border: 2px solid $color-accent-2;
   border-radius: $border-radius;
   height: 45px;
@@ -63,13 +68,18 @@ select {
 
   /* Input-Feld */
   input {
-    flex: 1; /* Input nimmt den freien Platz ein */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     border: none;
     outline: none; /* Entfernt den Fokusrahmen (kann mit einem :focus-Stil ergänzt werden) */
     font-size: 18px;
     background-color: transparent; /* Gleiche Hintergrundfarbe wie der Container */
     color: $color-accent-2;
     margin-right: 10px; /* Platz zwischen Input und Icon */
+    padding-left: $padding-small;
 
     &::placeholder {
       color: $color-accent-2; /* Gleiche Farbe wie der Text im Input */
@@ -78,6 +88,15 @@ select {
   }
 
   svg {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 32px;
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 22px;
     color: $color-accent-2;
     cursor: pointer;
@@ -102,7 +121,7 @@ select {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  gap: $padding-small;
+  gap: 6px;
   width: 100%;
   margin-block: $padding;
   select, .search-bar {

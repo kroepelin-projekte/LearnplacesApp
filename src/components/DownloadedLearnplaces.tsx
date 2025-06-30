@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { vibrate } from '../utils/Navigator.ts';
-import {FiCheck} from 'react-icons/fi';
+import iconCheck from "../assets/images/pin-check_2_black.svg";
 
 export const DownloadedLearnplaces = () => {
   const [cachedLearnplaces, setCachedLearnplaces] = useState<CachedContainer[]>([]);
@@ -61,9 +61,9 @@ export const DownloadedLearnplaces = () => {
                       <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
                         <div className="card">
                           <div className="card-header">
-                            <h3>{learnplace.title}</h3>
+                            <h2>{learnplace.title}</h2>
                             <div className="learnplace-visited-status">
-                              {learnplace.visited ? <FiCheck size={30} /> : ''}
+                              {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
                             </div>
                           </div>
                           <div className="card-body">
