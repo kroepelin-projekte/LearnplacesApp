@@ -261,6 +261,9 @@ ul:has(.card) {
 
 // learnplace page
 .learnplace-page {
+  section:first-child {
+    margin-bottom: 60px;
+  }
   > section {
     position: relative;
   }
@@ -376,10 +379,14 @@ ul:has(.card) {
   align-items: center;
   justify-content: center;
   margin-block: $padding;
+  margin-top: 60px;
   border: 1px solid $color-accent-2;
   padding: $padding-small;
   transition: all .25s ease;
   border-radius: $border-radius;
+  button {
+    margin-bottom: 0 !important;
+  }
   .connection-info {
     width: 100%;
     text-align: center;
