@@ -17,6 +17,9 @@ import {FiCheck} from 'react-icons/fi';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'react-router-dom';
 
+import { setConnectionInfo } from '../../state/network/networkSlice.ts';
+
+
 export const LearnplacePage = () => {
   const { id } = useParams();
   const learnplaceUrl = `${apiBaseUrl}/learnplaces/${id}`;
@@ -26,7 +29,14 @@ export const LearnplacePage = () => {
   const [isWithinLearnplaceRadius, setIsWithinLearnplaceRadius] = useState(false);
   const [blockComponents, setBlockComponents] = useState<JSX.Element[]>([]);
   const dispatch = useDispatch<AppDispatch>();
-  const [connectionInfo, setConnectionInfo] = useState<string | null>(null);
+
+
+
+  const { connectionType, downloadSpeed, connectionInfo } = useSelector(
+      (state: RootState) => state.network
+  );
+
+
 
   // for confetti
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
@@ -151,7 +161,7 @@ export const LearnplacePage = () => {
   }, []);
 
   // check internet connection type
-  useEffect(() => {
+/*  useEffect(() => {
     function getConnectionType(): string | null {
       if ('connection' in navigator) {
         const connection = navigator.connection as NetworkInformation;
@@ -174,7 +184,59 @@ export const LearnplacePage = () => {
     } else {
       setConnectionInfo('Bitte prüfen Sie vor dem Download, ob Sie Mobile Daten verwenden.');
     }
-  }, []);
+  }, []);*/
+
+  useEffect(() => {
+    function updateConnectionInfo() {
+      if ('connection' in navigator) {
+        const connection = navigator.connection as NetworkInformation;
+        const type = connection.type || 'unknown';
+        const speed = connection.downlink || 0;
+
+        let info = '';
+        switch (type) {
+          case 'wifi':
+            info = 'Sie sind mit einem WLAN verbunden.';
+            break;
+          case 'ethernet':
+            info = 'Sie sind mit einem LAN-Kabel verbunden.';
+            break;
+          case 'cellular':
+            info = 'Sie nutzen Mobile Daten.';
+            break;
+          case 'none':
+            info = 'Keine Verbindung verfügbar.';
+            break;
+          default:
+            info = 'Bitte prüfen Sie vor dem Download, ob Sie Mobile Daten verwenden.';
+        }
+
+        dispatch(setConnectionInfo({
+          connectionType: type,
+          downloadSpeed: speed,
+          connectionInfo: info
+        }));
+      } else {
+        dispatch(setConnectionInfo({
+          connectionType: 'unknown',
+          downloadSpeed: 0,
+          connectionInfo: 'Bitte prüfen Sie vor dem Download, ob Sie Mobile Daten verwenden.'
+        }));
+      }
+    }
+
+    updateConnectionInfo();
+
+    if ('connection' in navigator) {
+      const connection = navigator.connection as NetworkInformation;
+      connection.addEventListener('change', updateConnectionInfo);
+
+      return () => {
+        connection.removeEventListener('change', updateConnectionInfo);
+      };
+    }
+  }, [dispatch]);
+
 
 
   if (!navigator.onLine && !learnplace) {
@@ -221,12 +283,10 @@ export const LearnplacePage = () => {
       </div>
 
       <div className="download-container">
-        { connectionInfo &&
-          <>
-            <div className="connection-info">{connectionInfo}</div>
-            <div className="content-size">Download-Größe: {learnplace.content_size}</div>
-          </>
-        }
+        <div>{connectionInfo}</div>
+        <div className="connection-details">
+          {connectionType !== 'unknown' && `(${downloadSpeed} Mbps)`}
+        </div>
         <DownloadToCacheButton url={learnplaceUrl} />
       </div>
 

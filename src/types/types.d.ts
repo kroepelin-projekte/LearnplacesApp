@@ -57,7 +57,7 @@ declare global {
     data: VerifyTokenResponse;
   }
 
-  interface NetworkInformation {
+  interface NetworkInformation extends EventTarget {
     type?: 'wifi' | 'cellular' | 'ethernet' | 'none' | 'unknown';
     downlink?: number; // Speed in Mbps
     effectiveType?: string; // e.g. '4g', '3g'

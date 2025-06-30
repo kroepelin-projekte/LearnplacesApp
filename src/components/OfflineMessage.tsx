@@ -1,9 +1,8 @@
 import {useEffect, useState} from 'react';
-import {useDispatch, useSelector} from 'react-redux';
-import {AppDispatch, RootState} from '../state/store.ts';
+import {useSelector} from "react-redux";
+import {RootState} from "../state/store.ts";
 
 export const OfflineMessage = () => {
-  const dispatch = useDispatch<AppDispatch>();
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
   const [serverReachable, setServerReachable] = useState(true);
@@ -11,26 +10,52 @@ export const OfflineMessage = () => {
 
   // health check
   useEffect(() => {
-    fetch(`${apiBaseUrl}/health`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('Server nicht erreichbar');
-        }
-        setServerReachable(true);
+    const checkServerHealth = () => {
+      if (!navigator.onLine) return; // Don't check if offline
+      console.log('Checking server health...');
+
+      fetch(`${apiBaseUrl}/health`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
       })
-      .catch(error => {
-        setServerReachable(false);
-        console.error('Fehler beim Abrufen des Serverstatus:', error);
-      });
-  }, [apiBaseUrl, dispatch, accessToken, isOnline]);
+        .then(res => {
+          if (!res.ok) {
+            throw new Error('Server nicht erreichbar');
+          }
+          setServerReachable(true);
+        })
+        .catch(error => {
+          setServerReachable(false);
+          console.error('Fehler beim Abrufen des Serverstatus:', error);
+        });
+    };
+
+    // Initial check
+    checkServerHealth();
+
+    // Set up interval for periodic checks
+    const intervalId = setInterval(checkServerHealth, 30000); // Check every 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [apiBaseUrl, accessToken]);
+
 
   // check online status
   useEffect(() => {
     const updateOnlineStatus = () => {
-      setServerReachable(true);
-      setIsOnline(navigator.onLine);
+      const online = navigator.onLine;
+      setIsOnline(online);
+
+      // Only trigger server check when going online
+      if (online) {
+        fetch(`${apiBaseUrl}/health`, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        })
+          .then(res => {
+            if (!res.ok) throw new Error('Server nicht erreichbar');
+            setServerReachable(true);
+          })
+          .catch(() => setServerReachable(false));
+      }
     };
 
     window.addEventListener('online', updateOnlineStatus);
@@ -40,7 +65,7 @@ export const OfflineMessage = () => {
       window.removeEventListener('online', updateOnlineStatus);
       window.removeEventListener('offline', updateOnlineStatus);
     };
-  }, []);
+  }, [apiBaseUrl, accessToken]);
 
   return (
     <>
