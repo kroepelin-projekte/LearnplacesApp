@@ -33,6 +33,7 @@ declare global {
     visited: boolean;
     blocks: Array<BlockInterface>;
     content_size: string;
+    downloaded?: boolean;
   }
 
   interface CachedContainer {

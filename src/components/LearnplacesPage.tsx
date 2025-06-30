@@ -32,6 +32,7 @@ export const LearnplacesPage = () => {
   const selectedTag = useSelector(getSelectedTag); // current selected tag
   const searchQuery = useSelector(getSearchQuery); // current search query
   const learnplaces = useSelector(getLearnplaces);
+  const [processedLearnplaces, setProcessedLearnplaces] = useState<LearnplaceInterface[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
 
@@ -101,7 +102,26 @@ export const LearnplacesPage = () => {
     return filtered;
   }, []);
 
-  const filteredLearnplaces = filterLearnplaces(learnplaces, selectedTag, searchQuery);
+  // checks if learnplace is downloaded to cache
+  useEffect(() => {
+    const processLearnplaces = async () => {
+      const filtered = filterLearnplaces(learnplaces, selectedTag, searchQuery);
+      const processed = await Promise.all(
+          filtered.map(async learnplace => {
+            const cache = await caches.open('page-cache');
+            const cacheKeys = await cache.keys();
+            const isInCache = cacheKeys.some(key => key.url.endsWith(`/learnplaces/${learnplace.id}`));
+            return {
+              ...learnplace,
+              downloaded: !!isInCache
+            };
+          })
+      );
+      setProcessedLearnplaces(processed);
+    };
+
+    processLearnplaces();
+  }, [learnplaces, selectedTag, searchQuery, filterLearnplaces]);
 
   // handler for search query
   const handleSearchInput = useCallback((searchQuery: string) => {
@@ -229,12 +249,13 @@ export const LearnplacesPage = () => {
 
       {/* Learnplace List */}
       <ul>
-        {filteredLearnplaces.map((learnplace: LearnplaceInterface) => (
+        {processedLearnplaces.map((learnplace: LearnplaceInterface) => (
           <li key={learnplace.id}>
             <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
               <div className="card">
                 <div className="card-header">
                   <h2>{learnplace.title}</h2>
+                  <strong>{learnplace.downloaded ? 'Heruntergeladen' : 'Nicht heruntergeladen'}</strong>
                   <div className="learnplace-visited-status">
                     {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
                   </div>
