@@ -283,10 +283,13 @@ export const LearnplacePage = () => {
       </div>
 
       <div className="download-container">
+
+        {/* connection type */}
         <div>{connectionInfo}</div>
-        <div className="connection-details">
-          {connectionType !== 'unknown' && `(${downloadSpeed} Mbps)`}
-        </div>
+
+        {/* download size */}
+        <div className="content-size mt-4">Download-Größe: {learnplace.content_size == '0 Bytes' ? ' < 1MB' : learnplace.content_size}</div>
+
         <DownloadToCacheButton url={learnplaceUrl} />
       </div>
 

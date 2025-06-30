@@ -32,7 +32,7 @@ declare global {
     tags: Array<string>;
     visited: boolean;
     blocks: Array<BlockInterface>;
-    content_size: number;
+    content_size: string;
   }
 
   interface CachedContainer {
