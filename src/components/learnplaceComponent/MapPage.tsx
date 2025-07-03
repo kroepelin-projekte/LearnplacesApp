@@ -95,7 +95,7 @@ export const MapPage = () => {
             if (mapRef.current && learnplace) {
               mapRef.current.flyTo(
                 [learnplace.location.latitude, learnplace.location.longitude],
-                17, // Zoom-Level für Lernort
+                  learnplace.location.zoom,
                 { duration: 2 }
               );
             }

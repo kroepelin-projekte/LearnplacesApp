@@ -20,6 +20,7 @@ import {Loader} from './Loader.tsx';
 import {SyncLearnplaces} from './SyncLearnplaces.tsx';
 import {setAccessToken} from '../state/auth/authSlice.ts';
 import iconCheck from "../assets/images/pin-check_2_black.svg";
+import {BsDownload} from "react-icons/bs";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const LearnplacesPage = () => {
@@ -255,8 +256,8 @@ export const LearnplacesPage = () => {
               <div className="card">
                 <div className="card-header">
                   <h2>{learnplace.title}</h2>
-                  <strong>{learnplace.downloaded ? 'Heruntergeladen' : 'Nicht heruntergeladen'}</strong>
                   <div className="learnplace-visited-status">
+                    {learnplace.downloaded ? <BsDownload size={26} style={{filter: 'brightness(0)'}} /> : ''}
                     {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
                   </div>
                 </div>
