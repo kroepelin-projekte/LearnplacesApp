@@ -18,7 +18,7 @@ export const Navbar = () => {
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? iconGroupActive : iconGroup} alt="lernorte" />
+            <img src={isActive ? iconGroupActive : iconGroup} height="30" alt="lernorte" />
             <span>Lernorte</span>
           </>
         )}
@@ -29,7 +29,7 @@ export const Navbar = () => {
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? iconQuestionActive : iconQuestion} alt="how-to" />
+            <img src={isActive ? iconQuestionActive : iconQuestion} height="30" alt="how-to" />
             <span>How-To</span>
           </>
         )}
@@ -40,7 +40,7 @@ export const Navbar = () => {
       >
         {({ isActive }) => (
           <>
-            {isActive ? <BsDownload size={28} /> : <BsDownload size={28} />}
+            {isActive ? <BsDownload size={28} /> : <BsDownload size={30} />}
             <span>Downloads</span>
           </>
         )}
@@ -51,7 +51,7 @@ export const Navbar = () => {
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? iconQrCodeActive : iconQrCode} alt="Scanner" />
+            <img src={isActive ? iconQrCodeActive : iconQrCode} height="30" alt="Scanner" />
             <span>Scanner</span>
           </>
         )}
