@@ -19,13 +19,37 @@ export const OfflineMessage = () => {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+
+
+      //const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+
+      const TIMEOUT_SECONDS = 10;
+      let remainingSeconds = TIMEOUT_SECONDS;
+
+      const countdownInterval = setInterval(() => {
+        console.log(`Timeout in ${remainingSeconds} Sekunden...`);
+        remainingSeconds--;
+
+        if (remainingSeconds < 0) {
+          clearInterval(countdownInterval);
+        }
+      }, 1000);
+
+      const timeoutId = setTimeout(() => {
+        controller.abort();
+        clearInterval(countdownInterval);
+      }, TIMEOUT_SECONDS * 1000);
+
+
 
       const response = await fetch(`${apiBaseUrl}/health`, {
         headers: { Authorization: `Bearer ${accessToken}` },
         signal: controller.signal
       });
 
+      clearInterval(countdownInterval);
       clearTimeout(timeoutId);
 
       if (!response.ok) {
@@ -33,6 +57,7 @@ export const OfflineMessage = () => {
       }
 
       setServerReachable(true);
+      console.log('Checking server health: SUCCESS');
     } catch (error) {
 
       setServerReachable(false);
