@@ -18,6 +18,7 @@ import {DownloadedLearnplaces} from './components/DownloadedLearnplaces.tsx';
 import {useEffect} from 'react';
 import {initializeAuth} from './state/auth/authSlice.ts';
 import useGeolocation from './utils/geolocation.ts';
+import { checkServerHealth, setOnlineStatus } from './state/health/healthSlice';
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -28,6 +29,47 @@ function App() {
   useEffect(() => {
     dispatch(initializeAuth());
   }, [navigate, dispatch]);
+
+  useEffect(() => {
+    const updateOnlineStatus = () => {
+      dispatch(setOnlineStatus(navigator.onLine));
+      if (navigator.onLine) {
+        dispatch(checkServerHealth());
+      }
+    };
+
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    // Initial check
+    dispatch(checkServerHealth());
+
+    let countdown = 60;
+
+    // Debug Countdown Logger
+    const countdownId = setInterval(() => {
+      if (countdown % 10 === 0) {
+        console.log(`[Health Check] Next check in ${countdown} seconds`);
+      }
+      countdown--;
+      if (countdown < 0) countdown = 60;
+    }, 1000);
+
+
+    // Periodischer Check
+    const intervalId = setInterval(() => {
+      if (navigator.onLine) {
+        dispatch(checkServerHealth());
+      }
+    }, 60000);
+
+    return () => {
+      window.removeEventListener('online', updateOnlineStatus);
+      window.removeEventListener('offline', updateOnlineStatus);
+      clearInterval(intervalId);
+      clearInterval(countdownId);
+    };
+  }, [dispatch]);
 
   useGeolocation(isAuthenticated);
 

@@ -5,6 +5,7 @@ import learnplacesReducer from './learnplaces/learnplacesSlice';
 import geolocation from './map/geolocationSlice.ts';
 import syncedLearnplaces from './sync/syncedLearnplacesSlice.ts';
 import networkSlice from "./network/networkSlice.ts";
+import healthSlice from "./health/healthSlice.ts";
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     geolocation: geolocation,
     sync: syncedLearnplaces,
     network: networkSlice,
+    health: healthSlice,
   },
 });
 
