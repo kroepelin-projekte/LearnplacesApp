@@ -13,11 +13,13 @@ export const OfflineMessage = () => {
 
   // Server health check with timeout
   const checkServerHealth = useCallback(async () => {
+    console.log('Checking server health: START');
     if (!navigator.onLine) return;
+    console.log('Checking server health: USER IS ONLINE');
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
       const response = await fetch(`${apiBaseUrl}/health`, {
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -32,16 +34,22 @@ export const OfflineMessage = () => {
 
       setServerReachable(true);
     } catch (error) {
-      // Ignore AbortError as it only means the request timed out
+
+      setServerReachable(false);
+      console.error('Checking server health: ERROR checking server status:', error);
+
+
+/*      // Ignore AbortError as it only means the request timed out
       if (error instanceof Error && error.name !== 'AbortError') {
         setServerReachable(false);
         console.error('Error checking server status:', error);
-      }
+      }*/
     }
   }, [apiBaseUrl, accessToken]);
 
   // Debounced online status update
   const updateOnlineStatus = useCallback(() => {
+    console.log('Online status changed');
     // Clear previous timer
     if (statusChangeTimer) {
       clearTimeout(statusChangeTimer);

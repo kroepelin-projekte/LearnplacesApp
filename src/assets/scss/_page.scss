@@ -464,6 +464,9 @@ main .downloads section section {
   margin-block: 20px;
   border-bottom: 1px solid #ccc;
   padding-top: 20px;
+  > h2 {
+    font-size: 32px;
+  }
 }
 main .downloads section section:last-child {
   border: 0;

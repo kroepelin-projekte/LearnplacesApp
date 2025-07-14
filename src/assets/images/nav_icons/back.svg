@@ -1,9 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="29.836" height="25.976" viewBox="0 0 29.836 25.976">
-  <g id="logout_1_" data-name="logout(1)" transform="translate(508.9 -189.241)">
-    <g id="Gruppe_15" data-name="Gruppe 15" transform="translate(-308.964 322.382) rotate(180)">
-      <g id="Gruppe_14" data-name="Gruppe 14" transform="translate(170.1 107.165)">
-        <path id="Pfad_110" data-name="Pfad 110" d="M199.383,118.832,188.1,107.7a1.855,1.855,0,1,0-2.605,2.642l8.062,7.956h-21.6a1.855,1.855,0,0,0,0,3.711h21.6l-8.062,7.956a1.855,1.855,0,1,0,2.605,2.642l11.281-11.133a1.855,1.855,0,0,0,0-2.642Z" transform="translate(-170.1 -107.165)" fill="#fff"/>
-      </g>
-    </g>
-  </g>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 396.8 285">
+  <!-- Generator: Adobe Illustrator 29.3.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 151)  -->
+  <path fill="#ffffff" d="M15.8,150.7h0l116.4,116.4c4.2,4.9,11.5,5.4,16.4,1.3,4.9-4.2,5.5-11.5,1.3-16.4-.4-.5-.8-.9-1.3-1.3l-96.5-96.6h317.7c6.4,0,11.6-5.2,11.6-11.6s-5.2-11.6-11.6-11.6H52.1l96.5-96.5c4.9-4.2,5.5-11.5,1.3-16.4s-11.5-5.5-16.4-1.3c-.5.4-.9.8-1.3,1.3L15.8,134.3c-4.5,4.5-4.5,11.9,0,16.4Z"/>
 </svg>

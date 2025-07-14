@@ -46,7 +46,6 @@ export const LearnplacesPage = () => {
         const newToken = res.headers.get('Learnplaces_token');
 
         if (res.ok && newToken) {
-          console.log('Change access token');
           dispatch(setAccessToken(newToken));
         }
       })

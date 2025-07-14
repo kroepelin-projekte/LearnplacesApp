@@ -19,8 +19,8 @@ export const LearnplaceNavbar = () => {
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? iconBackActive : iconBack} alt="zurück zur Übersicht" />
-            <span></span>
+            <img src={isActive ? iconBackActive : iconBack} alt="zurück zur Übersicht" height="30" />
+            <span>Zurück</span>
           </>
         )}
       </NavLink>
@@ -31,7 +31,7 @@ export const LearnplaceNavbar = () => {
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? iconSingleLearnplaceActive : iconSingleLearnplace} alt="Lernort" />
+            <img src={isActive ? iconSingleLearnplaceActive : iconSingleLearnplace} alt="Lernort" height="30" />
             <span>Lernort</span>
           </>
         )}
@@ -42,7 +42,7 @@ export const LearnplaceNavbar = () => {
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? iconMapActive : iconMap} alt="Karte" />
+            <img src={isActive ? iconMapActive : iconMap} alt="Karte" height="30" />
             <span>Map</span>
           </>
         )}
