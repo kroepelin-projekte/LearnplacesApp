@@ -195,7 +195,7 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
       onClick={isCached ? handleRemoveFromCache : handleDownloadToCache}
     >
       { buttonIsLoading
-        ? <div className="button-loader"><Loader /></div>
+        ? <div className="button-loader no-select"><Loader /></div>
         : (
           isCached
             ? <><BsXLg size={28} /><span>Download Entfernen</span></>

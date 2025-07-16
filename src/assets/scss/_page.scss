@@ -112,7 +112,7 @@ section {
     width: 100%;
     text-align: center;
   }
-  &:hover {
+  &.is-cached {
     background-color: $color-accent-2;
     span,
     svg path{
