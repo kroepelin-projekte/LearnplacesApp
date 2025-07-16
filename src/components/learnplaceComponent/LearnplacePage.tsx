@@ -16,6 +16,7 @@ import {logout} from '../../state/auth/authSlice.ts';
 import iconCheck from '../../assets/images/pin-check_2.svg';
 import Confetti from 'react-confetti';
 import { useSearchParams } from 'react-router-dom';
+import { vibrate } from '../../utils/Navigator.ts';
 
 import { setConnectionInfo } from '../../state/network/networkSlice.ts';
 
@@ -232,6 +233,10 @@ export const LearnplacePage = () => {
     return '';
   }
 
+  if (hasConfetti) {
+    vibrate();
+  }
+
   return (
     <div className="learnplace-page">
 
@@ -242,7 +247,7 @@ export const LearnplacePage = () => {
         <div className="learnplace-visited-status">
           {
             learnplace.visited
-              ? <img src={iconCheck} width="40" alt="Lernort besucht" />
+              ? <img src={iconCheck} width="50" style={{transform: 'translate(10px, -6px)'}} alt="Lernort besucht" />
                 : ''
           }
         </div>
@@ -253,6 +258,8 @@ export const LearnplacePage = () => {
       </div>
 
       <div className="download-container">
+
+        <h2>Lernort Herunterladen</h2>
 
         {/* connection type */}
         <div>{connectionInfo}</div>

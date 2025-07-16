@@ -11,26 +11,29 @@
 
 .accordion-title {
   background-color: $color-accent-2 !important;
-  font-weight: 700;
-  color: $color-white;
   padding: $padding-small;
-  font-size: 16px;
-  text-align: left;
   border: none;
   cursor: pointer;
   width: 100%;
   transition: background-color 0.3s ease;
-  //margin-bottom: 10px;
   &:hover {
     filter: brightness(1.1);
+  }
+  .accordion-title-text {
+    padding-left: 30px;
+    font-weight: 700;
+    color: $color-white;
+    font-size: 16px;
+    text-align: left;
+    width: 100%;
+    display: inline-block;
   }
 }
 
 .accordion-icon {
-  display: inline-block;
+  position: absolute;
   transition: transform 0.3s ease;
   transform: translateY(2px);
-  margin-right: $padding-small;
   color: $color-white !important;
 
   svg {
@@ -62,8 +65,5 @@
     padding: 10px;
     border: 1px solid #eee;
     border-radius: 3px;
-/*    &:last-child {
-      margin-bottom: 10px;
-    }*/
   }
 }

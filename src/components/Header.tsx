@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import {useSelector} from 'react-redux';
 import {RootState} from '../state/store.ts';
 import logo from '../assets/images/logo.svg';
+import { vibrate } from '../utils/Navigator.ts';
 
 export const Header = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
 
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
-  const openModal = () => setShowModal(true);
+  const openModal = () => {
+    setShowModal(true);
+    vibrate();
+  };
   const closeModal = () => setShowModal(false);
 
   const confirmLogout = () => {

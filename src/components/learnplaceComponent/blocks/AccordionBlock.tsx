@@ -61,7 +61,7 @@ export const AccordionBlock = (props: {isWithinLearnplaceRadius: boolean, block:
         >
           <BsChevronRight />
         </span>
-        {title}
+          <div className="accordion-title-text">{title}</div>
       </button>
 
       <div

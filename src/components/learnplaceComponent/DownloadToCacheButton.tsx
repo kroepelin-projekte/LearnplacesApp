@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import { BsDownload, BsXLg } from "react-icons/bs";
 import {store} from '../../state/store.ts';
+import {Loader} from "../Loader.tsx";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 const PAGE_CACHE = 'page-cache';
 const MEDIA_CACHE = 'media-cache';
@@ -194,10 +195,10 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
       onClick={isCached ? handleRemoveFromCache : handleDownloadToCache}
     >
       { buttonIsLoading
-        ? <span>...</span>
+        ? <div className="button-loader"><Loader /></div>
         : (
           isCached
-            ? <><BsXLg size={28} /><span>Entfernen</span></>
+            ? <><BsXLg size={28} /><span>Download Entfernen</span></>
             : <><BsDownload size={28} /><span>Herunterladen</span></>
         )
       }
