@@ -15,6 +15,10 @@ It guides users to various learnplaces and provides detailed information about e
 Additionally, the app allows users to store all data for offline access.
 At each learnplace, users can scan a QR code to confirm their visit and get learning progress in ILIAS.
 
+<img src="src/assets/screenshots/screenshot_1.png" alt="Screenshot" height="400"/>
+<img src="src/assets/screenshots/screenshot_2.png" alt="Screenshot" height="200"/>
+
+
 ## Installation
 
 ### Prerequisites
