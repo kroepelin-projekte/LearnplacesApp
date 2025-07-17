@@ -19,7 +19,8 @@ import {fetchLearnplaces, getLearnplaces, getLearnplacesLoadingState} from '../s
 import {Loader} from './Loader.tsx';
 import {SyncLearnplaces} from './SyncLearnplaces.tsx';
 import {setAccessToken} from '../state/auth/authSlice.ts';
-import iconCheck from "../assets/images/pin-check_2_black.svg";
+//import iconCheck from "../assets/images/pin-check_2_black.svg";
+import iconCheck from "../assets/images/pin-check_2.svg";
 import {BsDownload} from "react-icons/bs";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 

@@ -37,7 +37,6 @@ section {
   transition: 0.2s ease;
   width: 100%;
   min-height: 45px;
-  //max-width: min(30ch, 420px);
   max-width: 500px;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -46,7 +45,6 @@ section {
   text-decoration: none;
   font-size: 18px;
   font-weight: bold;
-  margin-top: 10px;
   border-radius: $border-radius;
   &:before {
     content: "\203A";
@@ -103,7 +101,7 @@ section {
   text-decoration: none;
   font-size: 18px;
   font-weight: bold;
-  margin-block: 40px;
+  margin-block: $padding;
   border-radius: $border-radius;
   svg {
     margin-right: auto;
@@ -156,6 +154,7 @@ li:has(.card):last-child {
 }
 .card {
   padding: 12px;
+  padding-left: 0;
   border-radius: $border-radius;
   display: grid;
   grid-template-rows: min-content 1fr;
@@ -170,16 +169,24 @@ li:has(.card):last-child {
       font-size: 28px;
       font-weight: 700;
       color: $color-black;
-      padding-right: 110px;
+      padding-right: 80px;
       hyphens: auto;
     }
     .learnplace-visited-status  {
       position: absolute;
       top: 0;
       right: 0;
-      display: flex;
-      align-items: center;
-      gap: $padding-small;
+      width: 60px;
+      svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      img {
+        position: absolute;
+        top: -4px;
+        right: -18px;
+      }
     }
   }
   .card-body {
@@ -379,7 +386,7 @@ ul:has(.card) {
   align-items: center;
   justify-content: center;
   margin-block: $padding;
-  margin-top: 60px;
+  margin-top: $padding;
   border: 1px solid $color-accent-2;
   padding: $padding-small;
   transition: all .25s ease;
