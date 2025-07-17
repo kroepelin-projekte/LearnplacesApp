@@ -1,7 +1,18 @@
 {
   "name": "learnplacesapp",
+  "author": {
+    "name": "Kröpelin Projekt GmbH",
+    "url": "https://kroepelin-projekt.de",
+    "email": "support@kroepelin-projekte.de"
+  },
+  "copyright": "Copyright (c) 2025 Kröpelin Projekt GmbH",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kroepelin-projekte/LearnplacesApp"
+  },
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
