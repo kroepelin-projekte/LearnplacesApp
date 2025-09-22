@@ -35,7 +35,7 @@ export const isWithinRadius = (learnplacePosition: Position, learnplaceRadius: n
 }
 
 export const isVisible = (visited: boolean, isWithinLearnplaceRadius: boolean, visibleStatus: string) =>  {
-  if (visibleStatus === 'AFTER_VISIT_PLACE' && !visited) {
+  if (visibleStatus === 'AFTER_VISIT_PLACE' && (!visited && !isWithinLearnplaceRadius)) {
     return false;
   } else if (visibleStatus === 'ONLY_AT_PLACE') {
     if (!isWithinLearnplaceRadius) {
