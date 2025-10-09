@@ -14,6 +14,8 @@ interface ContainersState {
   selectedContainer: number | null;
   selectedTag: string | null;
   searchQuery: string;
+  mapCenter: {lat: number, lng: number};
+  mapZoom: number;
   isLoading: boolean;
   error: string | null;
 }
@@ -23,6 +25,8 @@ const initialState: ContainersState = {
   selectedContainer: null,
   selectedTag: null,
   searchQuery: '',
+  mapCenter: {lat: 47.9960901, lng: 7.8494005},
+  mapZoom: 5,
   isLoading: false,
   error: null,
 };
@@ -68,6 +72,12 @@ const containersSlice = createSlice({
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.searchQuery = action.payload;
     },
+    setMapCenter: (state, action: PayloadAction<{lat: number, lng: number}>) => {
+      state.mapCenter = action.payload;
+    },
+    setMapZoom: (state, action: PayloadAction<number>) => {
+      state.mapZoom = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -87,12 +97,14 @@ const containersSlice = createSlice({
   },
 });
 
-export const { setSelectedContainer, setSelectedTag, setSearchQuery } = containersSlice.actions;
+export const { setSelectedContainer, setSelectedTag, setSearchQuery, setMapCenter, setMapZoom } = containersSlice.actions;
 
 export const getContainers = (state: RootState) => state.containers.containers;
 export const getSelectedContainer = (state: RootState) => state.containers.selectedContainer;
 export const getSelectedTag = (state: RootState) => state.containers.selectedTag;
 export const getSearchQuery = (state: RootState) => state.containers.searchQuery;
 export const getContainerLoadingState = (state: RootState) => state.containers.isLoading;
+export const getMapCenter = (state: RootState) => state.containers.mapCenter;
+export const getMapZoom = (state: RootState) => state.containers.mapZoom;
 
 export default containersSlice.reducer;

@@ -21,6 +21,7 @@ import {SyncLearnplaces} from './SyncLearnplaces.tsx';
 import {setAccessToken} from '../state/auth/authSlice.ts';
 import iconCheck from "../assets/images/pin-check_2.svg";
 import {BsDownload} from "react-icons/bs";
+import {CourseMap} from "./CourseMap.tsx";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const LearnplacesPage = () => {
@@ -246,6 +247,8 @@ export const LearnplacesPage = () => {
           </div>
         </div>
       </section>
+
+      <CourseMap learnplaces={processedLearnplaces} />
 
       {/* Learnplace List */}
       <ul>
