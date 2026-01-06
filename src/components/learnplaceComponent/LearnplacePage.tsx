@@ -19,6 +19,7 @@ import { useSearchParams } from 'react-router-dom';
 import { vibrate } from '../../utils/Navigator.ts';
 
 import { setConnectionInfo } from '../../state/network/networkSlice.ts';
+import {CheckinByGeolocation} from "./CheckinByGeolocation.tsx";
 
 
 export const LearnplacePage = () => {
@@ -283,7 +284,11 @@ export const LearnplacePage = () => {
         {blockComponents.length > 0 ? blockComponents : null}
       </div>
 
-      <div className="download-container">
+      <div className="checkin-section">
+        <CheckinByGeolocation learnplace={learnplace} />
+      </div>
+
+      <div className="download-container background">
 
         <h2>Lernort Herunterladen</h2>
 

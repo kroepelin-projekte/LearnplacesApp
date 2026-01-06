@@ -83,12 +83,17 @@ section {
   }
 }
 
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-download-to-cache {
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  background-color: transparent;
+  background-color: $color-white;
   color: $color-accent-2;
   padding-inline: 20px;
   border: 2px solid $color-accent-2;
@@ -103,6 +108,9 @@ section {
   font-weight: bold;
   margin-block: $padding;
   border-radius: $border-radius;
+  &:hover {
+    filter: brightness(0.95);
+  }
   svg {
     margin-right: auto;
   }
@@ -112,11 +120,20 @@ section {
   }
   &.is-cached {
     background-color: $color-accent-2;
+    &:hover {
+      filter: brightness(1.1);
+    }
     span,
     svg path{
       color: $color-white;
     }
   }
+}
+
+.checkin-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 
