@@ -2,7 +2,7 @@
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim, skipWaiting } from 'workbox-core'
 import { NavigationRoute, registerRoute } from 'workbox-routing'
-import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
+import {StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
 // import {getIndexedDBData} from "./utils/Database.ts";
@@ -62,7 +62,7 @@ registerRoute(new NavigationRoute(
  Caching of downloaded pages and media (learnplacesInfo)
  =========================================
  */
-const PAGE_CACHE = 'page-cache';
+/*const PAGE_CACHE = 'page-cache';
 registerRoute(
   ({ url }) => {
     const matches = /.*\/learnplaces\/\d+$/.test(url.pathname);
@@ -93,9 +93,9 @@ registerRoute(
       },
     ],
   })
-);
+);*/
 
-const MEDIA_CACHE = 'media-cache';
+/*const MEDIA_CACHE = 'media-cache';
 registerRoute(
   ({ url }) => {
     const matches = /.*\/resources\/[a-z0-9-]+$/.test(url.pathname);
@@ -126,7 +126,7 @@ registerRoute(
       },
     ],
   })
-);
+);*/
 
 
 /**

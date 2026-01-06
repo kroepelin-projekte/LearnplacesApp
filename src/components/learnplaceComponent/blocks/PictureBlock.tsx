@@ -22,24 +22,48 @@ export const PictureBlock = (props: {isWithinLearnplaceRadius: boolean, block: B
 
   const rid = props.block.picture;
   useEffect(() => {
-    const fetchImage = () => {
+    const fetchImage = async () => {
       const accessToken = store.getState().auth.accessToken;
+      const imageUrl = `${apiBaseUrl}/resources/${rid}`;
+      const cacheName = 'media-cache'; // Der Cache für Bilder/Ressourcen
 
-      fetch(`${apiBaseUrl}/resources/${rid}`, {
+      try {
+        const res = await fetch(imageUrl, {
           method: 'GET',
           headers: {
             'Authorization': 'Bearer ' + accessToken,
           }
-        })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('[PictureBlock] Failed to fetch learnplace: ' + res.statusText);
+        });
+
+        if (!res.ok) {
+          throw new Error('[PictureBlock] Failed to fetch image: ' + res.statusText);
+        }
+
+        const blob = await res.blob();
+        setImgSrc(URL.createObjectURL(blob));
+
+        // Optional: Hier könntest du das Bild auch manuell cachen,
+        // falls es nicht über die Download-Funktion kam.
+      } catch (error) {
+        console.log('[PictureBlock] Fetch error, checking cache...', error);
+
+        try {
+          const cache = await caches.open(cacheName);
+          const cachedResponse = await cache.match(imageUrl);
+
+          if (cachedResponse) {
+            const blob = await cachedResponse.blob();
+            console.log('[PictureBlock] Serving image from manual cache');
+            setImgSrc(URL.createObjectURL(blob));
+          } else {
+            console.warn('[PictureBlock] Image not found in cache');
           }
-          return res.blob();
-        })
-        .then(blob => setImgSrc(URL.createObjectURL(blob)))
-        .catch(error => console.error('[PictureBlock] Error when fetching image:', error))
-        .then(() => setLoading(false));
+        } catch (cacheError) {
+          console.error('[PictureBlock] Cache lookup failed', cacheError);
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchImage();

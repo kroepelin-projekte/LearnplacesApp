@@ -41,62 +41,64 @@ export const DownloadToCacheButton = ({url}: {url: string}) => {
           'Authorization': 'Bearer ' + accessToken,
         }
       });
+
       if (!res.ok) {
         throw new Error(`[DownloadButton]: Network response was not ok (${res.status})`);
       }
+
+      // 1. Die JSON-Seite selbst cachen
       await cacheData(url, res, PAGE_CACHE);
 
       const data = await res.json();
       const resourceUrlBase = `${apiBaseUrl}/resources/`;
+      const MEDIA_CACHE = 'media-cache';
 
+      // 2. Hilfsfunktion für Medien-Caching (Bilder & Videos)
+      const downloadMedia = async (rid: string) => {
+        if (!rid) return;
+        const mediaUrl = resourceUrlBase + rid;
+
+        try {
+          const mediaRes = await fetch(mediaUrl, {
+            headers: { 'Authorization': `Bearer ${accessToken}` }
+          });
+
+          // WICHTIG: Cache-API benötigt Status 200 (kein 206 Partial Content)
+          if (mediaRes.ok && mediaRes.status === 200) {
+            const cache = await caches.open(MEDIA_CACHE);
+            await cache.put(mediaUrl, mediaRes);
+            console.log(`[DownloadButton]: Cached media successfully: ${rid}`);
+          } else {
+            console.warn(`[DownloadButton]: Failed to cache ${rid}. Status: ${mediaRes.status}`);
+          }
+        } catch (e) {
+          console.error(`[DownloadButton]: Error fetching media ${rid}:`, e);
+        }
+      };
+
+      // 3. Durch alle Blöcke iterieren
       const blocks = data.data.blocks || [];
       for (const block of blocks) {
-        if (block.picture) {
-          console.log('Bild URL: ', resourceUrlBase + block.picture);
-          await fetchAndCache(resourceUrlBase + block.picture);
-        }
-        if (block.video) {
-          await fetchAndCache(resourceUrlBase + block.video);
-        }
+        console.log('_____________', block);
+        // Haupt-Blöcke prüfen
+        if (block.type === 'PictureBlock') await downloadMedia(block.picture);
+        if (block.type === 'VideoBlock') await downloadMedia(block.resource_id);
 
+        // Sub-Blöcke prüfen
         if (block.sub_blocks && Array.isArray(block.sub_blocks)) {
           for (const subBlock of block.sub_blocks) {
-            if (subBlock.picture) {
-              console.log('Bild URL: ', resourceUrlBase + subBlock.picture);
-              await fetchAndCache(resourceUrlBase + subBlock.picture);
-            }
-            if (subBlock.video) {
-              await fetchAndCache(resourceUrlBase + subBlock.video);
-            }
+            if (subBlock.type === 'PictureBlock') await downloadMedia(subBlock.picture);
+            if (subBlock.type === 'VideoBlock') await downloadMedia(subBlock.resource_id);
           }
         }
       }
 
       console.log(`[DownloadButton]: All resources cached successfully.`);
       setIsCached(true);
-      setButtonIsLoading(false);
     } catch (err) {
       console.error('[DownloadButton]: Error during caching process', err);
-    }
-  };
-
-  const fetchAndCache = async (resourceUrl: string) => {
-    try {
-      const accessToken = store.getState().auth.accessToken;
-      const res = await fetch(resourceUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + accessToken,
-        }
-      });
-      if (!res.ok) {
-        console.warn(`[DownloadButton]: Failed to fetch ${resourceUrl}, status: ${res.status}`);
-        return;
-      }
-      await cacheData(resourceUrl, res, MEDIA_CACHE);;
-      console.log(`[DownloadButton]: Cached ${resourceUrl} successfully.`);
-    } catch (error) {
-      console.error(`[DownloadButton]: Error caching ${resourceUrl}`, error);
+    } finally {
+      setButtonIsLoading(false);
     }
   };
 
