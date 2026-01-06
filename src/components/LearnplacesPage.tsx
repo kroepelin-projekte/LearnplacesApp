@@ -37,6 +37,7 @@ export const LearnplacesPage = () => {
   const [processedLearnplaces, setProcessedLearnplaces] = useState<LearnplaceInterface[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+  const [isInitialAuthChecked, setIsInitialAuthChecked] = useState(false);
 
   // refresh access_token
   useEffect(() => {
@@ -52,16 +53,19 @@ export const LearnplacesPage = () => {
       })
       .catch(error => {
         console.error('Fehler bei /refresh', error);
+      })
+      .finally(() => {
+        setIsInitialAuthChecked(true);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   // load containers when component is mounted
   useEffect(() => {
-    if (containers.length === 0) {
+    if (isInitialAuthChecked && containers.length === 0) {
       dispatch(fetchContainers());
     }
-  }, [dispatch, containers.length]);
+  }, [dispatch, containers.length, isInitialAuthChecked]);
 
   // load learnplaces when container changes
   useEffect(() => {
@@ -176,7 +180,7 @@ export const LearnplacesPage = () => {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
-          <h1>Übersicht</h1>
+          <h1>Suche</h1>
           <div className="home-page-loader-container">
             <Loader />
           </div>
@@ -190,7 +194,7 @@ export const LearnplacesPage = () => {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
-          <h1>Übersicht</h1>
+          <h1>Suche</h1>
           <div className="home-page-loader-container">
             Es wurden keine Lernorte gefunden.
           </div>
@@ -205,7 +209,7 @@ export const LearnplacesPage = () => {
 
       {/* Controls */}
       <section className="learnplaces-container-select">
-        <h1>Übersicht</h1>
+        <h1>Suche</h1>
 
         <div className="learnplace-settings-container">
           {/* Container Dropdown */}

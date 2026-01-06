@@ -1,7 +1,9 @@
-import { MapContainer, TileLayer, Circle, CircleMarker, useMapEvent } from "react-leaflet";
+import { MapContainer, TileLayer, Circle, CircleMarker, useMapEvent, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { getMapCenter, getMapZoom, setMapCenter, setMapZoom } from '../state/containers/containersSlice';
+import {useEffect, useRef} from "react";
+import L from 'leaflet';
 
 export function CourseMap({ learnplaces }: { learnplaces: LearnplaceInterface[] }) {
     const navigate = useNavigate();
@@ -12,7 +14,23 @@ export function CourseMap({ learnplaces }: { learnplaces: LearnplaceInterface[] 
 
     // Helper-Component: Lauscht auf Map-Events und dispatcht aktuelle Werte in den Redux Store
     function MapSyncToRedux() {
-        useMapEvent("moveend", (event) => {
+
+      const map = useMap();
+      const lastIds = useRef<string>("");
+
+      useEffect(() => {
+        if (learnplaces.length === 0) return;
+
+        // Nur zoomen, wenn sich die IDs der Lernorte wirklich geändert haben
+        const currentIds = learnplaces.map(lp => lp.id).sort().join(",");
+        if (currentIds !== lastIds.current) {
+          const bounds = L.latLngBounds(learnplaces.map(lp => [lp.location.latitude, lp.location.longitude]));
+          map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+          lastIds.current = currentIds;
+        }
+      }, [map]); // Jetzt mit learnplaces in den Dependencies
+
+      useMapEvent("moveend", (event) => {
             const c = event.target.getCenter();
             dispatch(setMapCenter({ lat: c.lat, lng: c.lng }));
         });
@@ -26,6 +44,13 @@ export function CourseMap({ learnplaces }: { learnplaces: LearnplaceInterface[] 
         <MapContainer
             center={mapCenter}
             zoom={mapZoom}
+            dragging={false}
+            zoomControl={false}
+            scrollWheelZoom={false}
+            doubleClickZoom={false}
+            touchZoom={false}
+            boxZoom={false}
+            keyboard={false}
             style={{ height: "400px", width: "100%", marginBottom: "30px", borderRadius: "4px" }}
         >
             <MapSyncToRedux />

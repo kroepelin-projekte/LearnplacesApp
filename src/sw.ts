@@ -5,7 +5,7 @@ import { NavigationRoute, registerRoute } from 'workbox-routing'
 import {CacheFirst, StaleWhileRevalidate} from 'workbox-strategies';
 import {CacheableResponsePlugin} from 'workbox-cacheable-response';
 import {ExpirationPlugin} from 'workbox-expiration';
-import { getIndexedDBData } from './utils/Database';
+// import {getIndexedDBData} from "./utils/Database.ts";
 
 declare let self: ServiceWorkerGlobalScope
 
@@ -31,7 +31,7 @@ registerRoute(new NavigationRoute(
  Custom plugin for workbox stale while revalidate with headers
  =========================================
  */
-const jwtTokenPlugin = {
+/*const jwtTokenPlugin = {
   requestWillFetch: async ({ request }: { request: Request }) => {
     try {
       const accessToken = await getIndexedDBData('access_token');
@@ -55,7 +55,7 @@ const jwtTokenPlugin = {
       return request;
     }
   },
-};
+};*/
 
 /**
  =========================================
@@ -134,41 +134,24 @@ registerRoute(
  Temporary caching of learnplaces list
  =========================================
  */
-const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
+/*const TMP_LEARNPLACES_CACHE = 'tmp-learnplaces-cache';
 registerRoute(
-  ({ url }) => {
-    return url.pathname.includes('containers');
-  },
+  ({ url }) => url.pathname.includes('containers'),
   new StaleWhileRevalidate({
     cacheName: TMP_LEARNPLACES_CACHE,
     plugins: [
       {
         cacheKeyWillBeUsed: async ({ request }) => {
-          const url = new URL(request.url);
-          //console.log('[Service Worker] URL ohne Header:', url.href);
-          return new Request(url.href);
+          return request.url;
         },
       },
       jwtTokenPlugin,
-      {
-        handlerDidError: async () => {
-          //console.log("[Service Worker] Fehler beim Abrufen von Medien:", request.url);
-          return new Response("Das angeforderte Medium ist offline.", {
-            status: 503,
-            statusText: "Media Unavailable",
-          });
-        },
-      },
       new CacheableResponsePlugin({
-        statuses: [0, 200],
-      }),
-      new ExpirationPlugin({
-        maxEntries: 10,
-        maxAgeSeconds: 60 * 60,
+        statuses: [200], // NUR 200er cachen. Ein 401 (Token abgelaufen) soll den Cache NICHT überschreiben!
       }),
     ],
   })
-);
+);*/
 
 /**
  =========================================
