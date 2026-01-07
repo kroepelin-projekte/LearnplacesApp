@@ -161,7 +161,7 @@ export const LearnplacesPage = () => {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
-          <h1>Übersicht</h1>
+          <h1>Suche</h1>
           <p>
           Sie sind offline. Auf der Download-Seite finden Sie alle heruntergeladenen Lernorte.
           </p>

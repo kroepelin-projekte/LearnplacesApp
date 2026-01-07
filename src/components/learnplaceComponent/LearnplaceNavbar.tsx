@@ -14,7 +14,7 @@ export const LearnplaceNavbar = () => {
   return (
     <nav className="navigation" onClick={vibrate}>
       <NavLink
-        to="/lernorte"
+        to="/suche"
         className={({ isActive }) => (isActive ? "link active" : "link")}
       >
         {({ isActive }) => (

@@ -19,6 +19,7 @@ import {useEffect} from 'react';
 import {initializeAuth} from './state/auth/authSlice.ts';
 import useGeolocation from './utils/geolocation.ts';
 import { checkServerHealth, setOnlineStatus } from './state/health/healthSlice';
+import {MapOverviewPage} from "./components/MapOverviewPage.tsx";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -104,7 +105,8 @@ function App() {
         >
           <Route index element={<StartPage />} />
           <Route path="logout" element={<Logout />} />
-          <Route path="lernorte" element={<LearnplacesPage />} />
+          <Route path="lernorte" element={<MapOverviewPage />} />
+          <Route path="suche" element={<LearnplacesPage />} />
           <Route path="how-to" element={<HowToPage />} />
           <Route path="scanner" element={<QrCodeScannerPage />} />
           <Route path="downloads" element={<DownloadedLearnplaces />} />
