@@ -65,6 +65,25 @@ declare global {
     rtt?: number; // Round Trip Time in ms
     saveData?: boolean; // Data saving mode?
   }
+
+  interface TourLearnplace {
+    id: number;
+    latitude: number;
+    longitude: number;
+    lat?: number;
+    lng?: number;
+    radius: number;
+    title: string;
+    visited: boolean;
+  }
+
+  interface Tour {
+    map_id: number;
+    context_ref_id: number;
+    title: string;
+    description: string;
+    tour_learnplaces: TourLearnplace[];
+  }
 }
 
 export {};

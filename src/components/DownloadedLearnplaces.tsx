@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
 import DOMPurify from 'dompurify';
 import { vibrate } from '../utils/Navigator.ts';
-import iconCheck from "../assets/images/pin-check_2_black.svg";
+import iconCheck from "../assets/images/pin-check_2.svg";
 
 export const DownloadedLearnplaces = () => {
   const [cachedLearnplaces, setCachedLearnplaces] = useState<CachedContainer[]>([]);

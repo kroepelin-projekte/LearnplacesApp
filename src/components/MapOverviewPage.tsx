@@ -2,25 +2,9 @@ import {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
 import {RootState} from "../state/store.ts";
 import {Loader} from "./Loader.tsx";
-import {TourMap} from "./TourMap.tsx";
+import {MapTourThumbnail} from "./MapTourThumbnail.tsx";
+import {Link} from "react-router-dom";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
-interface TourLearnplace {
-  id: number;
-  latitude: number;
-  longitude: number;
-  lat?: number;
-  lng?: number;
-  radius: number;
-  title: string;
-  visited: boolean;
-}
-
-interface Tour {
-  context_ref_id: number;
-  title: string;
-  tour_learnplaces: TourLearnplace[];
-}
 
 export const MapOverviewPage = () => {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -31,7 +15,7 @@ export const MapOverviewPage = () => {
     if (!accessToken) return;
     setIsLoading(true);
 
-    fetch(`${apiBaseUrl}/maps`, {
+    fetch(`${apiBaseUrl}/maps-tour`, {
       headers: { Authorization: `Bearer ${accessToken}` },
     })
       .then(res => {
@@ -81,10 +65,16 @@ export const MapOverviewPage = () => {
           <p>Keine Touren gefunden.</p>
         ) : (
           tours.map(tour => (
-            <div key={tour.context_ref_id} className="tour-container" style={{ marginBottom: '30px' }}>
-              <h2 style={{ marginBottom: '10px' }}>{tour.title}</h2>
-              <TourMap learnplaces={tour.tour_learnplaces} />
-            </div>
+            <Link
+              key={tour.context_ref_id}
+              to={`/tour/${tour.map_id}`}
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            >
+              <div className="tour-container" style={{ marginBottom: '30px' }}>
+                <h2 style={{ marginBottom: '10px' }}>{tour.title}</h2>
+                <MapTourThumbnail learnplaces={tour.tour_learnplaces} />
+              </div>
+            </Link>
           ))
         )}
 

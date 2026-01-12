@@ -34,7 +34,7 @@ function FitBounds({ learnplaces }: { learnplaces: TourLearnplace[] }) {
   return null;
 }
 
-export function TourMap({ learnplaces }: TourMapProps) {
+export function MapTour({ learnplaces }: TourMapProps) {
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
 

@@ -20,6 +20,7 @@ import {initializeAuth} from './state/auth/authSlice.ts';
 import useGeolocation from './utils/geolocation.ts';
 import { checkServerHealth, setOnlineStatus } from './state/health/healthSlice';
 import {MapOverviewPage} from "./components/MapOverviewPage.tsx";
+import {MapTourPage} from "./components/MapTourPage.tsx";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -106,6 +107,7 @@ function App() {
           <Route index element={<StartPage />} />
           <Route path="logout" element={<Logout />} />
           <Route path="lernorte" element={<MapOverviewPage />} />
+          <Route path="tour/:id" element={<MapTourPage />} />
           <Route path="suche" element={<LearnplacesPage />} />
           <Route path="how-to" element={<HowToPage />} />
           <Route path="scanner" element={<QrCodeScannerPage />} />
