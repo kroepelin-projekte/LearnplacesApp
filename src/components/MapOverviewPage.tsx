@@ -1,29 +1,16 @@
 import {useEffect, useState} from "react";
-import {useSelector} from "react-redux";
-import {RootState} from "../state/store.ts";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState, AppDispatch} from "../state/store.ts";
 import {Loader} from "./Loader.tsx";
 import {MapTourThumbnail} from "./MapTourThumbnail.tsx";
 import {Link} from "react-router-dom";
+import {MapCollectionThumbnail} from "./MapCollectionThumbnail.tsx";
+import { setMapType } from "../state/mapType/mapTypeSlice.ts";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-interface Collection {
-  map_id: number;
-  title: string;
-  description: string;
-  context_ref_id: number;
-  collection_learnplaces: {
-    id: number;
-    title: string;
-    latitude: number;
-    longitude: number;
-    radius: number;
-    visited: boolean;
-    color: string;
-    render_index: number;
-  }[]
-}
-
 export const MapOverviewPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const activeTab = useSelector((state: RootState) => state.mapType.activeTab);
   const [tours, setTours] = useState<Tour[]>([]);
   const [collections, setCollections] = useState<Collection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,18 +30,7 @@ export const MapOverviewPage = () => {
         throw new Error('Tour Maps Error');
       })
       .then(data => {
-        const rawTours = Object.values(data.data || {}) as Tour[];
-
-        const formattedTours = rawTours.map((tour: Tour) => ({
-          ...tour,
-          tour_learnplaces: tour.tour_learnplaces.map(lp => ({
-            ...lp,
-            lat: lp.latitude,
-            lng: lp.longitude
-          }))
-        }));
-
-        setTours(formattedTours);
+        setTours(data.data);
       })
       .catch(error => {
         console.error('Fetch Error /tours', error);
@@ -73,18 +49,7 @@ export const MapOverviewPage = () => {
         throw new Error('Collection Maps Error');
       })
       .then(data => {
-        const rawTours = Object.values(data.data || {}) as Collection[];
-
-        const formattedCollections = rawTours.map((collection: Collection) => ({
-          ...collection,
-          collection_learnplaces: collection.collection_learnplaces.map(lp => ({
-            ...lp,
-            lat: lp.latitude,
-            lng: lp.longitude
-          }))
-        }));
-
-        setCollections(formattedCollections);
+        setCollections(data.data);
       })
       .catch(error => {
         console.error('Fetch Error /maps-collection', error);
@@ -107,40 +72,88 @@ export const MapOverviewPage = () => {
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
-        <h1>Touren</h1>
+        <h1>Übersicht</h1>
 
-        {tours.length === 0 ? (
-          <p>Keine Touren gefunden.</p>
-        ) : (
-          tours.map(tour => (
-            <Link
-              key={tour.map_id}
-              to={`/tour/${tour.map_id}`}
-              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
-            >
-              <div className="tour-container" style={{ marginBottom: '30px' }}>
-                <h2 style={{ marginBottom: '10px' }}>{tour.title}</h2>
-                <MapTourThumbnail learnplaces={tour.tour_learnplaces} />
-              </div>
-            </Link>
-          ))
-        )}
+        {/* Tab Navigation */}
+        <div className="tabs-container" style={{
+          display: 'flex',
+          gap: '10px',
+          marginBottom: '30px',
+          borderBottom: '2px solid #eee',
+          paddingBottom: '10px'
+        }}>
+          <button
+            onClick={() => dispatch(setMapType('tour'))}
+            style={{
+              padding: '10px 20px',
+              fontSize: '20px',
+              fontWeight: activeTab === 'tour' ? 'bold' : 'normal',
+              border: 'none',
+              background: 'none',
+              borderBottom: activeTab === 'tour' ? '3px solid #1a237e' : '3px solid transparent',
+              color: activeTab === 'tour' ? '#1a237e' : '#666',
+              cursor: 'pointer'
+            }}
+          >
+            Touren
+          </button>
+          <button
+            onClick={() => dispatch(setMapType('collection'))}
+            style={{
+              padding: '10px 20px',
+              fontSize: '20px',
+              fontWeight: activeTab === 'collection' ? 'bold' : 'normal',
+              border: 'none',
+              background: 'none',
+              borderBottom: activeTab === 'collection' ? '3px solid #1a237e' : '3px solid transparent',
+              color: activeTab === 'collection' ? '#1a237e' : '#666',
+              cursor: 'pointer'
+            }}
+          >
+            Sammlungen
+          </button>
+        </div>
 
-        {collections.length === 0 ? (
-          <p>Keine Sammlungen gefunden.</p>
+        {/* Content based on active tab */}
+        {activeTab === 'tour' ? (
+          <div className="tab-content">
+            {tours.length === 0 ? (
+              <p>Keine Touren gefunden.</p>
+            ) : (
+              tours.map(tour => (
+                <Link
+                  key={tour.map_id}
+                  to={`/tour/${tour.map_id}`}
+                  style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                >
+                  <div className="tour-container" style={{ marginBottom: '20px' }}>
+                    <MapTourThumbnail title={tour.title} learnplaces={tour.tour_learnplaces} />
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
         ) : (
-          collections.map(collection => (
-            <Link
-              key={collection.map_id}
-              to={`/tour/${collection.map_id}`}
-              style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
-            >
-              <div className="tour-container" style={{ marginBottom: '30px' }}>
-                <h2 style={{ marginBottom: '10px' }}>{collection.title}</h2>
-                <MapTourThumbnail learnplaces={collection.collection_learnplaces} />
-              </div>
-            </Link>
-          ))
+          <div className="tab-content">todo: title
+            {collections.length === 0 ? (
+              <p>Keine Sammlungen gefunden.</p>
+            ) : (
+              collections.map(collection => (
+                <Link
+                  key={collection.map_id}
+                  to={`/sammlung/${collection.map_id}`}
+                  style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                >
+                  <div className="tour-container" style={{ marginBottom: '20px' }}>
+                    <MapCollectionThumbnail
+                      title={collection.title}
+                      learnplaces={collection.collection_learnplaces}
+                    />
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
         )}
 
       </section>

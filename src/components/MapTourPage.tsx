@@ -27,18 +27,7 @@ export const MapTourPage = () => {
         throw new Error('Tour Fetch Error');
       })
       .then(data => {
-        const rawTour = data.data || data;
-
-        const formattedTour = {
-          ...rawTour,
-          tour_learnplaces: (rawTour.tour_learnplaces || []).map((lp: TourLearnplace) => ({
-            ...lp,
-            lat: lp.latitude,
-            lng: lp.longitude
-          }))
-        };
-
-        setTour(formattedTour);
+        setTour(data.data);
       })
       .catch(error => {
         console.error('Fetch Error /maps-tour/:id', error);
@@ -71,7 +60,12 @@ export const MapTourPage = () => {
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
-        <h1>{tour.title}</h1>
+        <h1>Tour</h1>
+        <h2>{tour.title}</h2>
+
+        <div className="tour-container" style={{ marginBottom: '30px' }}>
+          <MapTour learnplaces={tour.tour_learnplaces} />
+        </div>
 
         {tour.description && (
           <div
@@ -80,10 +74,6 @@ export const MapTourPage = () => {
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tour.description) }}
           />
         )}
-
-        <div className="tour-container" style={{ marginBottom: '30px' }}>
-          <MapTour learnplaces={tour.tour_learnplaces} />
-        </div>
 
       </section>
     </div>

@@ -21,6 +21,7 @@ import useGeolocation from './utils/geolocation.ts';
 import { checkServerHealth, setOnlineStatus } from './state/health/healthSlice';
 import {MapOverviewPage} from "./components/MapOverviewPage.tsx";
 import {MapTourPage} from "./components/MapTourPage.tsx";
+import {MapCollectionPage} from "./components/MapCollectionPage.tsx";
 
 function App() {
   const dispatch = useDispatch<AppDispatch>();
@@ -46,16 +47,16 @@ function App() {
     // Initial check
     dispatch(checkServerHealth());
 
-    let countdown = 60;
+    // let countdown = 60;
 
     // Debug Countdown Logger
-    const countdownId = setInterval(() => {
+    /*const countdownId = setInterval(() => {
       if (countdown % 10 === 0) {
         console.log(`[Health Check] Next check in ${countdown} seconds`);
       }
       countdown--;
       if (countdown < 0) countdown = 60;
-    }, 1000);
+    }, 1000);*/
 
 
     // Periodischer Check
@@ -69,7 +70,7 @@ function App() {
       window.removeEventListener('online', updateOnlineStatus);
       window.removeEventListener('offline', updateOnlineStatus);
       clearInterval(intervalId);
-      clearInterval(countdownId);
+      //clearInterval(countdownId);
     };
   }, [dispatch]);
 
@@ -108,6 +109,7 @@ function App() {
           <Route path="logout" element={<Logout />} />
           <Route path="lernorte" element={<MapOverviewPage />} />
           <Route path="tour/:id" element={<MapTourPage />} />
+          <Route path="sammlung/:id" element={<MapCollectionPage />} />
           <Route path="suche" element={<LearnplacesPage />} />
           <Route path="how-to" element={<HowToPage />} />
           <Route path="scanner" element={<QrCodeScannerPage />} />

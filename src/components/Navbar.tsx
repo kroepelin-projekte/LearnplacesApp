@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
 import iconGroup from '../assets/images/nav_icons/group.svg';
 import iconGroupActive from '../assets/images/nav_icons/group_active.svg';
-import iconQuestion from '../assets/images/nav_icons/question.svg';
-import iconQuestionActive from '../assets/images/nav_icons/question_active.svg';
+//import iconQuestion from '../assets/images/nav_icons/question.svg';
+//import iconQuestionActive from '../assets/images/nav_icons/question_active.svg';
 import iconQrCode from '../assets/images/nav_icons/qr-code.svg';
 import iconQrCodeActive from '../assets/images/nav_icons/qr-code_active.svg';
 import iconMap from '../assets/images/nav_icons/map.svg';
@@ -36,7 +36,7 @@ export const Navbar = () => {
           </>
         )}
       </NavLink>
-      <NavLink
+      {/*<NavLink
         to="/how-to"
         className={({ isActive }) => (isActive ? "link active" : "link")}
       >
@@ -46,7 +46,7 @@ export const Navbar = () => {
             <span>How-To</span>
           </>
         )}
-      </NavLink>
+      </NavLink>*/}
       <NavLink
         to="/downloads"
         className={({ isActive }) => (isActive ? "link active" : "link")}

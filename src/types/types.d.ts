@@ -70,8 +70,6 @@ declare global {
     id: number;
     latitude: number;
     longitude: number;
-    lat?: number;
-    lng?: number;
     radius: number;
     title: string;
     visited: boolean;
@@ -83,6 +81,26 @@ declare global {
     title: string;
     description: string;
     tour_learnplaces: TourLearnplace[];
+  }
+
+  interface CollectionLearnplace {
+    id: number;
+    latitude: number;
+    longitude: number;
+    radius: number;
+    title: string;
+    visited: boolean;
+    color: string;
+    tag_name: string;
+    render_index: number;
+  }
+
+  interface Collection {
+    map_id: number;
+    title: string;
+    description: string;
+    context_ref_id: number;
+    collection_learnplaces: CollectionLearnplace[]
   }
 }
 

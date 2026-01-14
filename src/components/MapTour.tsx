@@ -5,15 +5,6 @@ import L from 'leaflet';
 import { FiMaximize2, FiX } from "react-icons/fi";
 import {createPortal} from "react-dom";
 
-interface TourLearnplace {
-  id: number;
-  latitude: number;
-  longitude: number;
-  radius: number;
-  title: string;
-  visited: boolean;
-}
-
 interface TourMapProps {
   learnplaces: TourLearnplace[];
 }
