@@ -67,9 +67,9 @@ section {
     background-color: transparent;
     border-color: $color-white;
     color: $color-white;
-    &:before {
+/*    &:before {
       content: "";
-    }
+    }*/
     &:hover {
       background-color: $color-white;
       color: $color-accent-2;
@@ -568,4 +568,11 @@ main .downloads section ul {
   margin-top: 40px;
   margin-bottom: 10px;
   padding-left: 20px;
+}
+
+.app:has(.login-wrapper) {
+  display: block;
+  .login-wrapper {
+    height: 100svh;
+  }
 }

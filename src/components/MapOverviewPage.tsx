@@ -54,7 +54,7 @@ export const MapOverviewPage = () => {
           const freshData = await response.json();
           setter(freshData.data as T);
 
-          // Cache im Hintergrund aktualisieren
+          // Cache update in background
           const cache = await caches.open(cacheName);
           await cache.put(url, new Response(JSON.stringify(freshData)));
         } else {
@@ -65,7 +65,6 @@ export const MapOverviewPage = () => {
       }
     };
 
-    // Beide Requests parallel starten
     Promise.all([
       fetchData<Tour[]>('/maps-tour', 'maps-tour-cache', setTours),
       fetchData<Collection[]>('/maps-collection', 'maps-collection-cache', setCollections)

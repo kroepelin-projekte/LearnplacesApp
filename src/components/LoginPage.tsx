@@ -1,10 +1,11 @@
 import {Navigate} from 'react-router-dom';
-import {Header} from './Header.tsx';
+//import {Header} from './Header.tsx';
 import {useSelector} from 'react-redux';
 import {RootState} from '../state/store.ts';
 import bgImage from '../assets/images/bg.svg';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 import {generatePkcePair, urlBase64Encode, generateState} from '../utils/OAuth.ts';
+import logo from "../assets/images/logo.svg";
 
 export const LoginPage = () => {
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -35,7 +36,7 @@ export const LoginPage = () => {
 
   return (
     <>
-      <Header />
+     {/* <Header />*/}
       <main>
         <div className="main-wrapper">
           <div className="login-wrapper" style={{
@@ -45,6 +46,8 @@ export const LoginPage = () => {
             backgroundAttachment: 'fixed',
             backgroundImage: `url(${bgImage})`,
           }}>
+            <img src={logo} alt="Logo" className="header-logo" style={{ width: '300px', marginBottom: '100px', filter: "brightness(0) invert(1)"}} />
+
             <h2>Anmelden mit ILIAS</h2>
             <button className="btn btn-login" onClick={handleOAuthLogin}>Login</button>
           </div>
