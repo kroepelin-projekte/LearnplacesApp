@@ -20,46 +20,61 @@ export const MapOverviewPage = () => {
     if (!accessToken) return;
     setIsLoading(true);
 
-    fetch(`${apiBaseUrl}/maps-tour`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
-        throw new Error('Tour Maps Error');
-      })
-      .then(data => {
-        setTours(data.data);
-      })
-      .catch(error => {
-        console.error('Fetch Error /tours', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    const fetchData = async <T,>(
+      endpoint: string,
+      cacheName: string,
+      setter: (data: T) => void
+    ) => {
+      const url = `${apiBaseUrl}${endpoint}`;
 
-    fetch(`${apiBaseUrl}/maps-collection`, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
+      // 1. Stale: Versuche Daten aus dem Cache zu laden
+      try {
+        const cache = await caches.open(cacheName);
+        const cachedResponse = await cache.match(url);
+        if (cachedResponse && cachedResponse.ok) {
+          const cachedData = await cachedResponse.json();
+          setter(cachedData.data as T);
+          // Wir setzen isLoading hier noch NICHT auf false,
+          // damit der Loader bleibt, bis wir sicher sind, ob wir Netz haben.
         }
-        throw new Error('Collection Maps Error');
-      })
-      .then(data => {
-        setCollections(data.data);
-      })
-      .catch(error => {
-        console.error('Fetch Error /maps-collection', error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+      } catch (cacheError) {
+        console.warn(`Cache access error for ${endpoint}:`, cacheError);
+      }
+
+      // 2. Revalidate: Frische Daten vom Server holen
+      try {
+        const response = await fetch(url, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/json'
+          },
+        });
+
+        if (response.ok) {
+          const freshData = await response.json();
+          setter(freshData.data as T);
+
+          // Cache im Hintergrund aktualisieren
+          const cache = await caches.open(cacheName);
+          await cache.put(url, new Response(JSON.stringify(freshData)));
+        } else {
+          console.error(`Server returned ${response.status} for ${endpoint}`);
+        }
+      } catch (error) {
+        console.error(`Network Fetch Error ${endpoint}:`, error);
+      }
+    };
+
+    // Beide Requests parallel starten
+    Promise.all([
+      fetchData<Tour[]>('/maps-tour', 'maps-tour-cache', setTours),
+      fetchData<Collection[]>('/maps-collection', 'maps-collection-cache', setCollections)
+    ]).finally(() => {
+      setIsLoading(false);
+    });
   }, [accessToken]);
 
-  if (isLoading) {
+  if (isLoading && tours.length === 0 && collections.length === 0) {
     return (
       <div className="home-page">
         <div className="home-page-loader-container">
