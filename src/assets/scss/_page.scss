@@ -163,27 +163,27 @@ section {
 }
 
 li:has(.card) {
-  border-bottom: 1px solid rgba(0,0,100,0.4);
+ /* border-bottom: 1px solid rgba(0,0,100,0.4);*/
   padding-block: 2px;
 }
 li:has(.card):last-child {
   border: 0;
 }
 .card {
-  padding: 12px;
   padding-left: 0;
   border-radius: $border-radius;
-  display: grid;
+/*  display: grid;
   grid-template-rows: min-content 1fr;
-  gap: 10px;
+  gap: 8px;*/
   z-index: 20;
   cursor: pointer;
-  margin-block: 20px;
   transition: all .25s ease;
+  padding: 0px;
+  padding-bottom: 0;
   .card-header {
     position: relative;
     h2 {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 700;
       color: $color-black;
       padding-right: 80px;
@@ -191,7 +191,7 @@ li:has(.card):last-child {
     }
     .learnplace-visited-status  {
       position: absolute;
-      top: 0;
+      top: 2px;
       right: 0;
       width: 60px;
       svg {
@@ -201,8 +201,8 @@ li:has(.card):last-child {
       }
       img {
         position: absolute;
-        top: -4px;
-        right: -18px;
+        top: -8px;
+        right: -10px;
       }
     }
   }
@@ -230,10 +230,32 @@ a:has(.card) {
   text-decoration: none;
 }
 
-ul:has(.card) {
-  padding-bottom: $padding;
-}
+ol:has(.card) {
+  list-style: none; // Wir bauen die Nummerierung selbst
+  counter-reset: tour-counter;
+  padding: 0;
 
+  li {
+    counter-increment: tour-counter;
+    position: relative;
+    margin-bottom: 15px;
+    padding-left: 60px;
+    // Die Nummerierung links neben der Card
+    &::before {
+      content: counter(tour-counter);
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 26px;
+      font-weight: 900;
+      color: $color-accent-2; // Dezente große Zahl
+      filter: none;
+      z-index: 21; // Über der Card, aber unter dem Text
+      pointer-events: none;
+    }
+  }
+}
 
 
 
@@ -300,18 +322,19 @@ ul:has(.card) {
     width: 100vw;
   }
   section {
-    margin-top: 20px;
+    margin-top: $padding;
   }
   section h1 {
-    font-size: 28px;
+    font-size: 32px;
     margin-bottom: 0;
     margin-right: 60px;
     hyphens: auto;
   }
   section .description {
-    margin-top: 20px;
+    color: $color-black;
+    margin-top: 10px;
     font-size: 20px;
-    line-height: 1.4;
+    line-height: 1.2;
   }
   section h1,
   section p,
@@ -387,7 +410,7 @@ ul:has(.card) {
   padding: $padding-small;
   border-radius: $border-radius;
   p {
-    font-size: 28px;
+    font-size: 26px;
   }
   li {
     font-size: 20px;
@@ -490,7 +513,7 @@ ul:has(.card) {
 main .downloads section section {
   margin-block: 20px;
   border-bottom: 1px solid #ccc;
-  padding-top: 20px;
+  padding-top: 10px;
   > h2 {
     font-size: 32px;
   }
@@ -500,4 +523,49 @@ main .downloads section section:last-child {
 }
 main .downloads section ul {
   padding-bottom: 10px;
+}
+
+/*maps pages*/
+.tour-description, collection-description {
+  color: $color-black;
+}
+
+/*tabs container*/
+.tabs-container {
+  display: flex;
+  margin-bottom: 40px;
+  height: 50px;
+  border-bottom: 2px solid $color-accent-2;
+  button {
+    cursor: pointer;
+    border: 0;
+    outline: 0;
+    padding-inline: 20px;
+    font-size: 28px;
+    font-family: $font-family;
+    font-weight: 700;
+    background-color: transparent;
+    &:hover {
+      background-color: $color-accent-2;
+      color: $color-white;
+    }
+    &.active-tab {
+      background-color: $color-accent-2;
+      color: $color-white;
+    }
+  }
+}
+
+.tag-group {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+}
+.tag-group-title {
+  font-size: 32px;
+  font-weight: 700;
+  font-family: $font-family;
+  color: $color-black;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  padding-left: 20px;
 }

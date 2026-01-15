@@ -24,7 +24,6 @@ function FitBounds({ learnplaces }: { learnplaces: CollectionLearnplace[] }) {
 }
 
 export function MapCollectionThumbnail({ title, learnplaces }: CollectionMapProps) {
-  console.log(title);
   // WICHTIG: Aufsteigende Sortierung nach render_index (1, 2, 3...).
   // Index 1 (groß) wird zuerst gezeichnet, Index 2 (kleiner) darüber.
   const sortedLearnplaces = useMemo(() => {
@@ -33,12 +32,14 @@ export function MapCollectionThumbnail({ title, learnplaces }: CollectionMapProp
 
   return (
     <div className="tour-map-wrapper" style={{ position: 'relative', width: '100%', height: 'auto', zIndex: 1 }}>
+      <h2 style={{ marginBottom: '10px', color: 'black', fontSize: '26px' }}>{title}</h2>
       <MapContainer
         dragging={false}
         zoomControl={false}
         scrollWheelZoom={false}
         touchZoom={false}
         doubleClickZoom={false}
+        attributionControl={false}
         style={{
           height: "300px",
           width: "100%",

@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import { Link } from 'react-router-dom';
-import DOMPurify from 'dompurify';
 import {FiSearch, FiXCircle} from 'react-icons/fi';
 import {AppDispatch, RootState} from '../state/store.ts';
 import { vibrate } from '../utils/Navigator.ts';
@@ -266,9 +265,6 @@ export const LearnplacesPage = () => {
                     {learnplace.downloaded ? <BsDownload size={26} style={{filter: 'brightness(0)'}} /> : ''}
                     {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
                   </div>
-                </div>
-                <div className="card-body">
-                  <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(learnplace.description)}}/>
                 </div>
               </div>
             </Link>

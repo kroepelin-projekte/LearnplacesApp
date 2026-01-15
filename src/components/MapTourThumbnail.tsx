@@ -1,4 +1,4 @@
-import { MapContainer, TileLayer, CircleMarker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, CircleMarker, useMap, Circle } from "react-leaflet";
 import { useEffect } from "react";
 import L from 'leaflet';
 
@@ -13,7 +13,7 @@ function FitBounds({ learnplaces }: { learnplaces: TourLearnplace[] }) {
   useEffect(() => {
     if (learnplaces.length === 0) return;
     const bounds = L.latLngBounds(learnplaces.map(lp => [lp.latitude, lp.longitude]));
-    map.fitBounds(bounds, { padding: [10, 10], maxZoom: 16 });
+    map.fitBounds(bounds, { padding: [30, 30], maxZoom: 15 });
 
     setTimeout(() => {
       map.invalidateSize();
@@ -25,61 +25,55 @@ function FitBounds({ learnplaces }: { learnplaces: TourLearnplace[] }) {
 
 export function MapTourThumbnail({ title, learnplaces }: TourMapProps) {
   return (
-    <div className="map-tile-card" style={{
-      display: 'flex',
-      alignItems: 'center',
-      background: 'white',
-      borderRadius: '12px',
-      overflow: 'hidden',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      marginBottom: '16px',
-      cursor: 'pointer',
-      height: '250px'
-    }}>
-      {/* Linke Seite: Quadratische Mini-Map */}
-      <div style={{ width: '250px', height: '250px', flexShrink: 0 }}>
-        <MapContainer
-          dragging={false}
-          zoomControl={false}
-          scrollWheelZoom={false}
-          touchZoom={false}
-          doubleClickZoom={false}
-          attributionControl={false}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <FitBounds learnplaces={learnplaces} />
-          <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <div className="tour-map-wrapper" style={{ position: 'relative', width: '100%', height: 'auto', zIndex: 1 }}>
+      <h2 style={{ marginBottom: '10px', color: 'black', fontSize: '26px' }}>{title}</h2>
+      <MapContainer
+        dragging={false}
+        zoomControl={false}
+        scrollWheelZoom={false}
+        touchZoom={false}
+        doubleClickZoom={false}
+        attributionControl={false}
+        style={{
+          height: "300px",
+          width: "100%",
+          borderRadius: "8px",
+          cursor: 'pointer'
+        }}
+      >
+        <FitBounds learnplaces={learnplaces} />
+        <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
-          {learnplaces.map((lp) => (
-            <div key={lp.id}>
-              <CircleMarker
+        {learnplaces.map((lp) => (
+          <div key={lp.id}>
+            {/* Optionaler Radius-Kreis für Touren (falls vorhanden) */}
+            {lp.radius > 0 && (
+              <Circle
                 center={[lp.latitude, lp.longitude]}
-                radius={4}
+                radius={lp.radius}
                 pathOptions={{
-                  fillColor: lp.visited ? "#2e7d32" : "#1a237e",
-                  fillOpacity: 1,
-                  stroke: false
+                  color: lp.visited ? "#4caf50" : "#34499A",
+                  fillOpacity: 0.2,
+                  weight: 2
                 }}
                 interactive={false}
               />
-            </div>
-          ))}
-        </MapContainer>
-      </div>
+            )}
 
-      {/* Rechte Seite: Titel */}
-      <div style={{ padding: '0 16px', flexGrow: 1, overflow: 'hidden' }}>
-        <h3 style={{
-          margin: 0,
-          fontSize: '1.1rem',
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          color: '#333'
-        }}>
-          {title}
-        </h3>
-      </div>
+            {/* Marker-Punkt */}
+            <CircleMarker
+              center={[lp.latitude, lp.longitude]}
+              radius={6}
+              pathOptions={{
+                fillColor: lp.visited ? "#2e7d32" : "#1a237e",
+                fillOpacity: 1,
+                stroke: false
+              }}
+              interactive={false}
+            />
+          </div>
+        ))}
+      </MapContainer>
     </div>
   );
 }

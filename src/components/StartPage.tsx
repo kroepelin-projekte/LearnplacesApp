@@ -25,6 +25,12 @@ export const StartPage = () => {
           </Link>
         </div>
 
+        <div className="center-horizontally mt-12">
+          <Link to="/how-to" className="btn">
+            How-To
+          </Link>
+        </div>
+
       </section>
     </div>
   );

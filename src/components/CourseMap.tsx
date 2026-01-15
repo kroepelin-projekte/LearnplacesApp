@@ -51,7 +51,8 @@ export function CourseMap({ learnplaces }: { learnplaces: LearnplaceInterface[] 
             touchZoom={false}
             boxZoom={false}
             keyboard={false}
-            style={{ height: "400px", width: "100%", marginBottom: "30px", borderRadius: "4px" }}
+            attributionControl={false}
+            style={{ height: "300px", width: "100%", marginBottom: "30px", borderRadius: "4px" }}
         >
             <MapSyncToRedux />
 

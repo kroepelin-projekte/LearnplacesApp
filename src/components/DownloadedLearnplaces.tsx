@@ -1,6 +1,5 @@
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import DOMPurify from 'dompurify';
 import { vibrate } from '../utils/Navigator.ts';
 import iconCheck from "../assets/images/pin-check_2.svg";
 
@@ -54,7 +53,7 @@ export const DownloadedLearnplaces = () => {
           <div>
             {cachedLearnplaces.map((container) => (
               <section key={container.title}>
-                <h2>{container.title}</h2>
+                <h2 style={{ marginBottom: '10px' }}>{container.title}</h2>
                 <ul>
                   {container.learnplaces.map((learnplace) => (
                     <li key={learnplace.id}>
@@ -65,13 +64,6 @@ export const DownloadedLearnplaces = () => {
                             <div className="learnplace-visited-status">
                               {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
                             </div>
-                          </div>
-                          <div className="card-body">
-                            <div
-                              dangerouslySetInnerHTML={{
-                                __html: DOMPurify.sanitize(learnplace.description),
-                              }}
-                            />
                           </div>
                         </div>
                       </Link>

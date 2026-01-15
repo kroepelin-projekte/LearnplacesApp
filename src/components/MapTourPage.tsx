@@ -1,10 +1,12 @@
 import {useEffect, useState} from "react";
 import {useSelector} from "react-redux";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {RootState} from "../state/store.ts";
 import {Loader} from "./Loader.tsx";
 import {MapTour} from "./MapTour.tsx";
 import DOMPurify from 'dompurify';
+import {vibrate} from "../utils/Navigator.ts";
+import iconCheck from "../assets/images/pin-check_2.svg";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const MapTourPage = () => {
@@ -60,20 +62,37 @@ export const MapTourPage = () => {
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
-        <h1>Tour</h1>
-        <h2>{tour.title}</h2>
+        <h1 style={{ fontSize: '32px', marginBottom: '15px' }}>{tour.title}</h1>
+
+        {tour.description && (
+          <div
+            className="tour-description"
+            style={{ marginBottom: '20px', lineHeight: '1.2' }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tour.description) }}
+          />
+        )}
 
         <div className="tour-container" style={{ marginBottom: '30px' }}>
           <MapTour learnplaces={tour.tour_learnplaces} />
         </div>
 
-        {tour.description && (
-          <div
-            className="tour-description"
-            style={{ marginBottom: '20px', lineHeight: '1.5' }}
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(tour.description) }}
-          />
-        )}
+        {/* Learnplace List */}
+        <ol>
+          {tour.tour_learnplaces.map((learnplace: TourLearnplace) => (
+            <li key={learnplace.id}>
+              <Link to={`/lernort/${learnplace.id}`} onClick={vibrate}>
+                <div className="card">
+                  <div className="card-header">
+                    <h2>{learnplace.title}</h2>
+                    <div className="learnplace-visited-status">
+                      {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </li>
+          ))}
+        </ol>
 
       </section>
     </div>

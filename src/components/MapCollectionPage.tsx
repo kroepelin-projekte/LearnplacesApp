@@ -5,6 +5,8 @@ import {RootState} from "../state/store.ts";
 import {Loader} from "./Loader.tsx";
 import DOMPurify from 'dompurify';
 import {MapCollection} from "./MapCollection.tsx";
+import {vibrate} from "../utils/Navigator.ts";
+import iconCheck from "../assets/images/pin-check_2.svg";
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const MapCollectionPage = () => {
@@ -60,12 +62,12 @@ export const MapCollectionPage = () => {
   return (
     <div className="home-page">
       <section className="learnplaces-container-select">
-        <h1>{collection.title}</h1>
+        <h1 style={{ fontSize: '32px', marginBottom: '15px' }}>{collection.title}</h1>
 
         {collection.description && (
           <div
             className="collection-description"
-            style={{ marginBottom: '20px', lineHeight: '1.5' }}
+            style={{ marginBottom: '20px', lineHeight: '1.4', color: 'black' }}
             dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(collection.description) }}
           />
         )}
@@ -73,8 +75,6 @@ export const MapCollectionPage = () => {
         <div className="collection-container" style={{ marginBottom: '30px' }}>
           <MapCollection learnplaces={collection.collection_learnplaces} />
         </div>
-
-
 
         {/* Gruppierung der Lernorte vorbereiten */}
         {(() => {
@@ -88,32 +88,42 @@ export const MapCollectionPage = () => {
             grouped[tagName].push(lp);
           });
 
-          return Object.entries(grouped).map(([tagName, learnplaces]) => (
-            <div key={tagName} className="tag-group" style={{ marginBottom: '20px' }}>
-              <h3 style={{ borderBottom: '1px solid #ccc', paddingBottom: '5px' }}>
-                {tagName}
-              </h3>
-              {learnplaces.map((lp) => (
-                <div className="collection-learnplace" key={lp.id} style={{ marginBottom: '8px' }}>
-                  <Link
-                    to={`/lernort/${lp.id}`}
-                    className="btn"
-                    style={{
-                      display: 'block',
-                      padding: '10px',
-                      background: '#f0f0f0',
-                      borderRadius: '4px',
-                      textDecoration: 'none',
-                      color: 'black',
-                      borderLeft: `5px solid ${lp.color || '#34499a'}`
-                    }}
-                  >
-                    {lp.title}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          ));
+          return Object.entries(grouped).map(([tagName, learnplaces]) => {
+            const groupColor = learnplaces[0]?.color || '#34499a';
+
+            return (
+              <div key={tagName} className="tag-group">
+                <h3 className="tag-group-title">
+                  <span style={{
+                    width: '20px',
+                    height: '20px',
+                    backgroundColor: groupColor,
+                    borderRadius: '50%',
+                    display: 'inline-block',
+                    flexShrink: 0,
+                    marginRight: '10px',
+                  }}></span>
+                  {tagName}
+                </h3>
+                <ul>
+                  {learnplaces.map((lp) => (
+                    <li key={lp.id} style={{ position: 'relative' }}>
+                      <Link to={`/lernort/${lp.id}`} onClick={vibrate}>
+                        <div className="card" style={{ paddingLeft: '20px' }}>
+                          <div className="card-header">
+                            <h2>{lp.title}</h2>
+                            <div className="learnplace-visited-status">
+                              {lp.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })
         })()}
 
       </section>

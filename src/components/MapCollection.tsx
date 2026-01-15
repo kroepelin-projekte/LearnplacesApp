@@ -29,6 +29,18 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  const legendItems = useMemo(() => {
+    const seen = new Set();
+    return learnplaces
+      .filter(lp => {
+        const key = `${lp.color}-${lp.tag_name}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map(lp => ({ color: lp.color, tag: lp.tag_name || "Allgemein" }));
+  }, [learnplaces]);
+
   // WICHTIG: Aufsteigende Sortierung nach render_index (1, 2, 3...).
   // Leaflet rendert in der Reihenfolge des Arrays.
   // Index 1 (groß) wird zuerst gezeichnet, Index 2 (kleiner) darüber.
@@ -69,15 +81,55 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
           zIndex: 100000,
           background: 'white',
           border: 'none',
-          borderRadius: '4px',
-          padding: '8px',
+          borderRadius: '2px',
+          padding: '6px',
           display: 'flex',
           boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
-          cursor: 'pointer'
+          cursor: 'pointer',
         }}
       >
-        {isFullscreen ? <FiX size={20} /> : <FiMaximize2 size={20} />}
+        {isFullscreen ? <FiX size={18} strokeWidth={4}/> : <FiMaximize2 size={18} strokeWidth={4} />}
       </button>
+
+      {/* Legende (Nur im Fullscreen) */}
+      {isFullscreen && (
+        <div className="map-legend" style={{
+          position: 'absolute',
+          bottom: '10px',
+          left: '10px',
+          zIndex: 100000,
+          background: '#ffffff',
+          padding: '12px',
+          borderRadius: '2px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+          maxWidth: '200px',
+          fontSize: '16px',
+          color: '#34499a'
+        }}>
+          <h4 style={{ margin: '0 0 8px 0', fontSize: '18px', borderBottom: '1px solid #ddd' }}>Legende</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+            {legendItems.map((item, idx) => (
+              <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{
+                  width: '14px',
+                  height: '14px',
+                  backgroundColor: item.color,
+                  borderRadius: '50%',
+                  flexShrink: 0
+                }} />
+                <span style={{
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  color: '#000000'
+                }}>
+                  {item.tag}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <MapContainer
         key={isFullscreen ? 'fs' : 'inline'}
@@ -85,6 +137,7 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
         zoomControl={isFullscreen}
         scrollWheelZoom={isFullscreen}
         touchZoom={isFullscreen}
+        attributionControl={false}
         style={{
           height: isFullscreen ? "100vh" : "300px",
           width: "100%",

@@ -75,40 +75,16 @@ export const MapOverviewPage = () => {
         <h1>Übersicht</h1>
 
         {/* Tab Navigation */}
-        <div className="tabs-container" style={{
-          display: 'flex',
-          gap: '10px',
-          marginBottom: '30px',
-          borderBottom: '2px solid #eee',
-          paddingBottom: '10px'
-        }}>
+        <div className="tabs-container">
           <button
             onClick={() => dispatch(setMapType('tour'))}
-            style={{
-              padding: '10px 20px',
-              fontSize: '20px',
-              fontWeight: activeTab === 'tour' ? 'bold' : 'normal',
-              border: 'none',
-              background: 'none',
-              borderBottom: activeTab === 'tour' ? '3px solid #1a237e' : '3px solid transparent',
-              color: activeTab === 'tour' ? '#1a237e' : '#666',
-              cursor: 'pointer'
-            }}
+            className={activeTab === 'tour' ? 'active-tab' : ''}
           >
             Touren
           </button>
           <button
             onClick={() => dispatch(setMapType('collection'))}
-            style={{
-              padding: '10px 20px',
-              fontSize: '20px',
-              fontWeight: activeTab === 'collection' ? 'bold' : 'normal',
-              border: 'none',
-              background: 'none',
-              borderBottom: activeTab === 'collection' ? '3px solid #1a237e' : '3px solid transparent',
-              color: activeTab === 'collection' ? '#1a237e' : '#666',
-              cursor: 'pointer'
-            }}
+            className={activeTab === 'collection' ? 'active-tab' : ''}
           >
             Sammlungen
           </button>
@@ -134,7 +110,7 @@ export const MapOverviewPage = () => {
             )}
           </div>
         ) : (
-          <div className="tab-content">todo: title
+          <div className="tab-content">
             {collections.length === 0 ? (
               <p>Keine Sammlungen gefunden.</p>
             ) : (
