@@ -20,6 +20,7 @@ import { vibrate } from '../../utils/Navigator.ts';
 
 import { setConnectionInfo } from '../../state/network/networkSlice.ts';
 import {CheckinByGeolocation} from "./CheckinByGeolocation.tsx";
+import {updateLearnplaceCache} from "../../utils/cacheHelper.ts";
 
 
 export const LearnplacePage = () => {
@@ -42,6 +43,23 @@ export const LearnplacePage = () => {
   const [showConfetti, setShowConfetti] = useState(true);
 
   const position: number[]|null = useSelector((state: RootState) => state.geolocation.position);
+
+  useEffect(() => {
+    const checkAndRefreshCache = async () => {
+      const PAGE_CACHE = 'page-cache';
+      const url = `${apiBaseUrl}/learnplaces/${id}`;
+
+      const cache = await caches.open(PAGE_CACHE);
+      const match = await cache.match(url);
+
+      if (match && navigator.onLine) {
+        // Refresh cache of downloaded learnplace
+        updateLearnplaceCache(url, apiBaseUrl);
+      }
+    };
+
+    checkAndRefreshCache();
+  }, [id]);
 
   useEffect(() => {
     // Effekt 1: Nutzerposition aktualisieren
