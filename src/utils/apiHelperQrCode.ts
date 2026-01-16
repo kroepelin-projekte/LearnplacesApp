@@ -8,7 +8,11 @@ export const fetchVerifyToken = async (token: string): Promise<VerifyTokenRespon
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        qrcode: token,
+      }),
     });
 
     if (!response.ok) {

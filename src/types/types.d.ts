@@ -52,6 +52,9 @@ declare global {
     id: number;
     status: string;
     title: string;
+    latitude: number;
+    longitude: number;
+    radius: number;
   }
 
   interface ApiResponse {

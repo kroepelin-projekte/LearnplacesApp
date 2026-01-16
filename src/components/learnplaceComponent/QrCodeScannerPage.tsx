@@ -1,14 +1,17 @@
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {IDetectedBarcode, Scanner} from '@yudiel/react-qr-scanner';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../state/store.ts';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../state/store.ts';
 import { fetchVerifyToken } from '../../utils/apiHelperQrCode.ts';
+import { isWithinRadius } from '../../utils/BlockVisibility.ts';
 
 export function QrCodeScannerPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const [revisitPage, setRevistPage] = useState(false);
+
+  const userPosition = useSelector((state: RootState) => state.geolocation.position);
 
   // for scanner
   const [result, setResult] = useState<string | null>(null);
@@ -16,7 +19,7 @@ export function QrCodeScannerPage() {
 
   const [denied, setDenied] = useState(false);
   const [notFound, setNotFound] = useState(false);
-
+  const [tooFarAway, setTooFarAway] = useState(false);
 
   // handle qr-code scanner
   useEffect(() => {
@@ -30,6 +33,22 @@ export function QrCodeScannerPage() {
 
       if (!data) {
         return;
+      }
+
+      // Geo-Check: Ist der Nutzer nah genug am Lernort?
+      // Hinweis: 'data' muss die Koordinaten und den Radius des Lernorts enthalten
+      if (userPosition && data.latitude && data.longitude) {
+        const inRadius = isWithinRadius(
+          { lat: data.latitude, lng: data.longitude },
+          data.radius || 50, // Fallback auf 50m, falls kein Radius vom Server kommt
+          { lat: userPosition[0], lng: userPosition[1] }
+        );
+
+        if (!inRadius) {
+          setTooFarAway(true);
+          setShowScanner(false);
+          return;
+        }
       }
 
       switch (data?.status) {
@@ -68,7 +87,7 @@ export function QrCodeScannerPage() {
     } else {
       handleOfflineMode();
     }
-  }, [dispatch, navigate, result]);
+  }, [dispatch, navigate, result, userPosition]);
 
   // scann handler
   const handleScan = (data: IDetectedBarcode[]) => {
@@ -89,6 +108,16 @@ export function QrCodeScannerPage() {
     return (
       <div className="qr-code-message">
         <h3>Der Lernort ist nicht für Sie verfügbar.</h3>
+      </div>
+    );
+  }
+
+  if (tooFarAway) {
+    return (
+      <div className="qr-code-message">
+        <h3>Scanner gesperrt</h3>
+        <p>Sie befinden sich nicht nah genug am Lernort, um diesen Code zu aktivieren.</p>
+        <button className="btn" onClick={() => { setTooFarAway(false); setShowScanner(true); setResult(null); }}>Erneut versuchen</button>
       </div>
     );
   }
