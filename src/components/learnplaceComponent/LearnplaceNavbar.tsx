@@ -49,6 +49,7 @@ export const LearnplaceNavbar = () => {
       </NavLink>
       <NavLink
         to={`/lernort/${id}/map`}
+        replace
         className={({ isActive }) => (isActive ? "link active" : "link")}
       >
         {({ isActive }) => (

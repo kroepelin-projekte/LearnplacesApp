@@ -164,6 +164,7 @@ export function MapTour({ learnplaces }: TourMapProps) {
             <Marker
               position={[lp.latitude, lp.longitude]}
               icon={createNumberedIcon(index, lp.visited)}
+              interactive={isFullscreen}
               eventHandlers={isFullscreen ? {
                 click: () => {
                   navigate(`/lernort/${lp.id}`);
