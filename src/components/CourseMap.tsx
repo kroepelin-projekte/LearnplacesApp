@@ -75,6 +75,7 @@ export function CourseMap({ learnplaces }: { learnplaces: LearnplaceInterface[] 
                             fillColor="green"
                             fillOpacity={0.4}
                             weight={2}
+                            interactive={false}
                         />
 
                         <CircleMarker

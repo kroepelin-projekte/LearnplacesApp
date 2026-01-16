@@ -146,6 +146,7 @@ export const MapPage = () => {
           color="green"
           fillColor="green"
           fillOpacity={0.4}
+          interactive={false}
         />
 
         {/* Learnplace point */}
@@ -155,6 +156,7 @@ export const MapPage = () => {
           color="darkgreen"
           fillColor="darkgreen"
           fillOpacity={1}
+          interactive={false}
         />
       </MapContainer>
     </div>
