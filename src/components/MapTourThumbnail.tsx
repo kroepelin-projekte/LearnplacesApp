@@ -72,7 +72,6 @@ export function MapTourThumbnail({ title, learnplaces }: TourMapProps) {
             color: white;
             font-weight: bold;
             font-size: ${baseSize * 0.5}px;
-            border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.4);
             white-space: nowrap;
           ">

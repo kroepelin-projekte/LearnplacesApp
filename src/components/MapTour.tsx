@@ -91,7 +91,6 @@ export function MapTour({ learnplaces }: TourMapProps) {
             color: white;
             font-weight: bold;
             font-size: ${baseSize * 0.5}px;
-            border: 2px solid white;
             box-shadow: 0 2px 6px rgba(0,0,0,0.4);
             white-space: nowrap;
           ">

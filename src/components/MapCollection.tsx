@@ -1,8 +1,9 @@
-import { MapContainer, TileLayer, Circle, CircleMarker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Circle, Marker, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import L from 'leaflet';
-import { FiMaximize2, FiX } from "react-icons/fi";
+import { FiMaximize2, FiX, FiCheck } from "react-icons/fi";
+import { renderToStaticMarkup } from "react-dom/server";
 import { createPortal } from "react-dom";
 
 interface CollectionMapProps {
@@ -41,9 +42,6 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
       .map(lp => ({ color: lp.color, tag: lp.tag_name || "Allgemein" }));
   }, [learnplaces]);
 
-  // WICHTIG: Aufsteigende Sortierung nach render_index (1, 2, 3...).
-  // Leaflet rendert in der Reihenfolge des Arrays.
-  // Index 1 (groß) wird zuerst gezeichnet, Index 2 (kleiner) darüber.
   const sortedLearnplaces = useMemo(() => {
     return [...learnplaces].sort((a, b) => (a.render_index || 0) - (b.render_index || 0));
   }, [learnplaces]);
@@ -61,6 +59,55 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isFullscreen]);
+
+  // Funktion zum Erstellen des Icons mit Check-Badge (analog zu MapTour)
+  const createCollectionIcon = (lp: CollectionLearnplace) => {
+    const calcIndex = Math.max(0, (lp.render_index || 1) - 1);
+    const baseSize = Math.max(12, 56 - (calcIndex * 8));
+    const color = lp.color || '#34499a';
+
+    let checkIconHtml = '';
+    if (lp.visited) {
+      checkIconHtml = renderToStaticMarkup(
+        <div style={{
+          position: 'absolute',
+          top: '-15%', // Nutzt Prozent, damit es bei jeder Kreisgröße passt
+          right: '-15%',
+          background: '#4caf50',
+          borderRadius: '50%',
+          width: '20px',
+          height: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          border: '2px solid white',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+          zIndex: 2
+        }}>
+          <FiCheck size={14} strokeWidth={4} />
+        </div>
+      );
+    }
+
+    return L.divIcon({
+      className: 'custom-collection-marker',
+      html: `
+        <div style="position: relative; width: ${baseSize}px; height: ${baseSize}px;">
+          ${checkIconHtml}
+          <div style="
+            background-color: ${color};
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+          ">
+          </div>
+        </div>`,
+      iconSize: [baseSize, baseSize],
+      iconAnchor: [baseSize / 2, baseSize / 2],
+    });
+  };
 
   const mapContent = (
     <div className={`tour-map-wrapper ${isFullscreen ? 'is-fullscreen' : ''}`} style={{
@@ -91,7 +138,6 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
         {isFullscreen ? <FiX size={18} strokeWidth={4}/> : <FiMaximize2 size={18} strokeWidth={4} />}
       </button>
 
-      {/* Legende (Nur im Fullscreen) */}
       {isFullscreen && (
         <div className="map-legend" style={{
           position: 'absolute',
@@ -147,71 +193,37 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
         <FitBounds learnplaces={sortedLearnplaces} />
         <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OSM' />
 
-        {sortedLearnplaces.map((lp) => {
-          // Logik für die abnehmende Größe:
-          // Index 1 -> 28px
-          // Index 2 -> 24px
-          // Index 3 -> 20px
-          const calcIndex = Math.max(0, (lp.render_index || 1) - 1);
-          const markerRadius = Math.max(6, 28 - (calcIndex * 4));
-
-          return (
-            <div key={`${lp.id}-${lp.render_index}`}>
-              {/* Großer Radius-Kreis (nur für den ersten Index anzeigen) */}
-              {lp.render_index <= 1 && lp.radius > 0 && (
-                <Circle
-                  center={[lp.latitude, lp.longitude]}
-                  radius={lp.radius}
-                  pathOptions={{
-                    color: '#636363',
-                    fillColor: '#858585',
-                    fillOpacity: 0.2,
-                    weight: 2
-                  }}
-                  interactive={false}
-                />
-              )}
-
-              {/* Der Farbige Ring / Marker */}
-              <CircleMarker
+        {sortedLearnplaces.map((lp) => (
+          <div key={`${lp.id}-${lp.render_index}`}>
+            {lp.render_index <= 1 && lp.radius > 0 && (
+              <Circle
                 center={[lp.latitude, lp.longitude]}
-                radius={markerRadius}
+                radius={lp.radius}
                 pathOptions={{
-                  fillColor: lp.color || '#34499a',
-                  fillOpacity: 1,
-                  stroke: false // Entfernt den weißen Rand
+                  color: '#636363',
+                  fillColor: '#858585',
+                  fillOpacity: 0.2,
+                  weight: 2
                 }}
-                interactive={isFullscreen}
-                eventHandlers={isFullscreen ? {
-                  click: () => {
-                    navigate(`/lernort/${lp.id}`);
-                  }
-                } : {}}
+                interactive={false}
               />
+            )}
 
-              {/* Häkchen (als kleiner weißer Punkt in der Mitte beim obersten Element) */}
-              {lp.visited && isFullscreen && (
-                <CircleMarker
-                  center={[lp.latitude, lp.longitude]}
-                  radius={4}
-                  pathOptions={{
-                    fillColor: '#ffffff',
-                    fillOpacity: 1,
-                    stroke: false
-                  }}
-                  interactive={false}
-                />
-              )}
-            </div>
-          );
-        })}
+            <Marker
+              position={[lp.latitude, lp.longitude]}
+              icon={createCollectionIcon(lp)}
+              interactive={isFullscreen}
+              eventHandlers={isFullscreen ? {
+                click: () => {
+                  navigate(`/lernort/${lp.id}`);
+                }
+              } : {}}
+            />
+          </div>
+        ))}
       </MapContainer>
     </div>
   );
 
-  if (isFullscreen) {
-    return createPortal(mapContent, document.body);
-  }
-
-  return mapContent;
+  return isFullscreen ? createPortal(mapContent, document.body) : mapContent;
 }
