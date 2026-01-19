@@ -5,6 +5,7 @@ import { FiCheck } from "react-icons/fi";
 import { renderToStaticMarkup } from "react-dom/server";
 
 interface MapCollectionThumbnailProps {
+  title: string;
   learnplaces: CollectionLearnplace[];
 }
 
@@ -24,7 +25,7 @@ function FitBounds({ learnplaces }: { learnplaces: CollectionLearnplace[] }) {
   return null;
 }
 
-export function MapCollectionThumbnail({ learnplaces }: MapCollectionThumbnailProps) {
+export function MapCollectionThumbnail({ title, learnplaces }: MapCollectionThumbnailProps) {
   const sortedLearnplaces = useMemo(() => {
     return [...learnplaces].sort((a, b) => (a.render_index || 0) - (b.render_index || 0));
   }, [learnplaces]);
@@ -84,6 +85,7 @@ export function MapCollectionThumbnail({ learnplaces }: MapCollectionThumbnailPr
       overflow: "hidden",
       position: "relative"
     }}>
+      <h2 style={{ marginBottom: '10px', color: 'black', fontSize: '26px' }}>{title}</h2>
       <MapContainer
         center={[0, 0]}
         zoom={13}
