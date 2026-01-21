@@ -88,7 +88,11 @@ export const MapCollectionPage = () => {
             grouped[tagName].push(lp);
           });
 
-          return Object.entries(grouped).map(([tagName, learnplaces]) => {
+          const sortedEntries = Object.entries(grouped).sort(([a], [b]) =>
+            a.localeCompare(b, "de", { sensitivity: "base" })
+          );
+
+          return sortedEntries.map(([tagName, learnplaces]) => {
             const groupColor = learnplaces[0]?.color || '#34499a';
 
             return (

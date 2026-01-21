@@ -84,7 +84,7 @@ export function MapTourThumbnail({ title, learnplaces }: TourMapProps) {
   };
 
   return (
-    <div className="tour-map-wrapper" style={{ position: 'relative', width: '100%', height: 'auto', zIndex: 1 }}>
+    <div className="map-wrapper" style={{ width: '100%', marginBottom: '40px', zIndex: 1 }}>
       <h2 style={{ marginBottom: '10px', color: 'black', fontSize: '26px' }}>{title}</h2>
       <MapContainer
         dragging={false}
@@ -94,7 +94,7 @@ export function MapTourThumbnail({ title, learnplaces }: TourMapProps) {
         doubleClickZoom={false}
         attributionControl={false}
         style={{
-          height: "300px",
+          height: "200px",
           width: "100%",
           borderRadius: "8px",
           cursor: 'pointer'

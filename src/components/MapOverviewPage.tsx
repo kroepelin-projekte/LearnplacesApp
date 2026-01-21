@@ -134,7 +134,7 @@ export const MapOverviewPage = () => {
                   to={`/sammlung/${collection.map_id}`}
                   style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                 >
-                  <div className="tour-container" style={{ marginBottom: '20px' }}>
+                  <div className="collection-container" style={{ marginBottom: '20px' }}>
                     <MapCollectionThumbnail
                       title={collection.title}
                       learnplaces={collection.collection_learnplaces}

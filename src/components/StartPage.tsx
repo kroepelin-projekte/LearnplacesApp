@@ -13,10 +13,10 @@ export const StartPage = () => {
       <section>
         <h1>Willkommen in der Lernorte App</h1>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. At distinctio esse est, facere facilis, inventore laboriosam odio praesentium quam quasi reiciendis sapiente totam, veritatis. Atque!
+          Erlaube zunächst deinem Browser den Standortzugriff, damit dich die Lernorte-WebApp zu den für dich freigeschaltenen Lernorten führen kann. Ohne diese Erlaubnis siehst du im Folgenden nur die Lernorte, aber nicht deinen eigenen Standort, was das Auffinden erschweren kann.
         </p>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. At distinctio esse est, facere facilis, inventore laboriosam odio praesentium quam quasi reiciendis sapiente totam, veritatis. Atque!
+          Noch nie oder schon länger nicht mehr hier gewesen? Dann wirst du im nächsten Schritt noch über die Login-Maske deiner Institution geleitet.
         </p>
 
         <div className="center-horizontally mt-12">
@@ -27,7 +27,7 @@ export const StartPage = () => {
 
         <div className="center-horizontally mt-12">
           <Link to="/how-to" className="btn">
-            How-To
+            How To
           </Link>
         </div>
 

@@ -67,7 +67,7 @@ export function MapCollection({ learnplaces }: CollectionMapProps) {
     const color = lp.color || '#34499a';
 
     let checkIconHtml = '';
-    if (lp.visited) {
+    if (lp.visited && lp.render_index === 1) {
       checkIconHtml = renderToStaticMarkup(
         <div style={{
           position: 'absolute',

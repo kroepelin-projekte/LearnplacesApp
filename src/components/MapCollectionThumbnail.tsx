@@ -36,7 +36,7 @@ export function MapCollectionThumbnail({ title, learnplaces }: MapCollectionThum
     const color = lp.color || '#34499a';
 
     let checkIconHtml = '';
-    if (lp.visited) {
+    if (lp.visited && lp.render_index === 1) {
       checkIconHtml = renderToStaticMarkup(
         <div style={{
           position: 'absolute',
@@ -78,11 +78,10 @@ export function MapCollectionThumbnail({ title, learnplaces }: MapCollectionThum
     });
   };
   return (
-    <div className="map-collection-thumbnail" style={{
+    <div className="map-wrapper" style={{
       width: "100%",
-      height: "150px",
       borderRadius: "8px",
-      overflow: "hidden",
+      marginBottom: '40px',
       position: "relative"
     }}>
       <h2 style={{ marginBottom: '10px', color: 'black', fontSize: '26px' }}>{title}</h2>
@@ -95,7 +94,7 @@ export function MapCollectionThumbnail({ title, learnplaces }: MapCollectionThum
         doubleClickZoom={false}
         touchZoom={false}
         attributionControl={false}
-        style={{ height: "100%", width: "100%" }}
+        style={{ height: "200px", width: "100%", borderRadius: "8px", cursor: 'pointer' }}
       >
         <FitBounds learnplaces={sortedLearnplaces} />
         <TileLayer url="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
