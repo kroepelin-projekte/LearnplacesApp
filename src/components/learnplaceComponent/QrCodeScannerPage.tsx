@@ -4,7 +4,6 @@ import {IDetectedBarcode, Scanner} from '@yudiel/react-qr-scanner';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../state/store.ts';
 import { fetchVerifyToken } from '../../utils/apiHelperQrCode.ts';
-import { isWithinRadius } from '../../utils/BlockVisibility.ts';
 
 export function QrCodeScannerPage() {
   const navigate = useNavigate();
@@ -29,26 +28,9 @@ export function QrCodeScannerPage() {
 
     const handleOnlineMode = async () => {
       const data: VerifyTokenResponse|false = await fetchVerifyToken(result);
-      console.log(data);
 
       if (!data) {
         return;
-      }
-
-      // Geo-Check: Ist der Nutzer nah genug am Lernort?
-      // Hinweis: 'data' muss die Koordinaten und den Radius des Lernorts enthalten
-      if (userPosition && data.latitude && data.longitude) {
-        const inRadius = isWithinRadius(
-          { lat: data.latitude, lng: data.longitude },
-          data.radius || 50, // Fallback auf 50m, falls kein Radius vom Server kommt
-          { lat: userPosition[0], lng: userPosition[1] }
-        );
-
-        if (!inRadius) {
-          setTooFarAway(true);
-          setShowScanner(false);
-          return;
-        }
       }
 
       switch (data?.status) {
@@ -91,7 +73,6 @@ export function QrCodeScannerPage() {
 
   // scann handler
   const handleScan = (data: IDetectedBarcode[]) => {
-    console.log('SCANNER ', data);
     if (data.length === 0) {
       return;
     }

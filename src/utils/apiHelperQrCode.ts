@@ -1,4 +1,4 @@
-import { store } from '../state/store'; // Pfad anpassen, wenn nötig
+import { store } from '../state/store';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchVerifyToken = async (token: string): Promise<VerifyTokenResponse | false> => {
