@@ -52,6 +52,9 @@ declare global {
     id: number;
     status: string;
     title: string;
+    latitude: number;
+    longitude: number;
+    radius: number;
   }
 
   interface ApiResponse {
@@ -64,6 +67,43 @@ declare global {
     effectiveType?: string; // e.g. '4g', '3g'
     rtt?: number; // Round Trip Time in ms
     saveData?: boolean; // Data saving mode?
+  }
+
+  interface TourLearnplace {
+    id: number;
+    latitude: number;
+    longitude: number;
+    radius: number;
+    title: string;
+    visited: boolean;
+  }
+
+  interface Tour {
+    map_id: number;
+    context_ref_id: number;
+    title: string;
+    description: string;
+    tour_learnplaces: TourLearnplace[];
+  }
+
+  interface CollectionLearnplace {
+    id: number;
+    latitude: number;
+    longitude: number;
+    radius: number;
+    title: string;
+    visited: boolean;
+    color: string;
+    tag_name: string;
+    render_index: number;
+  }
+
+  interface Collection {
+    map_id: number;
+    title: string;
+    description: string;
+    context_ref_id: number;
+    collection_learnplaces: CollectionLearnplace[]
   }
 }
 

@@ -19,6 +19,8 @@ import { useSearchParams } from 'react-router-dom';
 import { vibrate } from '../../utils/Navigator.ts';
 
 import { setConnectionInfo } from '../../state/network/networkSlice.ts';
+import {CheckinByGeolocation} from "./CheckinByGeolocation.tsx";
+import {updateLearnplaceCache} from "../../utils/cacheHelper.ts";
 
 
 export const LearnplacePage = () => {
@@ -43,6 +45,23 @@ export const LearnplacePage = () => {
   const position: number[]|null = useSelector((state: RootState) => state.geolocation.position);
 
   useEffect(() => {
+    const checkAndRefreshCache = async () => {
+      const PAGE_CACHE = 'page-cache';
+      const url = `${apiBaseUrl}/learnplaces/${id}`;
+
+      const cache = await caches.open(PAGE_CACHE);
+      const match = await cache.match(url);
+
+      if (match && navigator.onLine) {
+        // Refresh cache of downloaded learnplace
+        updateLearnplaceCache(url, apiBaseUrl);
+      }
+    };
+
+    checkAndRefreshCache();
+  }, [id]);
+
+  useEffect(() => {
     // Effekt 1: Nutzerposition aktualisieren
     if (position) {
       setUserPosition({ lat: position[0], lng: position[1] });
@@ -54,6 +73,8 @@ export const LearnplacePage = () => {
    * Check if user in within the learnplace radius if position changes
    */
   useEffect(() => {
+    if (!learnplace || !learnplace.location) return;
+
     // learnplace position
     const { latitude = 0, longitude = 0 } = learnplace?.location || {};
     const learnplacePosition = { lat: latitude, lng: longitude };
@@ -99,35 +120,59 @@ export const LearnplacePage = () => {
    * Fetches the learnplace when componet is mounted
    */
   useEffect(() => {
-    function fetchJson() {
+    async function fetchJson() {
       const accessToken = store.getState().auth.accessToken;
-      fetch(learnplaceUrl, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + accessToken,
+      const cacheName = 'page-cache'; // Dein manueller Cache-Name
+
+      try {
+        const res = await fetch(learnplaceUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + accessToken,
+          }
+        });
+
+        if (res.status === 401) {
+          dispatch(logout());
+          return;
         }
-      })
-        .then((res) => {
 
-          if (res.status === 401) {
-            dispatch(logout());
-            return;
+        if (res.status === 400) {
+          navigate('/lernorte');
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
+        }
+
+        const data = await res.json();
+        setLearnplace(data.data);
+
+        // Optional: Wenn du willst, dass jeder Besuch auch den Cache aktualisiert:
+        // const cache = await caches.open(cacheName);
+        // await cache.put(learnplaceUrl, new Response(JSON.stringify(data.data)));
+
+      } catch (err) {
+        console.log('[Learnplace] Fetch error, trying cache...', err);
+
+        // FALLBACK: Wenn Netzwerk fehlschlägt, schau im manuellen Cache nach
+        try {
+          const cache = await caches.open(cacheName);
+          const cachedResponse = await cache.match(learnplaceUrl);
+
+          if (cachedResponse) {
+            const data = await cachedResponse.json();
+            console.log('[Learnplace] Serving from manual cache fallback');
+            const learnplaceData = data.data ? data.data : data;
+            setLearnplace(learnplaceData);
+          } else {
+            console.error('[Learnplace] No cache available');
           }
-
-          if (res.status === 400) {
-            navigate('/lernorte');
-            return;
-          }
-
-          if (!res.ok) {
-            throw new Error('[Learnplace] Failed to fetch learnplace: ' + res.statusText);
-          }
-
-          return res.json();
-        })
-        .then((data) =>  data.data)
-        .then((data) => setLearnplace(data))
-        .catch((err) => console.log('[Learnplace] Fetch error or offline.', err));
+        } catch (cacheErr) {
+          console.error('[Learnplace] Cache lookup failed', cacheErr);
+        }
+      }
     }
 
     fetchJson();
@@ -257,7 +302,11 @@ export const LearnplacePage = () => {
         {blockComponents.length > 0 ? blockComponents : null}
       </div>
 
-      <div className="download-container">
+      <div className="checkin-section">
+        <CheckinByGeolocation learnplace={learnplace} />
+      </div>
+
+      <div className="download-container background">
 
         <h2>Lernort Herunterladen</h2>
 

@@ -5,6 +5,10 @@ import iconQuestion from '../assets/images/nav_icons/question.svg';
 import iconQuestionActive from '../assets/images/nav_icons/question_active.svg';
 import iconQrCode from '../assets/images/nav_icons/qr-code.svg';
 import iconQrCodeActive from '../assets/images/nav_icons/qr-code_active.svg';
+import iconSearch from '../assets/images/nav_icons/search.svg';
+import iconSearchActive from '../assets/images/nav_icons/search_active.svg';
+//import iconMap from '../assets/images/nav_icons/map.svg';
+//import iconMapActive from '../assets/images/nav_icons/map_active.svg';
 import {BsDownload} from 'react-icons/bs';
 import { vibrate } from '../utils/Navigator.ts';
 
@@ -18,8 +22,19 @@ export const Navbar = () => {
       >
         {({ isActive }) => (
           <>
-            <img src={isActive ? iconGroupActive : iconGroup} height="30" alt="lernorte" />
+            <img src={isActive ? iconGroupActive : iconGroup} height="30" alt="Ubersicht" />
             <span>Lernorte</span>
+          </>
+        )}
+      </NavLink>
+      <NavLink
+        to="/suche"
+        className={({ isActive }) => (isActive ? "link active" : "link")}
+      >
+        {({ isActive }) => (
+          <>
+            <img src={isActive ? iconSearchActive : iconSearch} height="30" alt="lernorte" />
+            <span>Suche</span>
           </>
         )}
       </NavLink>

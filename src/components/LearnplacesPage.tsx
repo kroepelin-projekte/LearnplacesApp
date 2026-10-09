@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
 import { Link } from 'react-router-dom';
-import DOMPurify from 'dompurify';
 import {FiSearch, FiXCircle} from 'react-icons/fi';
 import {AppDispatch, RootState} from '../state/store.ts';
 import { vibrate } from '../utils/Navigator.ts';
@@ -37,6 +36,7 @@ export const LearnplacesPage = () => {
   const [processedLearnplaces, setProcessedLearnplaces] = useState<LearnplaceInterface[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
   const accessToken = useSelector((state: RootState) => state.auth.accessToken);
+  const [isInitialAuthChecked, setIsInitialAuthChecked] = useState(false);
 
   // refresh access_token
   useEffect(() => {
@@ -52,16 +52,19 @@ export const LearnplacesPage = () => {
       })
       .catch(error => {
         console.error('Fehler bei /refresh', error);
+      })
+      .finally(() => {
+        setIsInitialAuthChecked(true);
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   // load containers when component is mounted
   useEffect(() => {
-    if (containers.length === 0) {
+    if (isInitialAuthChecked && containers.length === 0) {
       dispatch(fetchContainers());
     }
-  }, [dispatch, containers.length]);
+  }, [dispatch, containers.length, isInitialAuthChecked]);
 
   // load learnplaces when container changes
   useEffect(() => {
@@ -157,7 +160,7 @@ export const LearnplacesPage = () => {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
-          <h1>Übersicht</h1>
+          <h1>Suche</h1>
           <p>
           Sie sind offline. Auf der Download-Seite finden Sie alle heruntergeladenen Lernorte.
           </p>
@@ -176,7 +179,7 @@ export const LearnplacesPage = () => {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
-          <h1>Übersicht</h1>
+          <h1>Suche</h1>
           <div className="home-page-loader-container">
             <Loader />
           </div>
@@ -190,7 +193,7 @@ export const LearnplacesPage = () => {
     return (
       <div className="home-page">
         <section className="learnplaces-container-select">
-          <h1>Übersicht</h1>
+          <h1>Suche</h1>
           <div className="home-page-loader-container">
             Es wurden keine Lernorte gefunden.
           </div>
@@ -205,7 +208,7 @@ export const LearnplacesPage = () => {
 
       {/* Controls */}
       <section className="learnplaces-container-select">
-        <h1>Übersicht</h1>
+        <h1>Suche</h1>
 
         <div className="learnplace-settings-container">
           {/* Container Dropdown */}
@@ -262,9 +265,6 @@ export const LearnplacesPage = () => {
                     {learnplace.downloaded ? <BsDownload size={26} style={{filter: 'brightness(0)'}} /> : ''}
                     {learnplace.visited ? <img src={iconCheck} width="36" alt="Lernort besucht" /> : ''}
                   </div>
-                </div>
-                <div className="card-body">
-                  <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(learnplace.description)}}/>
                 </div>
               </div>
             </Link>

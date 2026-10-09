@@ -1,8 +1,8 @@
 import {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {IDetectedBarcode, Scanner} from '@yudiel/react-qr-scanner';
-import {useDispatch} from 'react-redux';
-import {AppDispatch} from '../../state/store.ts';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../state/store.ts';
 import { fetchVerifyToken } from '../../utils/apiHelperQrCode.ts';
 
 export function QrCodeScannerPage() {
@@ -10,13 +10,15 @@ export function QrCodeScannerPage() {
   const dispatch = useDispatch<AppDispatch>();
   const [revisitPage, setRevistPage] = useState(false);
 
+  const userPosition = useSelector((state: RootState) => state.geolocation.position);
+
   // for scanner
   const [result, setResult] = useState<string | null>(null);
   const [showScanner, setShowScanner] = useState(true);
 
   const [denied, setDenied] = useState(false);
   const [notFound, setNotFound] = useState(false);
-
+  const [tooFarAway, setTooFarAway] = useState(false);
 
   // handle qr-code scanner
   useEffect(() => {
@@ -26,7 +28,6 @@ export function QrCodeScannerPage() {
 
     const handleOnlineMode = async () => {
       const data: VerifyTokenResponse|false = await fetchVerifyToken(result);
-      console.log(data);
 
       if (!data) {
         return;
@@ -68,11 +69,10 @@ export function QrCodeScannerPage() {
     } else {
       handleOfflineMode();
     }
-  }, [dispatch, navigate, result]);
+  }, [dispatch, navigate, result, userPosition]);
 
   // scann handler
   const handleScan = (data: IDetectedBarcode[]) => {
-    console.log('SCANNER ', data);
     if (data.length === 0) {
       return;
     }
@@ -89,6 +89,16 @@ export function QrCodeScannerPage() {
     return (
       <div className="qr-code-message">
         <h3>Der Lernort ist nicht für Sie verfügbar.</h3>
+      </div>
+    );
+  }
+
+  if (tooFarAway) {
+    return (
+      <div className="qr-code-message">
+        <h3>Scanner gesperrt</h3>
+        <p>Sie befinden sich nicht nah genug am Lernort, um diesen Code zu aktivieren.</p>
+        <button className="btn" onClick={() => { setTooFarAway(false); setShowScanner(true); setResult(null); }}>Erneut versuchen</button>
       </div>
     );
   }

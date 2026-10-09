@@ -1,4 +1,4 @@
-import { store } from '../state/store'; // Pfad anpassen, wenn nötig
+import { store } from '../state/store';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchVerifyToken = async (token: string): Promise<VerifyTokenResponse | false> => {
@@ -8,7 +8,11 @@ export const fetchVerifyToken = async (token: string): Promise<VerifyTokenRespon
       method: 'POST',
       headers: {
         'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
       },
+      body: JSON.stringify({
+        qrcode: token,
+      }),
     });
 
     if (!response.ok) {

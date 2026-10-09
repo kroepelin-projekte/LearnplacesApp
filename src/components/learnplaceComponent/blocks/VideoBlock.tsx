@@ -23,22 +23,44 @@ export const VideoBlock = (props: {isWithinLearnplaceRadius: boolean, block: Blo
   useEffect(() => {
     const fetchVideo = async () => {
       const accessToken = store.getState().auth.accessToken;
-      fetch(`${apiBaseUrl}/resources/${rid}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + accessToken,
-        }
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error('[VideoBlock] Failed to fetch learnplace: ' + res.statusText);
+      const videoUrl = `${apiBaseUrl}/resources/${rid}`;
+      const cacheName = 'media-cache'; // Videos liegen im selben Cache wie Bilder
+
+      try {
+        const res = await fetch(videoUrl, {
+          method: 'GET',
+          headers: {
+            'Authorization': 'Bearer ' + accessToken,
           }
-          return res.blob();
-        })
-        .then(blob => setVideoSrc(URL.createObjectURL(blob)))
-        .catch(error => console.error('[VideoBlock] Error when fetching video:', error))
-        .then(() => setLoading(false));
-    }
+        });
+
+        if (!res.ok) {
+          throw new Error('[VideoBlock] Failed to fetch video: ' + res.statusText);
+        }
+
+        const blob = await res.blob();
+        setVideoSrc(URL.createObjectURL(blob));
+      } catch (error) {
+        console.log('[VideoBlock] Fetch error, checking cache...', error);
+
+        try {
+          const cache = await caches.open(cacheName);
+          const cachedResponse = await cache.match(videoUrl);
+
+          if (cachedResponse) {
+            const blob = await cachedResponse.blob();
+            console.log('[VideoBlock] Serving video from manual cache');
+            setVideoSrc(URL.createObjectURL(blob));
+          } else {
+            console.warn('[VideoBlock] Video not found in cache');
+          }
+        } catch (cacheError) {
+          console.error('[VideoBlock] Cache lookup failed', cacheError);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchVideo();
   }, [dispatch, rid]);
